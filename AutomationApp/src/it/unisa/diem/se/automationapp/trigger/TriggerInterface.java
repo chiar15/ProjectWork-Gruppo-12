@@ -4,10 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
-/**
- *
- * @author chiar
- */
+
 public interface TriggerInterface {
-    
+    boolean isTriggered();
 }

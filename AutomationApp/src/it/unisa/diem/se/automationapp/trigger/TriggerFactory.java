@@ -4,10 +4,16 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
-/**
- *
- * @author chiar
- */
+import java.util.Map;
+
+
 public class TriggerFactory {
-    
+    public static TriggerInterface createTrigger(String type, Map<String, String> triggerData){
+        switch(type){
+            case "TimeTrigger":
+                return new TimeTrigger(triggerData);
+            default:
+                throw new IllegalArgumentException("Invalid trigger type: " + type);
+        }
+    }
 }

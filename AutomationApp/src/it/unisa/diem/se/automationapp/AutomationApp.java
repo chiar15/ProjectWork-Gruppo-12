@@ -31,6 +31,8 @@ public class AutomationApp extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+                String currentDir = System.getProperty("user.dir");
+        System.out.println("La directory di lavoro corrente è: " + currentDir);
     }
     
 }

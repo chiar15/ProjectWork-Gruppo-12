@@ -4,10 +4,6 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
-/**
- *
- * @author chiar
- */
 public interface ActionInterface {
-    
+    void execute();
 }

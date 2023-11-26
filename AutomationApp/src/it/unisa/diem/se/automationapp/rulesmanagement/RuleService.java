@@ -4,10 +4,6 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-/**
- *
- * @author chiar
- */
 public class RuleService {
     
 }

@@ -3,9 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutimationApp/src/autimationapp/AutimationApp.java</file>
-            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutimationApp/src/autimationapp/FXMLDocumentController.java</file>
-            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutimationApp/src/autimationapp/FXMLDocument.fxml</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/RuleEngine.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/RuleService.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerInterface.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionFactory.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/action/AudioAction.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/AutomationApp.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerFactory.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/Rule.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationView.fxml</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationViewController.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TimeTrigger.java</file>
+            <file>file:/C:/Users/chiar/Documents/NetBeansProjects/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionInterface.java</file>
         </group>
     </open-files>
 </project-private>
