@@ -13,7 +13,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.SourceDataLine;
 
 
 public class AudioAction implements ActionInterface{
@@ -28,31 +27,29 @@ public class AudioAction implements ActionInterface{
     }
 
     @Override
-    public void execute() {
-         try {
-            File audioFile = new File(filePath);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-            AudioFormat format = audioStream.getFormat();
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
+    public void execute()throws Exception{
+        File audioFile = new File(filePath);
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+        AudioFormat format = audioStream.getFormat();
+        DataLine.Info info = new DataLine.Info(Clip.class, format);
 
-            try (Clip audioClip = (Clip) AudioSystem.getLine(info)) {
-                audioClip.open(audioStream);
+        try (Clip audioClip = (Clip) AudioSystem.getLine(info)) {
+            audioClip.open(audioStream);
 
-                // Aggiungi un LineListener per essere notificato quando la riproduzione è finita
-                CountDownLatch latch = new CountDownLatch(1);
-                audioClip.addLineListener(event -> {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        latch.countDown();
-                    }
-                });
+            // Aggiungi un LineListener per essere notificato quando la riproduzione è finita
+            CountDownLatch latch = new CountDownLatch(1);
+            audioClip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    latch.countDown();
+                }
+            });
 
-                audioClip.start();  // Avvia la riproduzione dell'audio
-                latch.await();  // Attendi il completamento della riproduzione
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            audioClip.start();  // Avvia la riproduzione dell'audio
+            latch.await();  // Attendi il completamento della riproduzione
+            audioClip.stop();
         }
-    }
+    } 
 }
+
     
     

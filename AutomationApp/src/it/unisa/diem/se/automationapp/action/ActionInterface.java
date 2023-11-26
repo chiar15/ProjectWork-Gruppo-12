@@ -5,5 +5,5 @@
 package it.unisa.diem.se.automationapp.action;
 
 public interface ActionInterface {
-    void execute() throws InterruptedException;
+    void execute() throws Exception;
 }

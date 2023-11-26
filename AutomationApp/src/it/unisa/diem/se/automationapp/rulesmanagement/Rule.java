@@ -38,7 +38,7 @@ public class Rule {
         return this.trigger.isTriggered();
     }
     
-    public void execute(){
+    public void execute()throws Exception{
         this.action.execute();
     }
 }

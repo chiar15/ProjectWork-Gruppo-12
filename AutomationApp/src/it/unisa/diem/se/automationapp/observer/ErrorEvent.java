@@ -4,10 +4,21 @@
  */
 package it.unisa.diem.se.automationapp.observer;
 
-/**
- *
- * @author chiar
- */
 public class ErrorEvent {
-    
+    private final String errorMessage;
+    private final boolean isCritical;
+
+    public ErrorEvent(String errorMessage, boolean isCritical) {
+        this.errorMessage = errorMessage;
+        this.isCritical = isCritical;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public boolean isCritical() {
+        return isCritical;
+    }
 }
+
