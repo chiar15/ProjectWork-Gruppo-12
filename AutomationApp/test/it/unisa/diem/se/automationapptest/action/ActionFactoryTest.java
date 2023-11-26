@@ -17,9 +17,10 @@ public class ActionFactoryTest {
     @Test
     public void testCreateAudioAction() {
         Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", "ActionEnum.AUDIOACTION");
         actionData.put("filePath", "path/to/audio/file.wav");
 
-        ActionInterface action = ActionFactory.createAction("ActionEnum.AUDIOACTION", actionData);
+        ActionInterface action = ActionFactory.createAction(actionData);
 
         assertNotNull(action);
         assertTrue(action instanceof AudioAction);
@@ -28,8 +29,9 @@ public class ActionFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCreateActionWithInvalidType() {
         Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", "InvalidActionType");
         actionData.put("someKey", "someValue");
 
-        ActionFactory.createAction("InvalidActionType", actionData);
+        ActionFactory.createAction(actionData);
     }
 }

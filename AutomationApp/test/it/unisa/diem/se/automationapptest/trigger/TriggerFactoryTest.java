@@ -17,9 +17,10 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateTimeTrigger() {
         Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", "TriggerEnum.TIMETRIGGER");
         triggerData.put("time", "10:00");
 
-        TriggerInterface trigger = TriggerFactory.createTrigger("TriggerEnum.TIMETRIGGER", triggerData);
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
 
         assertNotNull(trigger);
         assertTrue(trigger instanceof TimeTrigger);
@@ -28,9 +29,10 @@ public class TriggerFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCreateTriggerWithInvalidType() {
         Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", "InvalidTriggerType");
         triggerData.put("someKey", "someValue");
 
-        TriggerFactory.createTrigger("InvalidTriggerType", triggerData);
+        TriggerFactory.createTrigger(triggerData);
     }
 }
 
