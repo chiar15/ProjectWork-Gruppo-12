@@ -12,5 +12,34 @@ import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
  * @author chiar
  */
 public class Rule {
+    private String name;
+    private TriggerInterface trigger;
+    private ActionInterface action;
+    
+    public Rule(String name, TriggerInterface trigger, ActionInterface action) {
+        this.name = name;
+        this.trigger = trigger;
+        this.action = action;
+    }
 
+    public String getName() {
+        return name;
+    }
+    
+    public TriggerInterface getTrigger() {
+        return trigger;
+    }
+    
+    public ActionInterface getAction() {
+        return action;
+    }
+    
+    public boolean isTriggered(){
+        return this.trigger.isTriggered();
+    }
+    
+    public void execute(){
+        this.action.execute();
+    }
 }
+
