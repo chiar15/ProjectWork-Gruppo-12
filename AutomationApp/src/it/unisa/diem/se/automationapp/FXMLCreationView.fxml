@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
-    <children>
-        <Button layoutX="126" layoutY="90" text="Click Me!" onAction="#handleButtonAction" fx:id="button" />
-        <Label layoutX="126" layoutY="120" minHeight="16" minWidth="69" fx:id="label" />
-    </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
+   <children>
+      <Label layoutX="19.0" layoutY="22.0" text="Rule name:" />
+      <TextField fx:id="ruleNameField" layoutX="19.0" layoutY="46.0" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="247.0" promptText="Enter a name for the rule" />
+      <ComboBox fx:id="comboBoxTrigger" layoutX="19.0" layoutY="82.0" onAction="#comboBoxTriggerAction" prefHeight="25.0" prefWidth="322.0" promptText="Select the Trigger" />
+      <Label fx:id="labelHours" layoutX="26.0" layoutY="124.0" text="Hours:" />
+      <Spinner fx:id="spinnerHours" layoutX="69.0" layoutY="120.0" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
+      <Label fx:id="labelMinutes" layoutX="179.0" layoutY="124.0" text="Minutes:" />
+      <Spinner fx:id="spinnerMinutes" layoutX="230.0" layoutY="120.0" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
+      <ComboBox fx:id="comboBoxActionRule" layoutX="19.0" layoutY="188.0" onAction="#comboBoxActionRule" prefHeight="25.0" prefWidth="322.0" promptText="Select the Action" />
+      <TextField fx:id="audioPathField" layoutX="19.0" layoutY="231.0" onAction="#audioPathFieldAction" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" />
+      <Button fx:id="audioPathButton" layoutX="230.0" layoutY="231.0" mnemonicParsing="false" onAction="#audioPathButtonAction" text="Select" />
+      <Button fx:id="createRuleButton" layoutX="328.0" layoutY="353.0" mnemonicParsing="false" onAction="#createRuleButtonAction" text="Create Rule" />
+   </children>
 </AnchorPane>

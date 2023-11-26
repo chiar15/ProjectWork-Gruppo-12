@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLMainViewController">
+   <children>
+      <TableView fx:id="ruleListTable" layoutX="21.0" layoutY="23.0" prefHeight="355.0" prefWidth="557.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.0">
+        <columns>
+          <TableColumn fx:id="ruleNameClm" prefWidth="130.0" text="Rule Name" />
+          <TableColumn fx:id="ruleTriggerClm" minWidth="1.0" prefWidth="145.0" text="Trigger" />
+            <TableColumn fx:id="ruleActionClm" prefWidth="179.0" text="Action" />
+        </columns>
+      </TableView>
+      <Button fx:id="addRuleButton" layoutX="493.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" text="Add Rule" />
+   </children>
+</AnchorPane>

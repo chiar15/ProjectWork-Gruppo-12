@@ -4,31 +4,168 @@
  */
 package it.unisa.diem.se.automationapp;
 
+import it.unisa.diem.se.automationapp.action.ActionEnum;
+import it.unisa.diem.se.automationapp.action.ActionInterface;
+import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
+import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
+import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
+import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
+import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  *
- * @author chiar
+ * @author agost
  */
-public class FXMLCreationViewController implements Initializable {
+public class FXMLCreationViewController{
     
     @FXML
-    private Label label;
-    
+    private TextField ruleNameField;
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
+    private ComboBox<TriggerEnum> comboBoxTrigger;
+    @FXML
+    private Label labelHours;
+    @FXML
+    private Spinner<Integer> spinnerHours;
+    @FXML
+    private Label labelMinutes;
+    @FXML
+    private Spinner<Integer> spinnerMinutes;
+    @FXML
+    private ComboBox<ActionEnum> comboBoxActionRule;
+    @FXML
+    private TextField audioPathField;
+    @FXML
+    private Button audioPathButton;
+    @FXML
+    private Button createRuleButton;
+    
+
+    public void initialize(RuleService rule) {
+        // TODO
+        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
+        comboBoxActionRule.getItems().setAll(ActionEnum.values());
+        
+        configureSpinner(spinnerHours, 0, 23);
+        configureSpinner(spinnerMinutes, 0, 59);
+        
+        BooleanBinding isInvalidInput = Bindings.createBooleanBinding(
+            () -> ruleNameField.getText().isEmpty() ||
+                  comboBoxTrigger.getValue() == null ||
+                  comboBoxActionRule.getValue() == null,
+            ruleNameField.textProperty(),
+            comboBoxTrigger.valueProperty(),
+            comboBoxActionRule.valueProperty()
+        );
+        
+        createRuleButton.disableProperty().bind(isInvalidInput);
     }
     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
     
+    
+
+    @FXML
+    private void ruleNameFieldAciton(ActionEvent event) {
+    }
+
+    @FXML
+    private void comboBoxTriggerAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void spinnerHoursAciton(MouseEvent event) {
+    }
+
+    @FXML
+    private void spinnerMinutesAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void comboBoxActionRule(ActionEvent event) {
+    }
+
+    @FXML
+    private void audioPathFieldAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void audioPathButtonAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the audio file");
+        
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("File audio (*.mp3, *.wav)", "*.mp3", "*.wav");
+        fileChooser.getExtensionFilters().add(extFilter);
+        
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+        
+        if (selectedFile != null) {
+            audioPathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void createRuleButtonAction(ActionEvent event) {
+        String ruleName = ruleNameField.getText();
+        TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+        ActionEnum selectedAction = comboBoxActionRule.getValue();
+        String audioFilePath = audioPathField.getText();
+        
+        int hours = spinnerHours.getValue();
+        int minutes = spinnerMinutes.getValue();
+        String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("time", timeString);
+        Map<String, String> actionData = new HashMap<>();
+        actionData.put("filePath", audioFilePath);
+
+        resetFields();
+        actionData.clear();
+        triggerData.clear();
+    }
+    
+    private void resetFields(){
+        ruleNameField.clear();
+        audioPathField.clear();
+        comboBoxTrigger.getSelectionModel().clearSelection();
+        comboBoxActionRule.getSelectionModel().clearSelection();
+        
+        spinnerHours.getValueFactory().setValue(Integer.MIN_VALUE);
+        spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
+    }
+    
+    private void configureSpinner(Spinner<Integer> spinner, int minValue, int maxValue) {
+        // Imposta il valore iniziale e i limiti dell'intervallo di valori ammissibili
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, 0);
+
+        // Imposta il valore di default
+        spinner.setValueFactory(valueFactory);
+
+        // Imposta il TextField editor per accettare solo input numerico
+        TextField editor = spinner.getEditor();
+        editor.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Accetta solo numeri
+                editor.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+    }
 }

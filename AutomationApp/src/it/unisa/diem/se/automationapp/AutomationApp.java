@@ -1,38 +1,36 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXML.java to edit this template
- */
 package it.unisa.diem.se.automationapp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
 
 /**
  *
- * @author chiar
+ * @author agost
  */
+
 public class AutomationApp extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLCreationView.fxml"));
-        
+        Image icon = new Image(getClass().getResourceAsStream("/icon/icona.png"));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLMainView.fxml"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
         
+        stage.getIcons().add(icon);
+        stage.setTitle("Automation App");
         stage.setScene(scene);
         stage.show();
+        stage.setResizable(false);
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
-                String currentDir = System.getProperty("user.dir");
-        System.out.println("La directory di lavoro corrente è: " + currentDir);
     }
-    
 }
