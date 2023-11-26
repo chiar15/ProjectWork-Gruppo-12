@@ -4,29 +4,39 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-public class RuleEngine implements Runnable{
-    private RuleService ruleService;
+import it.unisa.diem.se.automationapp.observer.ErrorEvent;
+import it.unisa.diem.se.automationapp.observer.EventBus;
+import java.io.IOException;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
-    public RuleEngine(RuleService ruleService) {
+public class RuleEngine {
+    private RuleService ruleService;
+    private EventBus eventBus;
+
+    public RuleEngine(RuleService ruleService, EventBus eventBus) {
         this.ruleService = ruleService;
+        this.eventBus = eventBus;
     }
 
-    @Override
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
+    public void executeRules() {
+        try {
             for (Rule rule : ruleService.getRuleList()) {
                 if (rule.isTriggered()) {
                     rule.execute();
                 }
-            }
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione
-                return; // Termina il ciclo e quindi il thread
-            }
+             }
+        } catch (UnsupportedAudioFileException e) {
+            eventBus.publish(new ErrorEvent(e.getMessage(), false));
+        } catch (IOException e) {
+            eventBus.publish(new ErrorEvent(e.getMessage(), false));
+        } catch (LineUnavailableException e) {
+            eventBus.publish(new ErrorEvent(e.getMessage(), false));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            eventBus.publish(new ErrorEvent("Riproduzione audio interrotta.", true));
+        } catch (Exception e) {
+            eventBus.publish(new ErrorEvent(e.getMessage(), false));
         }
     }
-    
-    
 }
