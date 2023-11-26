@@ -11,7 +11,8 @@ import java.util.Map;
  * @author chiar
  */
 public class ActionFactory {
-    public static ActionInterface createAction(String type, Map<String, String> actionData){
+    public static ActionInterface createAction(Map<String, String> actionData){
+        String type = actionData.get("type");
         switch(type){
             case "ActionEnum.AUDIOACTION":
             return new AudioAction(actionData);

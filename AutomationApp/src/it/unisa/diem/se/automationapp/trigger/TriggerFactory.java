@@ -8,7 +8,8 @@ import java.util.Map;
 
 
 public class TriggerFactory {
-    public static TriggerInterface createTrigger(String type, Map<String, String> triggerData){
+    public static TriggerInterface createTrigger(Map<String, String> triggerData){
+        String type = triggerData.get("type");
         switch(type){
             case "TriggerEnum.TIMETRIGGER":
                 return new TimeTrigger(triggerData);
