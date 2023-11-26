@@ -19,7 +19,7 @@ public class TriggerFactoryTest {
         Map<String, String> triggerData = new HashMap<>();
         triggerData.put("time", "10:00");
 
-        TriggerInterface trigger = TriggerFactory.createTrigger("TimeTrigger", triggerData);
+        TriggerInterface trigger = TriggerFactory.createTrigger("TriggerEnum.TIMETRIGGER", triggerData);
 
         assertNotNull(trigger);
         assertTrue(trigger instanceof TimeTrigger);

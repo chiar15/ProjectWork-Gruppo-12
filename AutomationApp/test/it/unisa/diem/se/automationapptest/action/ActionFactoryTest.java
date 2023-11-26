@@ -19,7 +19,7 @@ public class ActionFactoryTest {
         Map<String, String> actionData = new HashMap<>();
         actionData.put("filePath", "path/to/audio/file.wav");
 
-        ActionInterface action = ActionFactory.createAction("AudioAction", actionData);
+        ActionInterface action = ActionFactory.createAction("ActionEnum.AUDIOACTION", actionData);
 
         assertNotNull(action);
         assertTrue(action instanceof AudioAction);

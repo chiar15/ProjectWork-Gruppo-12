@@ -13,7 +13,7 @@ import java.util.Map;
 public class ActionFactory {
     public static ActionInterface createAction(String type, Map<String, String> actionData){
         switch(type){
-            case "AudioAction":
+            case "ActionEnum.AUDIOACTION":
             return new AudioAction(actionData);
         default:
             throw new IllegalArgumentException("Invalid action type: " + type);

@@ -10,7 +10,7 @@ import java.util.Map;
 public class TriggerFactory {
     public static TriggerInterface createTrigger(String type, Map<String, String> triggerData){
         switch(type){
-            case "TimeTrigger":
+            case "TriggerEnum.TIMETRIGGER":
                 return new TimeTrigger(triggerData);
             default:
                 throw new IllegalArgumentException("Invalid trigger type: " + type);
