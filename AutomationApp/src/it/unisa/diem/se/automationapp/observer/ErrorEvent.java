@@ -6,19 +6,20 @@ package it.unisa.diem.se.automationapp.observer;
 
 public class ErrorEvent {
     private final String errorMessage;
-    private final boolean isCritical;
+    private final EventType type;
 
-    public ErrorEvent(String errorMessage, boolean isCritical) {
+    public ErrorEvent(String errorMessage, EventType type) {
         this.errorMessage = errorMessage;
-        this.isCritical = isCritical;
+        this.type = type;
     }
 
     public String getErrorMessage() {
         return errorMessage;
     }
-
-    public boolean isCritical() {
-        return isCritical;
+    
+    public EventType getType() {
+        return type;
     }
+ 
 }
 

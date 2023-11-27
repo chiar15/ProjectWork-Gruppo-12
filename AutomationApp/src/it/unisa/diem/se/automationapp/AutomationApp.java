@@ -1,6 +1,7 @@
 package it.unisa.diem.se.automationapp;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,9 +28,13 @@ public class AutomationApp extends Application {
         stage.setTitle("Automation App");
         stage.setScene(scene);
         stage.setResizable(false);
+ 
+            
         stage.show();
     }
 
+
+    
     public static void main(String[] args) {
         launch(args);
     }

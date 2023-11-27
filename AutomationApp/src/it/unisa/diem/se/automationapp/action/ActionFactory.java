@@ -13,11 +13,11 @@ import java.util.Map;
 public class ActionFactory {
     public static ActionInterface createAction(Map<String, String> actionData){
         String type = actionData.get("type");
-        switch(type){
-            case "ActionEnum.AUDIOACTION":
+        
+        if(type.equalsIgnoreCase(ActionEnum.AUDIOACTION.name())){
             return new AudioAction(actionData);
-        default:
+        } else{
             throw new IllegalArgumentException("Invalid action type: " + type);
-}
+        }
     }
 }

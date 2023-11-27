@@ -5,13 +5,16 @@
 package it.unisa.diem.se.automationapptest.action;
 
 import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class AudioActionTest {
-
+    
     @Test
     public void testConstructorAndFilePath() {
         Map<String, String> actionData = new HashMap<>();
@@ -38,18 +41,17 @@ public class AudioActionTest {
         }
     }
 
-    @Test
-    public void testExecuteWithInvalidFile() {
+    @Test(expected = AudioExecutionException.class)
+    public void testExecuteWithInvalidFile() throws AudioExecutionException, InterruptedException{
         // Questo test fallirà se il file specificato non esiste.
         Map<String, String> actionData = new HashMap<>();
         String projectDirectory = System.getProperty("user.dir");
         actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song02.wav");
 
         AudioAction audioAction = new AudioAction(actionData);
-
         // Si aspetta un'eccezione a causa del file non valido.
-        audioAction.execute();
+           audioAction.execute();
+        
     }
-
 
 }

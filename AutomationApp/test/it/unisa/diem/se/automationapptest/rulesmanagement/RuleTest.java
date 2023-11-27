@@ -6,6 +6,7 @@ package it.unisa.diem.se.automationapptest.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.ActionFactory;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
+import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
@@ -54,10 +55,14 @@ public class RuleTest {
 
     // Nota: Questo test potrebbe tentare di riprodurre un audio.
     @Test
-    public void testExecute() {
+    public void testExecute(){
 
         // Esegui l'azione. Questo potrebbe dipendere dall'implementazione specifica di AudioAction.
-        rule.execute();
+        try{
+            rule.execute();
+        } catch (Exception e){
+            fail("Eccezione inattesa");
+        }
 
         // Verifica l'effetto atteso dell'azione.
         // Nota: questo potrebbe richiedere un approccio diverso a seconda dell'implementazione di AudioAction.

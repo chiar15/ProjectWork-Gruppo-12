@@ -1,11 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.rulesmanagement;
 
-import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -13,6 +7,8 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
 
 public class RuleServiceTest {
 
@@ -20,7 +16,9 @@ public class RuleServiceTest {
 
     @Before
     public void setUp() {
-        ruleService = new RuleService();
+        ruleService = RuleService.getInstance();
+        // Assicurati che la lista delle regole sia pulita prima di ogni test
+        ruleService.getRuleList().clear();
     }
 
     @Test
@@ -42,5 +40,6 @@ public class RuleServiceTest {
 
         Rule rule = ruleList.get(0);
         assertEquals("TestRule", rule.getName());
+        ruleService.getRuleList().clear();
     }
 }

@@ -4,39 +4,34 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import java.io.IOException;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import it.unisa.diem.se.automationapp.observer.EventType;
 
 public class RuleEngine {
-    private RuleService ruleService;
     private EventBus eventBus;
 
-    public RuleEngine(RuleService ruleService, EventBus eventBus) {
-        this.ruleService = ruleService;
+    public RuleEngine(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
     public void executeRules() {
-        try {
-            for (Rule rule : ruleService.getRuleList()) {
+        RuleService ruleService = RuleService.getInstance();
+        for (Rule rule : ruleService.getRuleList()) {
+            try {
                 if (rule.isTriggered()) {
                     rule.execute();
+                    break;
                 }
-             }
-        } catch (UnsupportedAudioFileException e) {
-            eventBus.publish(new ErrorEvent(e.getMessage(), false));
-        } catch (IOException e) {
-            eventBus.publish(new ErrorEvent(e.getMessage(), false));
-        } catch (LineUnavailableException e) {
-            eventBus.publish(new ErrorEvent(e.getMessage(), false));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            eventBus.publish(new ErrorEvent("Riproduzione audio interrotta.", true));
-        } catch (Exception e) {
-            eventBus.publish(new ErrorEvent(e.getMessage(), false));
-        }
+            } catch (AudioExecutionException e) {
+                eventBus.publish(new ErrorEvent(rule.getName() + e.getMessage(), EventType.CRITICAL_ERROR));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                eventBus.publish(new ErrorEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", EventType.ERROR));
+            } catch (Exception e) {
+                eventBus.publish(new ErrorEvent(e.getMessage(), EventType.ERROR));
+            }
+        } 
     }
 }

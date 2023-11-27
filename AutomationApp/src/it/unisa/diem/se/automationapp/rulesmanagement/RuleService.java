@@ -12,16 +12,30 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RuleService {
+    private static RuleService instance;
     private CopyOnWriteArrayList<Rule> ruleList;
 
-    public RuleService() {
+    private RuleService() {
         this.ruleList = new CopyOnWriteArrayList();
     }
 
-    public void createRule(String name, Map<String,String> triggerData, Map<String,String> actionData){
+    public static RuleService getInstance() {
+        if (instance == null) {
+            synchronized (RuleService.class) {
+                if (instance == null) {
+                    instance = new RuleService();
+                }
+            }
+        }
+        return instance;
+    }
+    
+    public Rule createRule(String name, Map<String,String> triggerData, Map<String,String> actionData){
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         ActionInterface action = ActionFactory.createAction(actionData);
-        ruleList.add(new Rule(name, trigger, action));
+        Rule rule = new Rule(name, trigger, action);
+        ruleList.add(rule);
+        return rule;
     }
     
     public CopyOnWriteArrayList<Rule> getRuleList() {

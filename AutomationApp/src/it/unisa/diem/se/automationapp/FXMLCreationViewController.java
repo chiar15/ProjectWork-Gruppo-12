@@ -7,6 +7,7 @@ package it.unisa.diem.se.automationapp;
 import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
@@ -60,8 +61,9 @@ public class FXMLCreationViewController{
     @FXML
     private Button createRuleButton;
     
+    private RuleCreationListener listener;
 
-    public void initialize(RuleService rule) {
+    public void initialize() {
         // TODO
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
@@ -82,7 +84,9 @@ public class FXMLCreationViewController{
     }
     
     
-    
+    public void setRuleCreationListener(RuleCreationListener listener) {
+        this.listener = listener;
+    } 
 
     @FXML
     private void ruleNameFieldAciton(ActionEvent event) {
@@ -134,13 +138,23 @@ public class FXMLCreationViewController{
         int minutes = spinnerMinutes.getValue();
         String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
         Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", selectedTrigger.name());
         triggerData.put("time", timeString);
         Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", selectedAction.name());
         actionData.put("filePath", audioFilePath);
 
+        RuleService ruleService = RuleService.getInstance();
+        Rule rule = ruleService.createRule(ruleName, triggerData, actionData);
+        
         resetFields();
         actionData.clear();
         triggerData.clear();
+        if (listener != null) {
+            listener.onRuleCreated(rule);
+        }
+        Stage stage = (Stage) createRuleButton.getScene().getWindow();
+        stage.close();
     }
     
     private void resetFields(){

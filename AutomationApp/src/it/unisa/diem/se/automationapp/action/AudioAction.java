@@ -4,7 +4,9 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.sampled.AudioFormat;
@@ -13,6 +15,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 public class AudioAction implements ActionInterface{
@@ -27,28 +31,36 @@ public class AudioAction implements ActionInterface{
     }
 
     @Override
-    public void execute()throws Exception{
-        File audioFile = new File(filePath);
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-        AudioFormat format = audioStream.getFormat();
-        DataLine.Info info = new DataLine.Info(Clip.class, format);
+    public void execute()throws AudioExecutionException, InterruptedException{
+        try{
+            File audioFile = new File(filePath);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
 
-        try (Clip audioClip = (Clip) AudioSystem.getLine(info)) {
-            audioClip.open(audioStream);
+            try (Clip audioClip = (Clip) AudioSystem.getLine(info)) {
+                audioClip.open(audioStream);
 
-            // Aggiungi un LineListener per essere notificato quando la riproduzione è finita
-            CountDownLatch latch = new CountDownLatch(1);
-            audioClip.addLineListener(event -> {
-                if (event.getType() == LineEvent.Type.STOP) {
-                    latch.countDown();
-                }
-            });
+                // Aggiungi un LineListener per essere notificato quando la riproduzione è finita
+                CountDownLatch latch = new CountDownLatch(1);
+                audioClip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        latch.countDown();
+                    }
+                });
 
-            audioClip.start();  // Avvia la riproduzione dell'audio
-            latch.await();  // Attendi il completamento della riproduzione
-            audioClip.stop();
+                audioClip.start();  // Avvia la riproduzione dell'audio
+                latch.await();  // Attendi il completamento della riproduzione
+                audioClip.stop();
+            } catch (LineUnavailableException e){
+                throw new AudioExecutionException ("Error while playing selected audio file");
+            }
+        } catch (UnsupportedAudioFileException  e) {
+            throw new AudioExecutionException ("Audio file format is not supported");
+        } catch(IOException e){
+            throw new AudioExecutionException ("Cannot access selected audio file");
         }
-    } 
+    }
 }
 
     
