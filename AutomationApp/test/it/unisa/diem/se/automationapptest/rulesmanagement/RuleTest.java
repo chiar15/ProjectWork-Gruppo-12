@@ -4,10 +4,12 @@
  */
 package it.unisa.diem.se.automationapptest.rulesmanagement;
 
+import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.action.ActionFactory;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
+import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import java.time.LocalTime;
@@ -26,13 +28,13 @@ public class RuleTest {
     @Before
     public void setUp(){
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", "TriggerEnum.TIMETRIGGER");
+        triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
         triggerData.put("time", LocalTime.now().minusMinutes(1).toString());
         trigger = TriggerFactory.createTrigger(triggerData);
 
         String projectDirectory = System.getProperty("user.dir");
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", "ActionEnum.AUDIOACTION");
+        actionData.put("type", ActionEnum.AUDIOACTION.name());
         actionData.put("filePath",  projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
         action = ActionFactory.createAction(actionData);
 

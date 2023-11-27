@@ -5,6 +5,7 @@
 package it.unisa.diem.se.automationapptest.trigger;
 
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
+import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateTimeTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", "TriggerEnum.TIMETRIGGER");
+        triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
         triggerData.put("time", "10:00");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);

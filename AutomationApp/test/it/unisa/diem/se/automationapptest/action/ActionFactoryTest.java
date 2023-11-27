@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapptest.action;
 
+import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.action.ActionFactory;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.action.AudioAction;
@@ -17,7 +18,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateAudioAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", "ActionEnum.AUDIOACTION");
+        actionData.put("type", ActionEnum.AUDIOACTION.name());
         actionData.put("filePath", "path/to/audio/file.wav");
 
         ActionInterface action = ActionFactory.createAction(actionData);
