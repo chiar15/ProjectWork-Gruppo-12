@@ -4,24 +4,19 @@
  */
 package it.unisa.diem.se.automationapp;
 
-import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleEngine;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
-import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -93,11 +88,11 @@ public class FXMLMainViewController implements Initializable {
             
             stage.getIcons().add(icon);
             stage.setScene(new Scene(root));
-            stage.setTitle("Rule List");
+            stage.setTitle("Rule Creation");
             FXMLCreationViewController controller = loader.getController();
             controller.initialize(ruleService);
-            stage.show();
             stage.setResizable(false);
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

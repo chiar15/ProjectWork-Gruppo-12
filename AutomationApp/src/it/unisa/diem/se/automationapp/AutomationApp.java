@@ -26,8 +26,8 @@ public class AutomationApp extends Application {
         stage.getIcons().add(icon);
         stage.setTitle("Automation App");
         stage.setScene(scene);
-        stage.show();
         stage.setResizable(false);
+        stage.show();
     }
 
     public static void main(String[] args) {
