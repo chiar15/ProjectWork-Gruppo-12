@@ -18,10 +18,12 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -55,22 +57,37 @@ public class FXMLCreationViewController{
     private Button createRuleButton;
     
     private RuleCreationListener listener;
+    @FXML
+    private TextArea messageField;
+    @FXML
+    private CheckBox singleExecutionCheckBox;
+    @FXML
+    private CheckBox multipleExecutionsCheckBox;
+    @FXML
+    private Label suspensionTimeLabel;
+    @FXML
+    private ComboBox<Integer> suspensionDaysBox;
+    @FXML
+    private ComboBox<Integer> suspensionHoursBox;
+    @FXML
+    private ComboBox<Integer> suspensionMinutesBox;
     
 
     public void initialize() {
-        // TODO
         
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
-        configureSpinner(spinnerHours, 00, 23);
-        configureSpinner(spinnerMinutes, 00, 59);
+        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
+        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
         createRuleButton.requestFocus();
+        singleExecutionCheckBox.setSelected(true);
         hideTimeTriggerControls();
         hideAudioActionControls();
-        
+        hideMessageField();
+        hideMultipleExecution();
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
@@ -82,50 +99,45 @@ public class FXMLCreationViewController{
         this.listener = listener;
     } 
 
-    @FXML
-    private void ruleNameFieldAciton(ActionEvent event) {
-    }
 
     @FXML
     private void comboBoxTriggerAction(ActionEvent event) {
         TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
 
-        switch (selectedTrigger) {
-            case TIMETRIGGER:
-                showTimeTriggerControls();
-                break;
-            default:
-                hideTimeTriggerControls();
-                break;
+        if (selectedTrigger != null) {
+            switch (selectedTrigger) {
+                case TIMETRIGGER:
+                    showTimeTriggerControls();
+                    break;
+                default:
+                    hideTimeTriggerControls();
+                    break;
+            }
         }
-    }
-
-    @FXML
-    private void spinnerHoursAciton(MouseEvent event) {
-    }
-
-    @FXML
-    private void spinnerMinutesAction(MouseEvent event) {
     }
 
     @FXML
     private void comboBoxActionRule(ActionEvent event) {
         ActionEnum selectedAction = comboBoxActionRule.getValue();
 
-        switch (selectedAction) {
-            case AUDIOACTION:
-                showAudioActionControls();
-                break;
-            default:
-                hideAudioActionControls();
-                break;
+        if (selectedAction != null) {
+            switch (selectedAction) {
+                case AUDIOACTION:
+                    hideMessageField();
+                    showAudioActionControls();
+                    break;
+                case MESSAGEACTION:
+                    hideAudioActionControls();
+                    showMessageField();
+                    break;
+                default:
+                    hideAudioActionControls();
+                    hideMessageField();
+                    break;
+            }
         }
     }
-
-    @FXML
-    private void audioPathFieldAction(ActionEvent event) {
-    }
-
+    
     @FXML
     private void audioPathButtonAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -181,9 +193,9 @@ public class FXMLCreationViewController{
         spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
     }
     
-    private void configureSpinner(Spinner<Integer> spinner, int minValue, int maxValue) {
+    private void configureSpinner(Spinner<Integer> spinner, int minValue, int maxValue, int defaultValue) {
         // Imposta il valore iniziale e i limiti dell'intervallo di valori ammissibili
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, 0);
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, defaultValue);
 
         // Imposta il valore di default
         spinner.setValueFactory(valueFactory);
@@ -195,7 +207,7 @@ public class FXMLCreationViewController{
                 editor.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
-        
+
         spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 int value = spinner.getValue();
@@ -237,38 +249,118 @@ public class FXMLCreationViewController{
         audioPathButton.setVisible(false);
     }
     
+    private void showMessageField() {
+        messageField.setVisible(true);
+    }
+
+    private void hideMessageField() {
+        messageField.setVisible(false);
+    }
+
+
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
             TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
-            if(selectedTrigger != null){
+            boolean triggerValid = selectedTrigger != null;
+
+            if (selectedTrigger != null) {
                 switch (selectedTrigger) {
                     case TIMETRIGGER:
-                        return spinnerHours.getValue() != null && spinnerMinutes.getValue() != null;
-                    // Aggiungere ulteriori casi per altri tipi di trigger se necessario
-
+                        triggerValid = triggerValid &&
+                                (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null);
+                        break;
+                    // Aggiungere altri casi per altri tipi di trigger se necessario
                     default:
-                        return true; // Non c'è alcun controllo da verificare per altri tipi di trigger
+                        break;
                 }
             }
-            return true;
-        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
+
+            return triggerValid && isFieldsFilled();
+        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty());
     }
 
     private BooleanBinding isValidActionInput() {
         return Bindings.createBooleanBinding(() -> {
             ActionEnum selectedAction = comboBoxActionRule.getValue();
-            if(selectedAction != null){
+            boolean actionValid = selectedAction != null;
+
+            if (selectedAction != null) {
                 switch (selectedAction) {
                     case AUDIOACTION:
-                        return !audioPathField.getText().isEmpty();
-                    // Aggiungere ulteriori casi per altri tipi di azione se necessario
-
+                        actionValid = actionValid && !audioPathField.getText().isEmpty();
+                        break;
+                    case MESSAGEACTION:
+                        actionValid = actionValid && !messageField.getText().isEmpty();
+                        break;
+                    // Aggiungere altri casi per altri tipi di azione se necessario
                     default:
-                        return true; // Non c'è alcun controllo da verificare per altri tipi di azione
+                        break;
                 }
             }
-            return true;
 
-        }, comboBoxActionRule.valueProperty(), audioPathField.textProperty());
+            return actionValid && isFieldsFilled();
+        }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
     }
+
+    private boolean isFieldsFilled() {
+        return !ruleNameField.getText().isEmpty();
+    }
+
+
+    @FXML
+    private void spinnerHoursAciton(MouseEvent event) {
+    }
+
+    @FXML
+    private void spinnerMinutesAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void audioPathFieldAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void messageFieldAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void ruleNameFieldAciton(ActionEvent event) {
+    }
+
+    @FXML
+    private void singleExecutionAction(ActionEvent event) {
+        if (singleExecutionCheckBox.isSelected()) {
+            hideMultipleExecution();
+        }
+    }
+
+    @FXML
+    private void multipleExecutionsAction(ActionEvent event) {
+        if (multipleExecutionsCheckBox.isSelected()) {
+            showMultipleExecution();
+        } else {
+            hideMultipleExecution();
+        }
+    }
+    
+    private void showMultipleExecution(){
+        suspensionTimeLabel.setVisible(true);
+        suspensionDaysBox.setManaged(true);
+        suspensionDaysBox.setVisible(true);
+        suspensionHoursBox.setManaged(true);
+        suspensionHoursBox.setVisible(true);
+        suspensionMinutesBox.setManaged(true);
+        suspensionMinutesBox.setVisible(true);
+    }
+    
+    private void hideMultipleExecution(){
+        suspensionTimeLabel.setVisible(false);
+        suspensionDaysBox.setManaged(false);
+        suspensionDaysBox.setVisible(false);
+        suspensionHoursBox.setManaged(false);
+        suspensionHoursBox.setVisible(false);
+        suspensionMinutesBox.setManaged(false);
+        suspensionMinutesBox.setVisible(false);
+    }
+
 }

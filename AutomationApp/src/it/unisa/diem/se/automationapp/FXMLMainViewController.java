@@ -101,7 +101,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
             
             stage.getIcons().add(icon);
             stage.setScene(new Scene(root));
-            stage.setTitle("Rule Creation");
+            stage.setTitle("Rule Creation Menù");
             FXMLCreationViewController controller = loader.getController();
             controller.initialize();
             controller.setRuleCreationListener(this);
