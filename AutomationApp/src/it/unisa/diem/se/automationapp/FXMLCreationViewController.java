@@ -76,12 +76,9 @@ public class FXMLCreationViewController{
     
 
     public void initialize() {
-<<<<<<< Updated upstream
-=======
         // TODO
         ruleManager = RuleManager.getInstance();
->>>>>>> Stashed changes
-        
+
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
         configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());

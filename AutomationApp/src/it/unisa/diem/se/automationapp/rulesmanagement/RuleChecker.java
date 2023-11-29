@@ -15,9 +15,11 @@ import it.unisa.diem.se.automationapp.observer.EventType;
 
 public class RuleChecker extends ScheduledService<Void> {
     private EventBus eventBus;
+    private RuleManager ruleManager;
 
-    public RuleChecker(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public RuleChecker() {
+        this.eventBus = EventBus.getInstance();
+        this.ruleManager = RuleManager.getInstance();;
         
         setOnFailed(e->{
             eventBus.publish(new ErrorEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", EventType.CRITICAL_ERROR));
@@ -29,7 +31,6 @@ public class RuleChecker extends ScheduledService<Void> {
         return new Task<Void>() {
             @Override
             protected Void call() {
-                RuleManager ruleManager = RuleManager.getInstance();
                 for (Rule rule : ruleManager.getRuleList()) {
                 if (isCancelled()) {
                     break;
