@@ -2,7 +2,7 @@ package it.unisa.diem.se.automationapptest.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RuleServiceTest {
+public class RuleManagerTest {
 
-    private RuleService ruleService;
+    private RuleManager ruleService;
 
     @Before
     public void setUp() {
-        ruleService = RuleService.getInstance();
+        ruleService = RuleManager.getInstance();
         ruleService.getRuleList().clear();
     }
 

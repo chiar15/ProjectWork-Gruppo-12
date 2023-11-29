@@ -11,19 +11,19 @@ import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class RuleService {
-    private static RuleService instance;
+public class RuleManager {
+    private static RuleManager instance;
     private CopyOnWriteArrayList<Rule> ruleList;
 
-    private RuleService() {
+    private RuleManager() {
         this.ruleList = new CopyOnWriteArrayList();
     }
 
-    public static RuleService getInstance() {
+    public static RuleManager getInstance() {
         if (instance == null) {
-            synchronized (RuleService.class) {
+            synchronized (RuleManager.class) {
                 if (instance == null) {
-                    instance = new RuleService();
+                    instance = new RuleManager();
                 }
             }
         }

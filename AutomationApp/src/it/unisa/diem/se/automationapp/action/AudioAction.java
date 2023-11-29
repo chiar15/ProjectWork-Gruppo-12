@@ -54,6 +54,8 @@ public class AudioAction implements ActionInterface{
                 audioClip.stop();
             } catch (LineUnavailableException e){
                 throw new AudioExecutionException ("Error while playing selected audio file");
+            } catch(InterruptedException e){
+                throw new InterruptedException(e.getMessage());
             }
         } catch (UnsupportedAudioFileException  e) {
             throw new AudioExecutionException ("Audio file format is not supported");

@@ -4,34 +4,51 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
+import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.EventType;
 
-public class RuleEngine {
+public class RuleEngine extends ScheduledService<Void> {
     private EventBus eventBus;
 
     public RuleEngine(EventBus eventBus) {
         this.eventBus = eventBus;
+        
+        setOnFailed(e->{
+            eventBus.publish(new ErrorEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", EventType.CRITICAL_ERROR));
+        });
     }
 
-    public void executeRules() {
-        RuleService ruleService = RuleService.getInstance();
-        for (Rule rule : ruleService.getRuleList()) {
-            try {
-                if (rule.isTriggered()) {
-                    rule.execute();
+    @Override
+    protected Task<Void> createTask() {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                RuleManager ruleService = RuleManager.getInstance();
+                for (Rule rule : ruleService.getRuleList()) {
+                if (isCancelled()) {
                     break;
                 }
-            } catch (AudioExecutionException e) {
-                eventBus.publish(new ErrorEvent(rule.getName() + e.getMessage(), EventType.CRITICAL_ERROR));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                eventBus.publish(new ErrorEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", EventType.ERROR));
-            } catch (Exception e) {
-                eventBus.publish(new ErrorEvent(e.getMessage(), EventType.ERROR));
+                    try {
+                        if (rule.isTriggered()) {
+                            rule.execute();
+                            break;
+                        }
+                    } catch (AudioExecutionException e) {
+                        eventBus.publish(new ErrorEvent(rule.getName() + ": "+ e.getMessage(), EventType.ERROR));
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } catch (Exception e) {
+                        eventBus.publish(new ErrorEvent(e.getMessage(), EventType.ERROR));
+                    }
+                }
+                return null;
             }
-        } 
+        };
     }
 }

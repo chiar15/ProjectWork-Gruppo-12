@@ -5,25 +5,18 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.action.ActionEnum;
-import it.unisa.diem.se.automationapp.action.ActionInterface;
-import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
-import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
-import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -62,9 +55,11 @@ public class FXMLCreationViewController{
     private Button createRuleButton;
     
     private RuleCreationListener listener;
+    
 
     public void initialize() {
         // TODO
+        
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
         
@@ -144,7 +139,7 @@ public class FXMLCreationViewController{
         actionData.put("type", selectedAction.name());
         actionData.put("filePath", audioFilePath);
 
-        RuleService ruleService = RuleService.getInstance();
+        RuleManager ruleService = RuleManager.getInstance();
         Rule rule = ruleService.createRule(ruleName, triggerData, actionData);
         
         resetFields();
@@ -153,8 +148,8 @@ public class FXMLCreationViewController{
         if (listener != null) {
             listener.onRuleCreated(rule);
         }
-        Stage stage = (Stage) createRuleButton.getScene().getWindow();
-        stage.close();
+        
+        closeWindow();
     }
     
     private void resetFields(){
@@ -181,5 +176,10 @@ public class FXMLCreationViewController{
                 editor.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+    }
+    
+    public void closeWindow(){
+        Stage stage = (Stage) createRuleButton.getScene().getWindow();
+        stage.close();
     }
 }

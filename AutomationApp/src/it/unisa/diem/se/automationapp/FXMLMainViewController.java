@@ -10,16 +10,11 @@ import it.unisa.diem.se.automationapp.observer.EventType;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleEngine;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.ResourceBundle;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,6 +32,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -57,7 +53,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     private TableColumn<String, String> ruleActionClm;
     
     private EventBus eventBus;
-    private ScheduledExecutorService executorService;
+
     private RuleEngine ruleEngine;
     
     private boolean isRuleCreationOpen;
@@ -65,7 +61,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     private ObservableList <Rule> observableList;
     
     private Queue<ErrorEvent> errorEventQueue;
-
+    
+    private boolean isPopupDisplayed;
     /**
      * Initializes the controller class.
      */
@@ -76,6 +73,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         observableList = FXCollections.observableArrayList();
         errorEventQueue = new LinkedList<>();
         isRuleCreationOpen = false;
+        isPopupDisplayed = false;
         
         ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
         ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
@@ -85,6 +83,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
         eventBus.subscribe(ErrorEvent.class, this::onErrorEvent);
         startRuleEngine();
+  
     }    
 
     @FXML
@@ -104,6 +103,13 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
             controller.initialize();
             controller.setRuleCreationListener(this);
             stage.setResizable(false);
+            
+            stage.setOnCloseRequest(windowEvent -> {
+                isRuleCreationOpen = false;
+                processQueuedPopups();
+                // Qui puoi anche chiamare un metodo nel controller di creazione, se necessario
+            });
+                        
             stage.show();
             isRuleCreationOpen = true;
         } catch (IOException e) {
@@ -119,9 +125,9 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         isRuleCreationOpen = false;
         processQueuedPopups();
     }
-        
+    
     private void onErrorEvent(ErrorEvent event) {
-        if (isRuleCreationOpen) {
+        if (isRuleCreationOpen || isPopupDisplayed) {
             errorEventQueue.add(event);
         } else{
             showAlert(event);
@@ -136,25 +142,29 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
 
 
     private void showAlert(ErrorEvent event) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, event.getErrorMessage(), ButtonType.OK);
-        alert.setTitle("Error");
-        alert.showAndWait();
-        if (event.getType() == EventType.CRITICAL_ERROR) {
-            closeApplication();
-        }
+        Platform.runLater(() -> {
+            isPopupDisplayed = true;
+            Alert alert = new Alert(Alert.AlertType.ERROR, event.getErrorMessage(), ButtonType.OK);
+            alert.setTitle("Error");
+            alert.showAndWait();
+            if (event.getType() == EventType.CRITICAL_ERROR) {
+                closeApplication();
+            }
+            isPopupDisplayed = false;
+        });
+        
     }
     
     public void startRuleEngine() {
         ruleEngine = new RuleEngine(eventBus);
 
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(ruleEngine::executeRules, 0, 5, TimeUnit.SECONDS);  // Eseguito ogni 5 secondi
+        ruleEngine.setPeriod(Duration.seconds(10));
+        ruleEngine.start();
+        
     }
-
-    private void closeApplication() {
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdownNow();
-        }
-        Platform.exit();
+    
+    public void closeApplication(){
+        Stage stage = (Stage) addRuleButton.getScene().getWindow();
+        stage.close();
     }
 }
