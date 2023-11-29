@@ -3,18 +3,33 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationViewController.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerFactory.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/AudioAction.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLMainView.fxml</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationView.fxml</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TimeTrigger.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLMainViewController.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/AutomationApp.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionFactory.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/RuleEngine.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionEnum.java</file>
-            <file>file:/C:/Users/agost/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerEnum.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionFactory.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/observer/EventBus.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/AutomationApp.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerEnum.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationViewController.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionEnum.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TriggerFactory.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/observer/RuleCreationListener.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/ActionInterface.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/observer/ErrorEvent.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/observer/EventBusTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLCreationView.fxml</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/rulesmanagement/RuleManagerTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/Rule.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/observer/EventType.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/trigger/TimeTriggerTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/trigger/TimeTrigger.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/rulesmanagement/RuleTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/FXMLMainViewController.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/action/AudioActionTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/RuleEngine.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/rulesmanagement/RuleManager.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/exception/AudioExecutionException.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/src/it/unisa/diem/se/automationapp/action/AudioAction.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/action/ActionFactoryTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/trigger/TriggerFactoryTest.java</file>
+            <file>file:/C:/Users/chiar/Documents/GitHub/ProjectWork-Gruppo-12/AutomationApp/test/it/unisa/diem/se/automationapptest/observer/ErrorEventTest.java</file>
         </group>
     </open-files>
 </project-private>

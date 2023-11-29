@@ -9,14 +9,18 @@ import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RuleManager {
     private static RuleManager instance;
     private CopyOnWriteArrayList<Rule> ruleList;
+    private ConcurrentLinkedQueue<Rule> executionQueue;
 
     private RuleManager() {
         this.ruleList = new CopyOnWriteArrayList();
+        this.executionQueue = new ConcurrentLinkedQueue<>();
+        
     }
 
     public static RuleManager getInstance() {
@@ -42,5 +46,15 @@ public class RuleManager {
         return ruleList;
     }
     
+    public ConcurrentLinkedQueue<Rule> getExecutionQueue() {
+        return executionQueue;
+    }
     
+    public void queueOffer(Rule rule){
+        this.executionQueue.offer(rule);
+    }
+    
+    public Rule queuePoll(){
+        return this.executionQueue.poll();
+    }
 }

@@ -9,7 +9,8 @@ import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.EventType;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleEngine;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleChecker;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleExecutor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -54,7 +55,9 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     
     private EventBus eventBus;
 
-    private RuleEngine ruleEngine;
+    private RuleChecker ruleChecker;
+    
+    private RuleExecutor ruleExecutor;
     
     private boolean isRuleCreationOpen;
     
@@ -82,8 +85,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         ruleListTable.setItems(observableList);
         
         eventBus.subscribe(ErrorEvent.class, this::onErrorEvent);
-        startRuleEngine();
-  
+        startRuleChecker();
+        startRuleExecutor();
     }    
 
     @FXML
@@ -155,12 +158,19 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
     }
     
-    public void startRuleEngine() {
-        ruleEngine = new RuleEngine(eventBus);
+    public void startRuleChecker() {
+        ruleChecker = new RuleChecker(eventBus);
 
-        ruleEngine.setPeriod(Duration.seconds(10));
-        ruleEngine.start();
+        ruleChecker.setPeriod(Duration.seconds(10));
+        ruleChecker.start();
         
+    }
+    
+    public void startRuleExecutor(){
+        ruleExecutor = new RuleExecutor(eventBus);
+        
+        ruleExecutor.setPeriod(Duration.millis(500));
+        ruleExecutor.start();
     }
     
     public void closeApplication(){
