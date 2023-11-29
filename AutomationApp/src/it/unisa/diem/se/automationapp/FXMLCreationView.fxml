@@ -12,12 +12,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <SplitPane dividerPositions="0.5" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
    <items>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="367.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
+              <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="16.0">
                   <children>
                       <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
                       <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
@@ -35,11 +34,11 @@
                      <children>
                         <HBox prefHeight="50.0" prefWidth="336.0">
                            <children>
-                              <Label fx:id="labelHours" text="Hours:" />
+                              <Label fx:id="labelHours" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
                               <Spinner fx:id="spinnerHours" editable="true" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
-                              <Label fx:id="labelMinutes" text="Minutes:" />
+                              <Label fx:id="labelMinutes" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
                               <HBox prefHeight="50.0" prefWidth="145.0">
                                  <children>
@@ -76,17 +75,17 @@
               </VBox>
           </children>
       </AnchorPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #E8F0FE;">
          <children>
-            <VBox prefHeight="186.0" prefWidth="184.0">
+            <VBox prefHeight="186.0" prefWidth="184.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="30.0">
                <children>
-                  <CheckBox fx:id="singleExecutionCheckBox" mnemonicParsing="false" onAction="#singleExecutionAction" text="Execute Once" />
+                  <CheckBox fx:id="singleExecutionCheckBox" mnemonicParsing="false" onAction="#singleExecutionAction" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Execute Once" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
-                  <CheckBox fx:id="multipleExecutionsCheckBox" mnemonicParsing="false" onAction="#multipleExecutionsAction" prefHeight="17.0" prefWidth="157.0" text="Execute Multiple Times" />
+                  <CheckBox fx:id="multipleExecutionsCheckBox" mnemonicParsing="false" onAction="#multipleExecutionsAction" prefHeight="20.0" prefWidth="178.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Execute Multiple Times" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
                   <VBox prefHeight="17.0" prefWidth="151.0">
                      <children>
-                        <Label fx:id="suspensionTimeLabel" text="Suspension Time:" />
+                        <Label fx:id="suspensionTimeLabel" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Suspension Time:" />
                      </children>
                   </VBox>
                   <ComboBox fx:id="suspensionDaysBox" prefWidth="150.0" promptText="Days" />

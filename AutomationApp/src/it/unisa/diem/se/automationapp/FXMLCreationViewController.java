@@ -66,11 +66,11 @@ public class FXMLCreationViewController{
     @FXML
     private Label suspensionTimeLabel;
     @FXML
-    private ComboBox<Integer> suspensionDaysBox;
+    private ComboBox<String> suspensionDaysBox;
     @FXML
-    private ComboBox<Integer> suspensionHoursBox;
+    private ComboBox<String> suspensionHoursBox;
     @FXML
-    private ComboBox<Integer> suspensionMinutesBox;
+    private ComboBox<String> suspensionMinutesBox;
     
     private RuleManager ruleManager;
     
@@ -83,6 +83,9 @@ public class FXMLCreationViewController{
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
         configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
         configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
+        configureDaysBox(suspensionDaysBox, 0, 30, 0);
+        configureTimeBox(suspensionHoursBox, 0, 23, java.time.LocalTime.now().getHour(), "Hours");
+        configureTimeBox(suspensionMinutesBox, 0, 59, java.time.LocalTime.now().getMinute(), "Minutes");
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
@@ -95,6 +98,7 @@ public class FXMLCreationViewController{
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
+            .or(singleExecutionCheckBox.selectedProperty().not().and(multipleExecutionsCheckBox.selectedProperty().not()))
         );
     }
     
@@ -185,6 +189,44 @@ public class FXMLCreationViewController{
         }
         
         closeWindow();
+    }
+    
+        @FXML
+    private void spinnerHoursAciton(MouseEvent event) {
+    }
+
+    @FXML
+    private void spinnerMinutesAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void audioPathFieldAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void messageFieldAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void ruleNameFieldAciton(ActionEvent event) {
+    }
+
+    @FXML
+    private void singleExecutionAction(ActionEvent event) {
+        if (singleExecutionCheckBox.isSelected()) {
+            hideMultipleExecution();
+            multipleExecutionsCheckBox.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void multipleExecutionsAction(ActionEvent event) {
+        if (multipleExecutionsCheckBox.isSelected()) {
+            showMultipleExecution();
+            singleExecutionCheckBox.setSelected(false);
+        } else {
+            hideMultipleExecution();
+        }
     }
     
     private void resetFields(){
@@ -309,43 +351,6 @@ public class FXMLCreationViewController{
     private boolean isFieldsFilled() {
         return !ruleNameField.getText().isEmpty();
     }
-
-
-    @FXML
-    private void spinnerHoursAciton(MouseEvent event) {
-    }
-
-    @FXML
-    private void spinnerMinutesAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void audioPathFieldAction(ActionEvent event) {
-    }
-
-    @FXML
-    private void messageFieldAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void ruleNameFieldAciton(ActionEvent event) {
-    }
-
-    @FXML
-    private void singleExecutionAction(ActionEvent event) {
-        if (singleExecutionCheckBox.isSelected()) {
-            hideMultipleExecution();
-        }
-    }
-
-    @FXML
-    private void multipleExecutionsAction(ActionEvent event) {
-        if (multipleExecutionsCheckBox.isSelected()) {
-            showMultipleExecution();
-        } else {
-            hideMultipleExecution();
-        }
-    }
     
     private void showMultipleExecution(){
         suspensionTimeLabel.setVisible(true);
@@ -365,6 +370,22 @@ public class FXMLCreationViewController{
         suspensionHoursBox.setVisible(false);
         suspensionMinutesBox.setManaged(false);
         suspensionMinutesBox.setVisible(false);
+    }
+    
+    private void configureDaysBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue) {
+        comboBox.getItems().clear();
+        for (int i = minValue; i <= maxValue; i++) {
+            comboBox.getItems().add(i + " Days");
+        }
+        comboBox.setValue(defaultValue + " Days");
+    }
+
+    private void configureTimeBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue, String unit) {
+        comboBox.getItems().clear();
+        for (int i = minValue; i <= maxValue; i++) {
+            comboBox.getItems().add(i + " " + unit);
+        }
+        comboBox.setValue(defaultValue + " " + unit);
     }
 
 }

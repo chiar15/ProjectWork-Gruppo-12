@@ -66,6 +66,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     private Queue<ErrorEvent> errorEventQueue;
     
     private boolean isPopupDisplayed;
+    @FXML
+    private Button deleteRuleButton;
     /**
      * Initializes the controller class.
      */
@@ -83,7 +85,9 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
         
         ruleListTable.setItems(observableList);
-        
+        deleteRuleButton.disableProperty().bind(
+            ruleListTable.getSelectionModel().selectedItemProperty().isNull()
+        );
         eventBus.subscribe(ErrorEvent.class, this::onErrorEvent);
         startRuleChecker();
         startRuleExecutor();
@@ -120,9 +124,18 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         }
     }
     
+    @FXML
+    private void deleteRuleButtonAction(ActionEvent event) {
+        Rule selectedRule = ruleListTable.getSelectionModel().getSelectedItem();
+        
+        if (selectedRule != null) {
+            observableList.remove(selectedRule);
+            ruleManager.deleteRule(selectedRule);
+        }
+    }
+    
     @Override
     public void onRuleCreated(Rule rule) {
-        //popolare observablelist
         observableList.add(rule);
         isRuleCreationOpen = false;
         processQueuedPopups();
