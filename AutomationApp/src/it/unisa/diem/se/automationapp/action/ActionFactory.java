@@ -14,7 +14,7 @@ public class ActionFactory {
     public static ActionInterface createAction(Map<String, String> actionData){
         String type = actionData.get("type");
         
-        if(type.equalsIgnoreCase(ActionEnum.AUDIOACTION.name())){
+        if(type.equalsIgnoreCase(ActionEnum.AUDIOACTION.toString())){
             return new AudioAction(actionData);
         } else{
             throw new IllegalArgumentException("Invalid action type: " + type);

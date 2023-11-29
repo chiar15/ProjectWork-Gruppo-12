@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="425.0" style="-fx-background-color: #CCE5FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
    <children>
       <VBox layoutX="16.0" layoutY="16.0" prefHeight="49.0" prefWidth="390.0">
          <children>
@@ -29,15 +29,14 @@
                   <HBox prefHeight="50.0" prefWidth="336.0">
                      <children>
                         <Label fx:id="labelHours" text="Hours:" />
-                        <HBox prefHeight="50.0" prefWidth="109.0">
-                           <children>
-                              <Spinner fx:id="spinnerHours" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
-                           </children>
-                        </HBox>
+                        <HBox prefHeight="50.0" prefWidth="9.0" />
+                        <Spinner fx:id="spinnerHours" editable="true" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
+                        <HBox prefHeight="50.0" prefWidth="9.0" />
                         <Label fx:id="labelMinutes" text="Minutes:" />
+                        <HBox prefHeight="50.0" prefWidth="9.0" />
                         <HBox prefHeight="50.0" prefWidth="145.0">
                            <children>
-                              <Spinner fx:id="spinnerMinutes" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
+                              <Spinner fx:id="spinnerMinutes" editable="true" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
                            </children>
                         </HBox>
                      </children>
@@ -55,12 +54,13 @@
          <children>
             <HBox prefHeight="51.0" prefWidth="329.0">
                <children>
-                  <TextField fx:id="audioPathField" onAction="#audioPathFieldAction" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" />
+                  <TextField fx:id="audioPathField" editable="false" onAction="#audioPathFieldAction" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" />
+                  <HBox prefHeight="50.0" prefWidth="9.0" />
                   <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" text="Select" />
                </children>
             </HBox>
          </children>
       </VBox>
-      <Button fx:id="createRuleButton" layoutX="328.0" layoutY="353.0" mnemonicParsing="false" onAction="#createRuleButtonAction" text="Create Rule" />
+      <Button fx:id="createRuleButton" disable="true" layoutX="328.0" layoutY="353.0" mnemonicParsing="false" onAction="#createRuleButtonAction" text="Create Rule" />
    </children>
 </AnchorPane>

@@ -62,20 +62,14 @@ public class FXMLCreationViewController{
         
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
-        
-        configureSpinner(spinnerHours, 0, 23);
-        configureSpinner(spinnerMinutes, 0, 59);
-        
-        BooleanBinding isInvalidInput = Bindings.createBooleanBinding(
-            () -> ruleNameField.getText().isEmpty() ||
-                  comboBoxTrigger.getValue() == null ||
-                  comboBoxActionRule.getValue() == null,
-            ruleNameField.textProperty(),
-            comboBoxTrigger.valueProperty(),
-            comboBoxActionRule.valueProperty()
+        configureSpinner(spinnerHours, 00, 23);
+        configureSpinner(spinnerMinutes, 00, 59);
+        hideTimeTriggerControls();
+        hideAudioActionControls();
+        createRuleButton.disableProperty().bind(
+            ruleNameField.textProperty().isEmpty()
+            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
         );
-        
-        createRuleButton.disableProperty().bind(isInvalidInput);
     }
     
     
@@ -89,6 +83,16 @@ public class FXMLCreationViewController{
 
     @FXML
     private void comboBoxTriggerAction(ActionEvent event) {
+        TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+
+        switch (selectedTrigger) {
+            case TIMETRIGGER:
+                showTimeTriggerControls();
+                break;
+            default:
+                hideTimeTriggerControls();
+                break;
+        }
     }
 
     @FXML
@@ -101,6 +105,16 @@ public class FXMLCreationViewController{
 
     @FXML
     private void comboBoxActionRule(ActionEvent event) {
+        ActionEnum selectedAction = comboBoxActionRule.getValue();
+
+        switch (selectedAction) {
+            case AUDIOACTION:
+                showAudioActionControls();
+                break;
+            default:
+                hideAudioActionControls();
+                break;
+        }
     }
 
     @FXML
@@ -176,10 +190,75 @@ public class FXMLCreationViewController{
                 editor.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
+        
+        spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                int value = spinner.getValue();
+                if (value < minValue) {
+                    spinner.getValueFactory().setValue(minValue);
+                } else if (value > maxValue) {
+                    spinner.getValueFactory().setValue(maxValue);
+                }
+            }
+        });
     }
     
     public void closeWindow(){
         Stage stage = (Stage) createRuleButton.getScene().getWindow();
         stage.close();
+    }
+    
+    private void showTimeTriggerControls() {
+        labelHours.setVisible(true);
+        spinnerHours.setVisible(true);
+        labelMinutes.setVisible(true);
+        spinnerMinutes.setVisible(true);
+    }
+
+    private void hideTimeTriggerControls() {
+        labelHours.setVisible(false);
+        spinnerHours.setVisible(false);
+        labelMinutes.setVisible(false);
+        spinnerMinutes.setVisible(false);
+    }
+
+    private void showAudioActionControls() {
+        audioPathField.setVisible(true);
+        audioPathButton.setVisible(true);
+    }
+
+    private void hideAudioActionControls() {
+        audioPathField.setVisible(false);
+        audioPathButton.setVisible(false);
+    }
+    
+    private BooleanBinding isValidTriggerInput() {
+        return Bindings.createBooleanBinding(() -> {
+            TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+
+            switch (selectedTrigger) {
+                case TIMETRIGGER:
+                    return spinnerHours.getValue() != null && spinnerMinutes.getValue() != null;
+                // Aggiungere ulteriori casi per altri tipi di trigger se necessario
+
+                default:
+                    return true; // Non c'è alcun controllo da verificare per altri tipi di trigger
+            }
+        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
+    }
+
+    private BooleanBinding isValidActionInput() {
+        return Bindings.createBooleanBinding(() -> {
+            ActionEnum selectedAction = comboBoxActionRule.getValue();
+
+            switch (selectedAction) {
+                case AUDIOACTION:
+                    return !audioPathField.getText().isEmpty();
+                // Aggiungere ulteriori casi per altri tipi di azione se necessario
+
+                default:
+                    return true; // Non c'è alcun controllo da verificare per altri tipi di azione
+            }
+        }, comboBoxActionRule.valueProperty(), audioPathField.textProperty());
     }
 }

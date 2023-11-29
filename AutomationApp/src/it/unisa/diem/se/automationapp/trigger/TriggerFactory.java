@@ -11,7 +11,7 @@ public class TriggerFactory {
     public static TriggerInterface createTrigger(Map<String, String> triggerData){
         String type = triggerData.get("type");
         
-        if(type.equalsIgnoreCase(TriggerEnum.TIMETRIGGER.name())){
+        if(type.equalsIgnoreCase(TriggerEnum.TIMETRIGGER.toString())){
             return new TimeTrigger(triggerData);
         } else{
             throw new IllegalArgumentException("Invalid trigger type: " + type);

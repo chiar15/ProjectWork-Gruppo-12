@@ -5,15 +5,37 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLMainViewController">
-   <children>
-      <TableView fx:id="ruleListTable" layoutX="21.0" layoutY="23.0" prefHeight="355.0" prefWidth="557.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.0">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #CCE5FF;;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLMainViewController">
+
+    <TableView fx:id="ruleListTable" layoutX="21.0" layoutY="23.0" prefHeight="355.0" prefWidth="557.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.0">
         <columns>
-          <TableColumn fx:id="ruleNameClm" prefWidth="130.0" text="Rule Name" />
-          <TableColumn fx:id="ruleTriggerClm" minWidth="1.0" prefWidth="145.0" text="Trigger" />
-            <TableColumn fx:id="ruleActionClm" prefWidth="179.0" text="Action" />
+            <TableColumn fx:id="ruleNameClm" prefWidth="130.0" resizable="false" text="Rule Name">
+                <style>
+                    -fx-font-size: 16px;
+                </style>
+            </TableColumn>
+            <TableColumn fx:id="ruleTriggerClm" minWidth="1.0" prefWidth="145.0" resizable="false" text="Trigger">
+                <style>
+                    -fx-font-size: 16px;
+                </style>
+            </TableColumn>
+            <TableColumn fx:id="ruleActionClm" prefWidth="179.0" resizable="false" text="Action">
+                <style>
+                    -fx-font-size: 16px;
+                </style>
+            </TableColumn>
         </columns>
-      </TableView>
-      <Button fx:id="addRuleButton" layoutX="493.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" text="Add Rule" />
-   </children>
+        <style>
+            -fx-font-size: 16px; /* Dimensione del testo della tabella */
+        </style>
+    </TableView>
+    
+    <Button fx:id="addRuleButton" layoutX="460.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" prefHeight="30.0" prefWidth="112.0" text="Add Rule" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="460.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="339.0">
+        <style>
+            -fx-background-color: #003366; /* Sfumatura di blu per il pulsante */
+            -fx-text-fill: white; /* Colore del testo */
+            -fx-font-size: 14px; /* Dimensione del testo */
+            -fx-pref-width: 120px; /* Larghezza preferita */
+        </style>
+    </Button>
 </AnchorPane>

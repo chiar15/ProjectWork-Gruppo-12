@@ -1,15 +1,11 @@
 package it.unisa.diem.se.automationapp;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 
 /**
@@ -31,14 +27,8 @@ public class AutomationApp extends Application {
         stage.setTitle("Automation App");
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.setOnCloseRequest(new EventHandler() {
-            @Override
-            public void handle(Event event) {
-                Platform.exit();
-                System.exit(0);
-            }
-  
-        });
+ 
+            
         stage.show();
     }
 

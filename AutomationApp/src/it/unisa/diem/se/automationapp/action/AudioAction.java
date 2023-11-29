@@ -63,6 +63,11 @@ public class AudioAction implements ActionInterface{
             throw new AudioExecutionException ("Cannot access selected audio file");
         }
     }
+    
+    @Override
+    public String toString() {
+        return filePath;
+    } 
 }
 
     
