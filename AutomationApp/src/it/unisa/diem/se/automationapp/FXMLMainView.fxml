@@ -16,5 +16,5 @@
     </TableView>
     
     <Button fx:id="addRuleButton" layoutX="460.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Add Rule" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="460.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="339.0" />
-   <Button fx:id="deleteRuleButton" layoutX="21.0" layoutY="339.0" mnemonicParsing="false" onAction="#deleteRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Delete Rule" AnchorPane.leftAnchor="21.0" />
+   <Button fx:id="deleteRuleButton" layoutX="21.0" layoutY="333.0" mnemonicParsing="false" onAction="#deleteRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Delete Rule" />
 </AnchorPane>

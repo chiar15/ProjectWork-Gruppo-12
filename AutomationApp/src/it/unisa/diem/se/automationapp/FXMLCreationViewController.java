@@ -72,20 +72,17 @@ public class FXMLCreationViewController{
     @FXML
     private ComboBox<String> suspensionMinutesBox;
     
-    private RuleManager ruleManager;
+     private RuleManager ruleManager;
     
-
     public void initialize() {
-        // TODO
-        ruleManager = RuleManager.getInstance();
-
+        
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
         configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
         configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
         configureDaysBox(suspensionDaysBox, 0, 30, 0);
-        configureTimeBox(suspensionHoursBox, 0, 23, java.time.LocalTime.now().getHour(), "Hours");
-        configureTimeBox(suspensionMinutesBox, 0, 59, java.time.LocalTime.now().getMinute(), "Minutes");
+        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
+        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
@@ -98,7 +95,6 @@ public class FXMLCreationViewController{
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
-            .or(singleExecutionCheckBox.selectedProperty().not().and(multipleExecutionsCheckBox.selectedProperty().not()))
         );
     }
     
@@ -151,7 +147,7 @@ public class FXMLCreationViewController{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the audio file");
         
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("File audio (*.mp3, *.wav)", "*.mp3", "*.wav");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Audio file (*.mp3, *.wav)", "*.mp3", "*.wav");
         fileChooser.getExtensionFilters().add(extFilter);
         
         File selectedFile = fileChooser.showOpenDialog(new Stage());
@@ -178,8 +174,8 @@ public class FXMLCreationViewController{
         actionData.put("type", selectedAction.name());
         actionData.put("filePath", audioFilePath);
 
-        
-        Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
+        RuleManager ruleService = RuleManager.getInstance();
+        Rule rule = ruleService.createRule(ruleName, triggerData, actionData);
         
         resetFields();
         actionData.clear();
@@ -189,44 +185,6 @@ public class FXMLCreationViewController{
         }
         
         closeWindow();
-    }
-    
-        @FXML
-    private void spinnerHoursAciton(MouseEvent event) {
-    }
-
-    @FXML
-    private void spinnerMinutesAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void audioPathFieldAction(ActionEvent event) {
-    }
-
-    @FXML
-    private void messageFieldAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void ruleNameFieldAciton(ActionEvent event) {
-    }
-
-    @FXML
-    private void singleExecutionAction(ActionEvent event) {
-        if (singleExecutionCheckBox.isSelected()) {
-            hideMultipleExecution();
-            multipleExecutionsCheckBox.setSelected(false);
-        }
-    }
-
-    @FXML
-    private void multipleExecutionsAction(ActionEvent event) {
-        if (multipleExecutionsCheckBox.isSelected()) {
-            showMultipleExecution();
-            singleExecutionCheckBox.setSelected(false);
-        } else {
-            hideMultipleExecution();
-        }
     }
     
     private void resetFields(){
@@ -351,8 +309,47 @@ public class FXMLCreationViewController{
     private boolean isFieldsFilled() {
         return !ruleNameField.getText().isEmpty();
     }
+
+
+    @FXML
+    private void spinnerHoursAciton(MouseEvent event) {
+    }
+
+    @FXML
+    private void spinnerMinutesAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void audioPathFieldAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void messageFieldAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void ruleNameFieldAciton(ActionEvent event) {
+    }
+
+    @FXML
+    private void singleExecutionAction(ActionEvent event) {
+        if (singleExecutionCheckBox.isSelected()) {
+            hideMultipleExecution();
+            multipleExecutionsCheckBox.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void multipleExecutionsAction(ActionEvent event) {
+        if (multipleExecutionsCheckBox.isSelected()) {
+            showMultipleExecution();
+            singleExecutionCheckBox.setSelected(false);
+        } else {
+            hideMultipleExecution();
+        }
+    }
     
-    private void showMultipleExecution(){
+    private void showMultipleExecution() {
         suspensionTimeLabel.setVisible(true);
         suspensionDaysBox.setManaged(true);
         suspensionDaysBox.setVisible(true);
@@ -362,7 +359,7 @@ public class FXMLCreationViewController{
         suspensionMinutesBox.setVisible(true);
     }
     
-    private void hideMultipleExecution(){
+    private void hideMultipleExecution() {
         suspensionTimeLabel.setVisible(false);
         suspensionDaysBox.setManaged(false);
         suspensionDaysBox.setVisible(false);
@@ -371,6 +368,7 @@ public class FXMLCreationViewController{
         suspensionMinutesBox.setManaged(false);
         suspensionMinutesBox.setVisible(false);
     }
+    
     
     private void configureDaysBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue) {
         comboBox.getItems().clear();
@@ -387,5 +385,4 @@ public class FXMLCreationViewController{
         }
         comboBox.setValue(defaultValue + " " + unit);
     }
-
 }

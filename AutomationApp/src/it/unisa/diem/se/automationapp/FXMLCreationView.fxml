@@ -16,7 +16,7 @@
    <items>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="367.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="16.0">
+              <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
                   <children>
                       <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
                       <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
@@ -77,11 +77,11 @@
       </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #E8F0FE;">
          <children>
-            <VBox prefHeight="186.0" prefWidth="184.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="30.0">
+            <VBox layoutX="14.0" layoutY="27.0" prefHeight="186.0" prefWidth="184.0" AnchorPane.leftAnchor="13.0">
                <children>
                   <CheckBox fx:id="singleExecutionCheckBox" mnemonicParsing="false" onAction="#singleExecutionAction" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Execute Once" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
-                  <CheckBox fx:id="multipleExecutionsCheckBox" mnemonicParsing="false" onAction="#multipleExecutionsAction" prefHeight="20.0" prefWidth="178.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Execute Multiple Times" />
+                  <CheckBox fx:id="multipleExecutionsCheckBox" mnemonicParsing="false" onAction="#multipleExecutionsAction" prefHeight="20.0" prefWidth="175.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Execute Multiple Times" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
                   <VBox prefHeight="17.0" prefWidth="151.0">
                      <children>

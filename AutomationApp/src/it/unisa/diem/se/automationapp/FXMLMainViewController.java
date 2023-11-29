@@ -4,13 +4,14 @@
  */
 package it.unisa.diem.se.automationapp;
 
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.EventType;
+import it.unisa.diem.se.automationapp.observer.MessageEventType;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleChecker;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleExecutor;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -59,15 +60,19 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     
     private RuleExecutor ruleExecutor;
     
+    private RuleManager ruleManager;
+    
     private boolean isRuleCreationOpen;
     
     private ObservableList <Rule> observableList;
     
-    private Queue<ErrorEvent> errorEventQueue;
+    private Queue<MessageEvent> messageEventQueue;
     
     private boolean isPopupDisplayed;
+    
     @FXML
     private Button deleteRuleButton;
+    
     /**
      * Initializes the controller class.
      */
@@ -76,7 +81,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
         eventBus = EventBus.getInstance();
         observableList = FXCollections.observableArrayList();
-        errorEventQueue = new LinkedList<>();
+        messageEventQueue = new LinkedList<>();
         isRuleCreationOpen = false;
         isPopupDisplayed = false;
         
@@ -88,7 +93,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         deleteRuleButton.disableProperty().bind(
             ruleListTable.getSelectionModel().selectedItemProperty().isNull()
         );
-        eventBus.subscribe(ErrorEvent.class, this::onErrorEvent);
+        
+        eventBus.subscribe(MessageEvent.class, this::onMessageEvent);
         startRuleChecker();
         startRuleExecutor();
     }    
@@ -141,29 +147,35 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         processQueuedPopups();
     }
     
-    private void onErrorEvent(ErrorEvent event) {
+    private void onMessageEvent(MessageEvent event) {
         if (isRuleCreationOpen || isPopupDisplayed) {
-            errorEventQueue.add(event);
+            messageEventQueue.add(event);
         } else{
             showAlert(event);
         }
     }
     
     private void processQueuedPopups() {
-        while (!errorEventQueue.isEmpty()) {
-            showAlert(errorEventQueue.poll());
+        while (!messageEventQueue.isEmpty()) {
+            showAlert(messageEventQueue.poll());
         }
     }
 
 
-    private void showAlert(ErrorEvent event) {
+    private void showAlert(MessageEvent event) {
         Platform.runLater(() -> {
             isPopupDisplayed = true;
-            Alert alert = new Alert(Alert.AlertType.ERROR, event.getErrorMessage(), ButtonType.OK);
-            alert.setTitle("Error");
-            alert.showAndWait();
-            if (event.getType() == EventType.CRITICAL_ERROR) {
-                closeApplication();
+            if(event.getType() == MessageEventType.MESSAGE){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, event.getMessage(), ButtonType.OK);
+                alert.setTitle("Message");
+                alert.showAndWait();
+            } else{
+                Alert alert = new Alert(Alert.AlertType.ERROR, event.getMessage(), ButtonType.OK);
+                alert.setTitle("Error");
+                alert.showAndWait();
+                if (event.getType() == MessageEventType.CRITICAL_ERROR) {
+                    closeApplication();
+                }
             }
             isPopupDisplayed = false;
         });

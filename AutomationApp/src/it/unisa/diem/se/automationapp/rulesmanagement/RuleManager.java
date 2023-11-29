@@ -58,7 +58,8 @@ public class RuleManager {
         return this.executionQueue.poll();
     }
     
-    public void deleteRule(Rule rule) {
-        ruleList.remove(rule);
+    public void deleteRule(Rule selectedRule){
+        ruleList.remove(selectedRule);
+        executionQueue.remove(selectedRule);
     }
 }
