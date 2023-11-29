@@ -9,9 +9,9 @@ import javafx.concurrent.Task;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.EventType;
+import it.unisa.diem.se.automationapp.observer.MessageEventType;
 
 public class RuleChecker extends ScheduledService<Void> {
     private EventBus eventBus;
@@ -22,7 +22,7 @@ public class RuleChecker extends ScheduledService<Void> {
         this.ruleManager = RuleManager.getInstance();;
         
         setOnFailed(e->{
-            eventBus.publish(new ErrorEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", EventType.CRITICAL_ERROR));
+            eventBus.publish(new MessageEvent("Errore nel thread di controllo delle regole, l'applicazione verrà terminata", MessageEventType.CRITICAL_ERROR));
         });
     }
 
@@ -42,7 +42,7 @@ public class RuleChecker extends ScheduledService<Void> {
                             break;
                         }
                     } catch (Exception e) {
-                        eventBus.publish(new ErrorEvent(e.getMessage(), EventType.ERROR));
+                        eventBus.publish(new MessageEvent(e.getMessage(), MessageEventType.ERROR));
                     }
                 }
                 return null;

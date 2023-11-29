@@ -4,20 +4,20 @@
  */
 package it.unisa.diem.se.automationapp.observer;
 
-public class ErrorEvent {
-    private final String errorMessage;
-    private final EventType type;
+public class MessageEvent {
+    private final String message;
+    private final MessageEventType type;
 
-    public ErrorEvent(String errorMessage, EventType type) {
-        this.errorMessage = errorMessage;
+    public MessageEvent(String message, MessageEventType type) {
+        this.message = message;
         this.type = type;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
     
-    public EventType getType() {
+    public MessageEventType getType() {
         return type;
     }
  
