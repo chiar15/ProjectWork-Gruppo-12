@@ -17,9 +17,11 @@ import javafx.concurrent.Task;
  */
 public class RuleExecutor extends ScheduledService<Void> {
     private EventBus eventBus;
+    private RuleManager ruleManager;
     
-    public RuleExecutor(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public RuleExecutor() {
+        this.eventBus = EventBus.getInstance();
+        this.ruleManager = RuleManager.getInstance();
         
         setOnFailed(e->{
             eventBus.publish(new ErrorEvent("Errore nel thread di esecuzione delle regole, l'applicazione verrà terminata", EventType.CRITICAL_ERROR));
@@ -31,8 +33,7 @@ public class RuleExecutor extends ScheduledService<Void> {
     protected Task<Void> createTask() {
         return new Task<Void>() {
             @Override
-            protected Void call() {
-                RuleManager ruleManager = RuleManager.getInstance();
+            protected Void call() { 
                 Rule rule = ruleManager.queuePoll();
                 if (rule != null && !isCancelled()) {
                     try {

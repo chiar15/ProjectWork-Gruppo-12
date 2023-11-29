@@ -158,7 +158,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     }
     
     public void startRuleChecker() {
-        ruleChecker = new RuleChecker(eventBus);
+        ruleChecker = new RuleChecker();
 
         ruleChecker.setPeriod(Duration.seconds(10));
         ruleChecker.start();
@@ -166,7 +166,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     }
     
     public void startRuleExecutor(){
-        ruleExecutor = new RuleExecutor(eventBus);
+        ruleExecutor = new RuleExecutor();
         
         ruleExecutor.setPeriod(Duration.millis(500));
         ruleExecutor.start();

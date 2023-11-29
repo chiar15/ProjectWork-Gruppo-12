@@ -72,8 +72,15 @@ public class FXMLCreationViewController{
     @FXML
     private ComboBox<Integer> suspensionMinutesBox;
     
+    private RuleManager ruleManager;
+    
 
     public void initialize() {
+<<<<<<< Updated upstream
+=======
+        // TODO
+        ruleManager = RuleManager.getInstance();
+>>>>>>> Stashed changes
         
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
@@ -170,8 +177,8 @@ public class FXMLCreationViewController{
         actionData.put("type", selectedAction.name());
         actionData.put("filePath", audioFilePath);
 
-        RuleManager ruleService = RuleManager.getInstance();
-        Rule rule = ruleService.createRule(ruleName, triggerData, actionData);
+        
+        Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
         
         resetFields();
         actionData.clear();

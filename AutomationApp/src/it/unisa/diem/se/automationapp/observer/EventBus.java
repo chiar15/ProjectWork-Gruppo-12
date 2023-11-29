@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapp.observer;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +5,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public class EventBus {
-    private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<Consumer<?>>> subscribers = new ConcurrentHashMap<>();
+    private static EventBus instance = null;
+    private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<Consumer<?>>> subscribers;
+
+    // Costruttore privato per impedire l'istanziazione esterna
+    private EventBus() {
+        subscribers = new ConcurrentHashMap<>();
+    }
+
+    // Metodo statico pubblico per ottenere l'istanza
+    public static EventBus getInstance() {
+        if (instance == null) {
+            synchronized (EventBus.class) {
+                if (instance == null) {
+                    instance = new EventBus();
+                }
+            }
+        }
+        return instance;
+    }
 
     public <T> void subscribe(Class<T> eventType, Consumer<T> listener) {
         subscribers.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>()).add(listener);
@@ -24,4 +38,3 @@ public class EventBus {
         }
     }
 }
-
