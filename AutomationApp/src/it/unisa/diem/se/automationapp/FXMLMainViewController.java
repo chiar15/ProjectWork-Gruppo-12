@@ -107,7 +107,6 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
             stage.setOnCloseRequest(windowEvent -> {
                 isRuleCreationOpen = false;
                 processQueuedPopups();
-                // Qui puoi anche chiamare un metodo nel controller di creazione, se necessario
             });
                         
             stage.show();
