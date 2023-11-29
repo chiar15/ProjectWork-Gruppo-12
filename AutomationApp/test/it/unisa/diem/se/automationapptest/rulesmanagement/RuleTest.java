@@ -26,7 +26,7 @@ public class RuleTest {
     private ActionInterface action;
     
     @Before
-    public void setUp(){
+    public void setUp() {
         Map<String, String> triggerData = new HashMap<>();
         triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
         triggerData.put("time", LocalTime.now().minusMinutes(1).toString());
@@ -35,7 +35,7 @@ public class RuleTest {
         String projectDirectory = System.getProperty("user.dir");
         Map<String, String> actionData = new HashMap<>();
         actionData.put("type", ActionEnum.AUDIOACTION.name());
-        actionData.put("filePath",  projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
+        actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
         action = ActionFactory.createAction(actionData);
 
         rule = new Rule("TestRule", trigger, action);
@@ -43,30 +43,31 @@ public class RuleTest {
     
     @Test
     public void testRuleConstructorAndGetters() {
-       
         assertEquals("TestRule", rule.getName());
         assertSame(trigger, rule.getTrigger());
         assertSame(action, rule.getAction());
+        assertFalse("wasExecuted should be false initially", rule.getWasExecuted());
     }
 
     @Test
     public void testIsTriggered() {
-
-        assertTrue(rule.isTriggered());
+        assertTrue("The rule should be triggered", rule.isTriggered());
     }
 
-    // Nota: Questo test potrebbe tentare di riprodurre un audio.
     @Test
-    public void testExecute(){
-
-        // Esegui l'azione. Questo potrebbe dipendere dall'implementazione specifica di AudioAction.
-        try{
-            rule.execute();
-        } catch (Exception e){
-            fail("Eccezione inattesa");
-        }
-
-        // Verifica l'effetto atteso dell'azione.
-        // Nota: questo potrebbe richiedere un approccio diverso a seconda dell'implementazione di AudioAction.
+    public void testSetWasExecuted() {
+        rule.setWasExecuted(true);
+        assertTrue("wasExecuted should be true after being set", rule.getWasExecuted());
     }
+    
+    @Test
+    public void testExecute() {
+        try {
+            rule.execute();
+        } catch (Exception e) {
+            fail("No exception should be thrown during execution");
+        }
+    }
+
+
 }

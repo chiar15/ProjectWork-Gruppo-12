@@ -15,11 +15,13 @@ public class Rule {
     private String name;
     private TriggerInterface trigger;
     private ActionInterface action;
+    private boolean wasExecuted;
     
     public Rule(String name, TriggerInterface trigger, ActionInterface action) {
         this.name = name;
         this.trigger = trigger;
         this.action = action;
+        this.wasExecuted = false;
     }
 
     public String getName() {
@@ -32,6 +34,14 @@ public class Rule {
     
     public ActionInterface getAction() {
         return action;
+    }
+
+    public boolean getWasExecuted() {
+        return wasExecuted;
+    }
+
+    public void setWasExecuted(boolean wasExecuted) {
+        this.wasExecuted = wasExecuted;
     }
     
     public boolean isTriggered(){

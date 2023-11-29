@@ -35,7 +35,8 @@ public class RuleEngine extends ScheduledService<Void> {
                     break;
                 }
                     try {
-                        if (rule.isTriggered()) {
+                        if (rule.isTriggered() && !rule.getWasExecuted()) {
+                            rule.setWasExecuted(true);
                             rule.execute();
                             break;
                         }
