@@ -4,10 +4,31 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import java.util.Map;
+
 /**
  *
  * @author chiar
  */
-public class MessageAction {
+public class MessageAction implements ActionInterface{
+    private String message;
+
+    public MessageAction(Map<String, String> actionData) {
+        this.message = actionData.get("message");
+    }
+
+    public String getMessage() {
+        return message;
+    }
+    
+    @Override
+    public void execute() throws Exception {
+        EventBus eventBus = EventBus.getInstance();
+        
+        eventBus.publish(new MessageEvent(message, MessageEventType.MESSAGE));
+    }
     
 }

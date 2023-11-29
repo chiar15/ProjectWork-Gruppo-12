@@ -16,6 +16,8 @@ public class ActionFactory {
         
         if(type.equalsIgnoreCase(ActionEnum.AUDIOACTION.toString())){
             return new AudioAction(actionData);
+        } else if (type.equalsIgnoreCase(ActionEnum.MESSAGEACTION.toString())){
+            return new MessageAction(actionData);
         } else{
             throw new IllegalArgumentException("Invalid action type: " + type);
         }

@@ -8,6 +8,6 @@ package it.unisa.diem.se.automationapp.observer;
  *
  * @author chiar
  */
-public enum EventType {
-    ERROR, CRITICAL_ERROR,
+public enum MessageEventType {
+    ERROR, CRITICAL_ERROR,MESSAGE,
 }

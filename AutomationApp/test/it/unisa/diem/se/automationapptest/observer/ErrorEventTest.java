@@ -4,8 +4,8 @@
  */
 package it.unisa.diem.se.automationapptest.observer;
 
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
-import it.unisa.diem.se.automationapp.observer.EventType;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.observer.MessageEventType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -14,19 +14,19 @@ public class ErrorEventTest {
     @Test
     public void testErrorEventWithErrorType() {
         String testErrorMessage = "Test error message";
-        ErrorEvent errorEvent = new ErrorEvent(testErrorMessage, EventType.ERROR);
+        MessageEvent errorEvent = new MessageEvent(testErrorMessage, MessageEventType.ERROR);
 
         assertEquals(testErrorMessage, errorEvent.getErrorMessage());
-        assertEquals(EventType.ERROR, errorEvent.getType());
+        assertEquals(MessageEventType.ERROR, errorEvent.getType());
     }
 
     @Test
     public void testErrorEventWithCriticalErrorType() {
         String testErrorMessage = "Critical test error message";
-        ErrorEvent errorEvent = new ErrorEvent(testErrorMessage, EventType.CRITICAL_ERROR);
+        MessageEvent errorEvent = new MessageEvent(testErrorMessage, MessageEventType.CRITICAL_ERROR);
 
         assertEquals(testErrorMessage, errorEvent.getErrorMessage());
-        assertEquals(EventType.CRITICAL_ERROR, errorEvent.getType());
+        assertEquals(MessageEventType.CRITICAL_ERROR, errorEvent.getType());
     }
 }
 
