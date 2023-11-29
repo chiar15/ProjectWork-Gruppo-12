@@ -64,8 +64,13 @@ public class FXMLCreationViewController{
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
         configureSpinner(spinnerHours, 00, 23);
         configureSpinner(spinnerMinutes, 00, 59);
+        ruleNameField.setFocusTraversable(false);
+        comboBoxTrigger.setFocusTraversable(false);
+        comboBoxActionRule.setFocusTraversable(false);
+        createRuleButton.requestFocus();
         hideTimeTriggerControls();
         hideAudioActionControls();
+        
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
@@ -235,30 +240,35 @@ public class FXMLCreationViewController{
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
             TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+            if(selectedTrigger != null){
+                switch (selectedTrigger) {
+                    case TIMETRIGGER:
+                        return spinnerHours.getValue() != null && spinnerMinutes.getValue() != null;
+                    // Aggiungere ulteriori casi per altri tipi di trigger se necessario
 
-            switch (selectedTrigger) {
-                case TIMETRIGGER:
-                    return spinnerHours.getValue() != null && spinnerMinutes.getValue() != null;
-                // Aggiungere ulteriori casi per altri tipi di trigger se necessario
-
-                default:
-                    return true; // Non c'è alcun controllo da verificare per altri tipi di trigger
+                    default:
+                        return true; // Non c'è alcun controllo da verificare per altri tipi di trigger
+                }
             }
+            return true;
         }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
     }
 
     private BooleanBinding isValidActionInput() {
         return Bindings.createBooleanBinding(() -> {
             ActionEnum selectedAction = comboBoxActionRule.getValue();
+            if(selectedAction != null){
+                switch (selectedAction) {
+                    case AUDIOACTION:
+                        return !audioPathField.getText().isEmpty();
+                    // Aggiungere ulteriori casi per altri tipi di azione se necessario
 
-            switch (selectedAction) {
-                case AUDIOACTION:
-                    return !audioPathField.getText().isEmpty();
-                // Aggiungere ulteriori casi per altri tipi di azione se necessario
-
-                default:
-                    return true; // Non c'è alcun controllo da verificare per altri tipi di azione
+                    default:
+                        return true; // Non c'è alcun controllo da verificare per altri tipi di azione
+                }
             }
+            return true;
+
         }, comboBoxActionRule.valueProperty(), audioPathField.textProperty());
     }
 }

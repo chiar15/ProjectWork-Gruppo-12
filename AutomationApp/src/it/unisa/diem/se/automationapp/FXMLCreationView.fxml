@@ -11,18 +11,18 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="425.0" style="-fx-background-color: #CCE5FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
    <children>
-      <VBox layoutX="16.0" layoutY="16.0" prefHeight="49.0" prefWidth="390.0">
+      <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="396.0" AnchorPane.leftAnchor="13.0">
          <children>
             <Label text="Rule name:" />
-            <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="247.0" promptText="Enter a name for the rule" />
+            <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="396.0" promptText="Enter a name for the rule" />
          </children>
       </VBox>
-      <VBox layoutX="13.0" layoutY="65.0" prefHeight="34.0" prefWidth="330.0">
+      <VBox layoutX="13.0" layoutY="65.0" prefHeight="34.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
          <children>
-            <ComboBox fx:id="comboBoxTrigger" onAction="#comboBoxTriggerAction" prefHeight="26.0" prefWidth="328.0" promptText="Select the Trigger" />
+            <ComboBox fx:id="comboBoxTrigger" onAction="#comboBoxTriggerAction" prefHeight="26.0" prefWidth="342.0" promptText="Select the Trigger" />
          </children>
       </VBox>
-      <VBox layoutX="13.0" layoutY="100.0" prefHeight="63.0" prefWidth="390.0">
+      <VBox layoutX="13.0" layoutY="100.0" prefHeight="63.0" prefWidth="390.0" AnchorPane.leftAnchor="13.0">
          <children>
             <VBox prefHeight="50.0" prefWidth="330.0">
                <children>
@@ -45,12 +45,12 @@
             </VBox>
          </children>
       </VBox>
-      <VBox layoutX="14.0" layoutY="166.0" prefHeight="34.0" prefWidth="328.0">
+      <VBox layoutX="14.0" layoutY="166.0" prefHeight="34.0" prefWidth="328.0" AnchorPane.leftAnchor="13.0">
          <children>
             <ComboBox fx:id="comboBoxActionRule" onAction="#comboBoxActionRule" prefHeight="26.0" prefWidth="349.0" promptText="Select the Action" />
          </children>
       </VBox>
-      <VBox layoutX="16.0" layoutY="200.0" prefHeight="34.0" prefWidth="330.0">
+      <VBox layoutX="16.0" layoutY="200.0" prefHeight="34.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
          <children>
             <HBox prefHeight="51.0" prefWidth="329.0">
                <children>
