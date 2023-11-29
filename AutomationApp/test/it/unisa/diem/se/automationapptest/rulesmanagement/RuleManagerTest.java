@@ -11,36 +11,54 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class RuleManagerTest {
 
-    private RuleManager ruleService;
+    private RuleManager ruleManager;
+    private Map<String, String> triggerData;
+    private Map<String, String> actionData;
 
     @Before
     public void setUp() {
-        ruleService = RuleManager.getInstance();
-        ruleService.getRuleList().clear();
-    }
-
-    @Test
-    public void testCreateRuleAndRetrieveList() {
-        Map<String, String> triggerData = new HashMap<>();
+        ruleManager = RuleManager.getInstance();
+        ruleManager.getRuleList().clear();
+        ruleManager.getExecutionQueue().clear();
+        triggerData = new HashMap<>();
         triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
         triggerData.put("time", "10:00");
-
         String projectDirectory = System.getProperty("user.dir");
-        Map<String, String> actionData = new HashMap<>();
+        actionData = new HashMap<>();
         actionData.put("type", ActionEnum.AUDIOACTION.name());
         actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
+    }
 
-        Rule createdRule = ruleService.createRule("TestRule", triggerData, actionData);
+@Test
+    public void testCreateRuleAndRetrieveList() {
+
+        Rule createdRule = ruleManager.createRule("TestRule", triggerData, actionData);
 
         assertNotNull(createdRule);
         assertEquals("TestRule", createdRule.getName());
 
-        CopyOnWriteArrayList<Rule> ruleList = ruleService.getRuleList();
+        CopyOnWriteArrayList<Rule> ruleList = ruleManager.getRuleList();
         assertNotNull(ruleList);
         assertEquals(1, ruleList.size());
         assertSame(createdRule, ruleList.get(0));
+    }
+
+    @Test
+    public void testQueueOfferAndPoll() {
+
+        Rule rule = ruleManager.createRule("QueueTestRule", triggerData, actionData);
+        ruleManager.queueOffer(rule);
+
+        ConcurrentLinkedQueue<Rule> executionQueue = ruleManager.getExecutionQueue();
+        assertNotNull("La coda di esecuzione non dovrebbe essere null", executionQueue);
+        assertFalse("La coda di esecuzione non dovrebbe essere vuota", executionQueue.isEmpty());
+
+        Rule polledRule = ruleManager.queuePoll();
+        assertSame("La regola recuperata dalla coda dovrebbe essere la stessa che è stata inserita", rule, polledRule);
+        assertTrue("La coda di esecuzione dovrebbe essere vuota dopo il poll", executionQueue.isEmpty());
     }
 }

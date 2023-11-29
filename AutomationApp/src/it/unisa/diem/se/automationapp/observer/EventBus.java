@@ -37,4 +37,14 @@ public class EventBus {
             }
         }
     }
+    
+    public <T> void unsubscribe(Class<T> eventType, Consumer<T> listener) {
+        if (subscribers.containsKey(eventType)) {
+            subscribers.get(eventType).remove(listener);
+        }
+    }
+      
+    public void clearSubscribers(Class<?> eventType) {
+        subscribers.remove(eventType);
+    }
 }

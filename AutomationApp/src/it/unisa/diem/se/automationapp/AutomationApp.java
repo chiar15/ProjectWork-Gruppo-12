@@ -1,6 +1,9 @@
 package it.unisa.diem.se.automationapp;
 
+import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -28,6 +31,11 @@ public class AutomationApp extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
  
+        stage.setOnCloseRequest(e->{
+            EventBus.getInstance().clearSubscribers(MessageEvent.class);
+            Platform.exit();
+            System.exit(0);
+        });
             
         stage.show();
     }

@@ -8,6 +8,7 @@ import it.unisa.diem.se.automationapp.observer.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import static org.junit.Assert.*;
 
 public class EventBusTest {
@@ -16,7 +17,9 @@ public class EventBusTest {
 
     @Before
     public void setUp() {
-        eventBus = new EventBus();
+        eventBus = EventBus.getInstance();
+        // Pulisce i sottoscrittori per la classe String prima di ogni test
+        eventBus.clearSubscribers(String.class);
     }
 
     @Test
@@ -46,9 +49,21 @@ public class EventBusTest {
     public void testPublishWithNoSubscribers() {
         AtomicBoolean eventReceived = new AtomicBoolean(false);
 
-        // Nessuna sottoscrizione per la classe String.
+        // Nessuna sottoscrizione per la classe String in questo test
         eventBus.publish("Test Event");
 
         assertFalse(eventReceived.get());
+    }
+
+    @Test
+    public void testUnsubscribe() {
+        AtomicBoolean eventReceived = new AtomicBoolean(false);
+        Consumer<String> listener = event -> eventReceived.set(true);
+
+        eventBus.subscribe(String.class, listener);
+        eventBus.unsubscribe(String.class, listener);
+        eventBus.publish("Test Event");
+
+        assertFalse("L'evento non dovrebbe essere ricevuto dopo la disiscrizione", eventReceived.get());
     }
 }
