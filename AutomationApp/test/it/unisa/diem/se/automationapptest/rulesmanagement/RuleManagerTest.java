@@ -35,8 +35,7 @@ public class RuleManagerTest {
 
     @Test
     public void testCreateRuleAndRetrieveList() {
-
-        Rule createdRule = ruleManager.createRule("TestRule", triggerData, actionData);
+        Rule createdRule = ruleManager.createRule("TestRule", triggerData, actionData, 0);
 
         assertNotNull(createdRule);
         assertEquals("TestRule", createdRule.getName());
@@ -49,8 +48,7 @@ public class RuleManagerTest {
 
     @Test
     public void testQueueOfferAndPoll() {
-
-        Rule rule = ruleManager.createRule("QueueTestRule", triggerData, actionData);
+        Rule rule = ruleManager.createRule("QueueTestRule", triggerData, actionData, 0);
         ruleManager.queueOffer(rule);
 
         ConcurrentLinkedQueue<Rule> executionQueue = ruleManager.getExecutionQueue();
@@ -64,7 +62,7 @@ public class RuleManagerTest {
     
     @Test
     public void testDeleteRule() {
-        Rule testRule = ruleManager.createRule("DeleteTestRule", triggerData, actionData);
+        Rule testRule = ruleManager.createRule("DeleteTestRule", triggerData, actionData, 0);
 
         assertNotNull("La regola creata non dovrebbe essere null", testRule);
         assertTrue("La lista delle regole dovrebbe contenere la regola creata", 
@@ -82,4 +80,16 @@ public class RuleManagerTest {
                     ruleManager.getExecutionQueue().contains(testRule));
     }
 
+    @Test
+    public void testDoesRuleNameExist() {
+        ruleManager.createRule("ExistingRule", triggerData, actionData, 0);
+        assertTrue("Il nome della regola dovrebbe esistere", ruleManager.doesRuleNameExist("ExistingRule"));
+        assertFalse("Un nome di regola non esistente non dovrebbe esistere", ruleManager.doesRuleNameExist("NonExistingRule"));
+    }
+
+    @Test
+    public void testCreateSuspendedRule() {
+        Rule suspendedRule = ruleManager.createRule("SuspendedRule", triggerData, actionData, 1000);
+        assertNotNull("La regola sospesa non dovrebbe essere null", suspendedRule);
+    }
 }

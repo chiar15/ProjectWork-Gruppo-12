@@ -170,7 +170,7 @@ public class FXMLCreationViewController{
             prepareSuspensionPeriod(suspensionPeriod);
         }
 
-        Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
+        Rule rule = ruleManager.createRule(ruleName, triggerData, actionData, suspensionPeriod);
 
         resetFields();
         if (listener != null) {

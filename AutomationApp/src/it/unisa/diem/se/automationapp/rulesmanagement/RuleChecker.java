@@ -6,9 +6,6 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
-import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEventType;
@@ -36,6 +33,12 @@ public class RuleChecker extends ScheduledService<Void> {
                     break;
                 }
                     try {
+                        if(rule instanceof SuspendedRuleDecorator && rule.getWasExecuted()){
+                            SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                            if(suspendedRule.isReadyToExecute()){
+                                rule.setWasExecuted(false);
+                            }
+                        }
                         if (rule.isTriggered() && !rule.getWasExecuted()) {
                             rule.setWasExecuted(true);
                             ruleManager.queueOffer(rule);
