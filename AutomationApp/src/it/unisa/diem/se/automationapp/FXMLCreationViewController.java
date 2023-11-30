@@ -297,12 +297,12 @@ public class FXMLCreationViewController{
         spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
     }
     
-    private void prepareSuspensionPeriod(long suspensionPeriod) {
+    private void prepareSuspensionPeriod(long suspensionPeriodInSeconds) {
         long days = Long.parseLong(suspensionDaysBox.getValue().split(" ")[0]); 
         long hours = Long.parseLong(suspensionHoursBox.getValue().split(" ")[0]); 
         long minutes = Long.parseLong(suspensionMinutesBox.getValue().split(" ")[0]);
 
-        suspensionPeriod = (days * 86400L) + (hours * 3600L) + (minutes * 60L);
+        suspensionPeriodInSeconds = (days * 86400L) + (hours * 3600L) + (minutes * 60L);
     }
 
     

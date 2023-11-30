@@ -15,7 +15,7 @@ public class SuspendedRuleDecorator extends Rule {
     public SuspendedRuleDecorator(Rule rule, long suspensionPeriod) {
         super(rule.getName(), rule.getTrigger(), rule.getAction());
         this.suspensionPeriod = suspensionPeriod;
-        this.lastExecutionTime = System.currentTimeMillis();
+        this.lastExecutionTime = 0;
     }
 
     public long getSuspensionPeriod() {
