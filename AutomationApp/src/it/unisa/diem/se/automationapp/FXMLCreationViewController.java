@@ -13,11 +13,16 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -75,6 +80,7 @@ public class FXMLCreationViewController{
     private RuleManager ruleManager;
     
     public void initialize() {
+        ruleManager = RuleManager.getInstance();
         
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
@@ -92,6 +98,14 @@ public class FXMLCreationViewController{
         hideAudioActionControls();
         hideMessageField();
         hideMultipleExecution();
+        ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+                if (!newPropertyValue) {
+                    checkRuleNameValidity();
+                }
+            }
+        });
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
@@ -162,30 +176,41 @@ public class FXMLCreationViewController{
         String ruleName = ruleNameField.getText();
         TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
         ActionEnum selectedAction = comboBoxActionRule.getValue();
-        String audioFilePath = audioPathField.getText();
-        
+
         int hours = spinnerHours.getValue();
         int minutes = spinnerMinutes.getValue();
         String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
         Map<String, String> triggerData = new HashMap<>();
         triggerData.put("type", selectedTrigger.name());
         triggerData.put("time", timeString);
+
         Map<String, String> actionData = new HashMap<>();
         actionData.put("type", selectedAction.name());
-        actionData.put("filePath", audioFilePath);
 
-        RuleManager ruleService = RuleManager.getInstance();
-        Rule rule = ruleService.createRule(ruleName, triggerData, actionData);
-        
+        switch (selectedAction) {
+            case AUDIOACTION:
+                String audioFilePath = audioPathField.getText();
+                actionData.put("filePath", audioFilePath);
+                break;
+            case MESSAGEACTION:
+                String message = messageField.getText();
+                actionData.put("message", message);
+                break;
+            // Aggiungere qui altri casi se necessario
+        }
+
+        // Creazione della regola
+        Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
+
+        // Reset dei campi e notifica della creazione della regola
         resetFields();
-        actionData.clear();
-        triggerData.clear();
         if (listener != null) {
             listener.onRuleCreated(rule);
         }
-        
+
         closeWindow();
     }
+
     
     private void resetFields(){
         ruleNameField.clear();
@@ -395,5 +420,26 @@ public class FXMLCreationViewController{
             }
         }
         comboBox.setValue(defaultValue + (defaultValue == 1 ? " " + unit.substring(0, unit.length() - 1) : " " + unit));
+    }
+    
+    private void checkRuleNameValidity() {
+        String ruleName = ruleNameField.getText();
+        if(!ruleName.isEmpty()){
+            if (ruleManager != null && !ruleManager.getRuleList().isEmpty()) {
+                if (ruleManager.doesRuleNameExist(ruleName)) {
+                    showAlert("Duplicate Rule Name", "A rule with this name already exists. Please choose a different name.");
+                    ruleNameField.clear();
+                }
+            }
+        }
+    }
+
+    private void showAlert(String title, String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR, content, ButtonType.OK);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.showAndWait();
+        });
     }
 }

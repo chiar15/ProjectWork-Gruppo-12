@@ -62,4 +62,11 @@ public class RuleManager {
         ruleList.remove(selectedRule);
         executionQueue.remove(selectedRule);
     }
+    
+    public boolean doesRuleNameExist(String ruleName) {
+        String trimmedRuleName = ruleName.replaceAll("\\s+", ""); // Rimuove tutti gli spazi
+
+        return getRuleList().stream()
+            .anyMatch(rule -> rule.getName().replaceAll("\\s+", "").equals(trimmedRuleName));
+    }
 }

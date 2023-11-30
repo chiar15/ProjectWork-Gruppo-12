@@ -30,5 +30,9 @@ public class MessageAction implements ActionInterface{
         
         eventBus.publish(new MessageEvent(message, MessageEventType.MESSAGE));
     }
-    
+
+    @Override
+    public String toString() {
+        return message;
+    }
 }
