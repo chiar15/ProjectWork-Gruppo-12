@@ -38,10 +38,10 @@ public class RuleManager {
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         ActionInterface action = ActionFactory.createAction(actionData);
         Rule rule = new Rule(name, trigger, action);
-        
         if(suspensionPeriod != 0){
             rule = new SuspendedRuleDecorator(rule, suspensionPeriod);
         }
+        
         ruleList.add(rule);
         return rule;
     }

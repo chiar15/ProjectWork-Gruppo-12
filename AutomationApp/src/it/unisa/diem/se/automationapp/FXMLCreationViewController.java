@@ -167,7 +167,7 @@ public class FXMLCreationViewController{
         Map<String, String> triggerData = prepareTriggerData(selectedTrigger);
         Map<String, String> actionData = prepareActionData(selectedAction);
         if(multipleExecutionsCheckBox.isSelected()){
-            prepareSuspensionPeriod(suspensionPeriod);
+            suspensionPeriod = prepareSuspensionPeriod();
         }
 
         Rule rule = ruleManager.createRule(ruleName, triggerData, actionData, suspensionPeriod);
@@ -241,9 +241,10 @@ public class FXMLCreationViewController{
     
     private void initializeBindings() {
         createRuleButton.disableProperty().bind(
-            ruleNameField.textProperty().isEmpty()
-            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
-        );
+                ruleNameField.textProperty().isEmpty()
+                .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
+                .or(isInvalidMultipleExecution())
+            );
     }
     
     public void setRuleCreationListener(RuleCreationListener listener) {
@@ -297,12 +298,12 @@ public class FXMLCreationViewController{
         spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
     }
     
-    private void prepareSuspensionPeriod(long suspensionPeriodInSeconds) {
+    private long prepareSuspensionPeriod() {
         long days = Long.parseLong(suspensionDaysBox.getValue().split(" ")[0]); 
         long hours = Long.parseLong(suspensionHoursBox.getValue().split(" ")[0]); 
         long minutes = Long.parseLong(suspensionMinutesBox.getValue().split(" ")[0]);
 
-        suspensionPeriodInSeconds = (days * 86400L) + (hours * 3600L) + (minutes * 60L);
+        return (days * 86400L) + (hours * 3600L) + (minutes * 60L);
     }
 
     
@@ -410,6 +411,16 @@ public class FXMLCreationViewController{
 
             return actionValid && isFieldsFilled();
         }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
+    }
+    
+    private BooleanBinding isInvalidMultipleExecution() {
+        BooleanBinding daysZero = suspensionDaysBox.valueProperty().isEqualTo("0 Days");
+        BooleanBinding hoursZero = suspensionHoursBox.valueProperty().isEqualTo("0 Hours");
+        BooleanBinding minutesZero = suspensionMinutesBox.valueProperty().isEqualTo("0 Minutes");
+
+        return multipleExecutionsCheckBox.selectedProperty().and(
+            daysZero.and(hoursZero).and(minutesZero)
+        );
     }
 
     private boolean isFieldsFilled() {
