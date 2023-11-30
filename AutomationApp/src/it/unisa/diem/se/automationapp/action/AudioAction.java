@@ -66,7 +66,7 @@ public class AudioAction implements ActionInterface{
     
     @Override
     public String toString() {
-        return filePath;
+        return "AUDIO PLAYBACK - " + "Audio file path: " + filePath;
     } 
 }
 
