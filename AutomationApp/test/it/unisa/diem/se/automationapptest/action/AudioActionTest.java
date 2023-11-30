@@ -10,8 +10,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 
 public class AudioActionTest {
     

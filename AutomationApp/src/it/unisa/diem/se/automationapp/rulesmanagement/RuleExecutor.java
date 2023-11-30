@@ -38,6 +38,10 @@ public class RuleExecutor extends ScheduledService<Void> {
                 if (rule != null && !isCancelled()) {
                     try {
                         rule.execute();
+                        if(rule instanceof SuspendedRuleDecorator){
+                            SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                            suspendedRule.setLastExecutionTime(System.currentTimeMillis());
+                        }
                     } catch (AudioExecutionException e) {
                         eventBus.publish(new MessageEvent("Errore nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), MessageEventType.ERROR));
                     } catch (InterruptedException e) {

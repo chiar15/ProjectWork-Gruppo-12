@@ -201,8 +201,7 @@ public class FXMLCreationViewController{
 
         // Creazione della regola
         Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
-
-        // Reset dei campi e notifica della creazione della regola
+        
         resetFields();
         if (listener != null) {
             listener.onRuleCreated(rule);

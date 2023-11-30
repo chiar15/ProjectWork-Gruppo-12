@@ -34,13 +34,18 @@ public class RuleManager {
         return instance;
     }
     
-    public Rule createRule(String name, Map<String,String> triggerData, Map<String,String> actionData){
+    public Rule createRule(String name, Map<String,String> triggerData, Map<String,String> actionData, long suspensionPeriod){
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         ActionInterface action = ActionFactory.createAction(actionData);
         Rule rule = new Rule(name, trigger, action);
+        
+        if(suspensionPeriod != 0){
+            rule = new SuspendedRuleDecorator(rule, suspensionPeriod);
+        }
         ruleList.add(rule);
         return rule;
     }
+   
     
     public CopyOnWriteArrayList<Rule> getRuleList() {
         return ruleList;
