@@ -72,7 +72,7 @@ public class FXMLCreationViewController{
     @FXML
     private ComboBox<String> suspensionMinutesBox;
     
-     private RuleManager ruleManager;
+    private RuleManager ruleManager;
     
     public void initialize() {
         
@@ -94,7 +94,7 @@ public class FXMLCreationViewController{
         hideMultipleExecution();
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
-            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput())))
+            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
         );
     }
     
@@ -369,20 +369,31 @@ public class FXMLCreationViewController{
         suspensionMinutesBox.setVisible(false);
     }
     
+    private BooleanBinding isValidCheckBoxInput() {
+        return singleExecutionCheckBox.selectedProperty().or(multipleExecutionsCheckBox.selectedProperty());
+    }
     
     private void configureDaysBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue) {
         comboBox.getItems().clear();
         for (int i = minValue; i <= maxValue; i++) {
-            comboBox.getItems().add(i + " Days");
+            if (i == 1) {
+                comboBox.getItems().add(i + " Day");
+            } else {
+                comboBox.getItems().add(i + " Days");
+            }
         }
-        comboBox.setValue(defaultValue + " Days");
+        comboBox.setValue(defaultValue + (defaultValue == 1 ? " Day" : " Days"));
     }
 
     private void configureTimeBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue, String unit) {
         comboBox.getItems().clear();
         for (int i = minValue; i <= maxValue; i++) {
-            comboBox.getItems().add(i + " " + unit);
+            if (i == 1) {
+                comboBox.getItems().add(i + " " + unit.substring(0, unit.length() - 1));
+            } else {
+                comboBox.getItems().add(i + " " + unit);
+            }
         }
-        comboBox.setValue(defaultValue + " " + unit);
+        comboBox.setValue(defaultValue + (defaultValue == 1 ? " " + unit.substring(0, unit.length() - 1) : " " + unit));
     }
 }

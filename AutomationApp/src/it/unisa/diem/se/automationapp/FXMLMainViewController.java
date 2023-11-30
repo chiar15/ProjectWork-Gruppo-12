@@ -80,6 +80,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     public void initialize(URL url, ResourceBundle rb) {
         
         eventBus = EventBus.getInstance();
+        ruleManager = RuleManager.getInstance();
         observableList = FXCollections.observableArrayList();
         messageEventQueue = new LinkedList<>();
         isRuleCreationOpen = false;

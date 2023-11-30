@@ -33,7 +33,7 @@ public class RuleManagerTest {
         actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
     }
 
-@Test
+    @Test
     public void testCreateRuleAndRetrieveList() {
 
         Rule createdRule = ruleManager.createRule("TestRule", triggerData, actionData);
@@ -61,4 +61,25 @@ public class RuleManagerTest {
         assertSame("La regola recuperata dalla coda dovrebbe essere la stessa che è stata inserita", rule, polledRule);
         assertTrue("La coda di esecuzione dovrebbe essere vuota dopo il poll", executionQueue.isEmpty());
     }
+    
+    @Test
+    public void testDeleteRule() {
+        Rule testRule = ruleManager.createRule("DeleteTestRule", triggerData, actionData);
+
+        assertNotNull("La regola creata non dovrebbe essere null", testRule);
+        assertTrue("La lista delle regole dovrebbe contenere la regola creata", 
+                   ruleManager.getRuleList().contains(testRule));
+
+        ruleManager.queueOffer(testRule);
+        assertTrue("La coda di esecuzione dovrebbe contenere la regola inserita",
+                   ruleManager.getExecutionQueue().contains(testRule));
+
+        ruleManager.deleteRule(testRule);
+
+        assertFalse("La lista delle regole non dovrebbe più contenere la regola rimossa", 
+                    ruleManager.getRuleList().contains(testRule));
+        assertFalse("La coda di esecuzione non dovrebbe più contenere la regola rimossa", 
+                    ruleManager.getExecutionQueue().contains(testRule));
+    }
+
 }

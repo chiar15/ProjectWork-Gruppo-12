@@ -36,13 +36,13 @@
                            <children>
                               <Label fx:id="labelHours" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
-                              <Spinner fx:id="spinnerHours" editable="true" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
+                              <Spinner fx:id="spinnerHours" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
                               <Label fx:id="labelMinutes" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
                               <HBox prefHeight="50.0" prefWidth="145.0">
                                  <children>
-                                    <Spinner fx:id="spinnerMinutes" editable="true" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
+                                    <Spinner fx:id="spinnerMinutes" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
                                  </children>
                               </HBox>
                            </children>
