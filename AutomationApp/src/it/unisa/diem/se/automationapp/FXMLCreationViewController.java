@@ -30,6 +30,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -84,57 +85,6 @@ public class FXMLCreationViewController{
         setupListeners();
         initializeBindings();
     }
-    
-    private void configureUIElements() {
-        configureComboBoxes();
-        configureSpinners();
-        ruleNameField.setFocusTraversable(false);
-        comboBoxTrigger.setFocusTraversable(false);
-        comboBoxActionRule.setFocusTraversable(false);
-        createRuleButton.requestFocus();
-        singleExecutionCheckBox.setSelected(true);
-        hideTimeTriggerControls();
-        hideAudioActionControls();
-        hideMessageField();
-        hideMultipleExecution();
-
-    }
-    
-    private void configureComboBoxes() {
-        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
-        comboBoxActionRule.getItems().setAll(ActionEnum.values());
-        configureDaysBox(suspensionDaysBox, 0, 30, 0);
-        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
-        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
-    }
-    
-    private void configureSpinners() {
-        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
-        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
-    }
-    
-    private void setupListeners() {
-        ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
-                if (!newPropertyValue) {
-                    checkRuleNameValidity();
-                }
-            }
-        });
-    }
-    
-    private void initializeBindings() {
-        createRuleButton.disableProperty().bind(
-            ruleNameField.textProperty().isEmpty()
-            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
-        );
-    }
-    
-    public void setRuleCreationListener(RuleCreationListener listener) {
-        this.listener = listener;
-    } 
-
 
     @FXML
     private void comboBoxTriggerAction(ActionEvent event) {
@@ -210,17 +160,18 @@ public class FXMLCreationViewController{
     @FXML
     private void createRuleButtonAction(ActionEvent event) {
         String ruleName = ruleNameField.getText();
+        long suspensionPeriod = 0;
         TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
         ActionEnum selectedAction = comboBoxActionRule.getValue();
 
-        // Preparazione dei dati di trigger e azione
         Map<String, String> triggerData = prepareTriggerData(selectedTrigger);
         Map<String, String> actionData = prepareActionData(selectedAction);
+        if(multipleExecutionsCheckBox.isSelected()){
+            prepareSuspensionPeriod(suspensionPeriod);
+        }
 
-        // Creazione della regola
         Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
 
-        // Reset dei campi e notifica della creazione della regola
         resetFields();
         if (listener != null) {
             listener.onRuleCreated(rule);
@@ -228,6 +179,76 @@ public class FXMLCreationViewController{
 
         closeWindow();
     }
+    
+        @FXML
+    private void ruleNameFieldAciton(ActionEvent event) {
+    }
+
+    @FXML
+    private void spinnerHoursAciton(MouseEvent event) {
+    }
+
+    @FXML
+    private void spinnerMinutesAction(MouseEvent event) {
+    }
+
+    @FXML
+    private void audioPathFieldAction(ActionEvent event) {
+    }
+
+    @FXML
+    private void messageFieldAction(MouseEvent event) {
+    }
+    
+    private void configureUIElements() {
+        configureComboBoxes();
+        configureSpinners();
+        ruleNameField.setFocusTraversable(false);
+        comboBoxTrigger.setFocusTraversable(false);
+        comboBoxActionRule.setFocusTraversable(false);
+        createRuleButton.requestFocus();
+        singleExecutionCheckBox.setSelected(true);
+        hideTimeTriggerControls();
+        hideAudioActionControls();
+        hideMessageField();
+        hideMultipleExecution();
+
+    }
+    
+    private void configureComboBoxes() {
+        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
+        comboBoxActionRule.getItems().setAll(ActionEnum.values());
+        configureDaysBox(suspensionDaysBox, 0, 30, 0);
+        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
+        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
+    }
+    
+    private void configureSpinners() {
+        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
+        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
+    }
+    
+    private void setupListeners() {
+        ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
+                if (!newPropertyValue) {
+                    checkRuleNameValidity();
+                }
+            }
+        });
+    }
+    
+    private void initializeBindings() {
+        createRuleButton.disableProperty().bind(
+            ruleNameField.textProperty().isEmpty()
+            .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
+        );
+    }
+    
+    public void setRuleCreationListener(RuleCreationListener listener) {
+        this.listener = listener;
+    } 
 
     private Map<String, String> prepareActionData(ActionEnum selectedAction) {
         Map<String, String> actionData = new HashMap<>();
@@ -276,14 +297,20 @@ public class FXMLCreationViewController{
         spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
     }
     
+    private void prepareSuspensionPeriod(long suspensionPeriodInSeconds) {
+        long days = Long.parseLong(suspensionDaysBox.getValue().split(" ")[0]); 
+        long hours = Long.parseLong(suspensionHoursBox.getValue().split(" ")[0]); 
+        long minutes = Long.parseLong(suspensionMinutesBox.getValue().split(" ")[0]);
+
+        suspensionPeriodInSeconds = (days * 86400L) + (hours * 3600L) + (minutes * 60L);
+    }
+
+    
     private void configureSpinner(Spinner<Integer> spinner, int minValue, int maxValue, int defaultValue) {
-        // Imposta il valore iniziale e i limiti dell'intervallo di valori ammissibili
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, defaultValue);
 
-        // Imposta il valore di default
         spinner.setValueFactory(valueFactory);
 
-        // Imposta il TextField editor per accettare solo input numerico
         TextField editor = spinner.getEditor();
         editor.textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) { // Accetta solo numeri
