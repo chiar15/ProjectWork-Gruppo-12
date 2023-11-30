@@ -30,7 +30,6 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -81,14 +80,14 @@ public class FXMLCreationViewController{
     
     public void initialize() {
         ruleManager = RuleManager.getInstance();
-        
-        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
-        comboBoxActionRule.getItems().setAll(ActionEnum.values());
-        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
-        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
-        configureDaysBox(suspensionDaysBox, 0, 30, 0);
-        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
-        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
+        configureUIElements();
+        setupListeners();
+        initializeBindings();
+    }
+    
+    private void configureUIElements() {
+        configureComboBoxes();
+        configureSpinners();
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
@@ -98,6 +97,23 @@ public class FXMLCreationViewController{
         hideAudioActionControls();
         hideMessageField();
         hideMultipleExecution();
+
+    }
+    
+    private void configureComboBoxes() {
+        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
+        comboBoxActionRule.getItems().setAll(ActionEnum.values());
+        configureDaysBox(suspensionDaysBox, 0, 30, 0);
+        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
+        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
+    }
+    
+    private void configureSpinners() {
+        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
+        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
+    }
+    
+    private void setupListeners() {
         ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
@@ -106,12 +122,14 @@ public class FXMLCreationViewController{
                 }
             }
         });
+    }
+    
+    private void initializeBindings() {
         createRuleButton.disableProperty().bind(
             ruleNameField.textProperty().isEmpty()
             .or(Bindings.not(isValidTriggerInput().and(isValidActionInput()).and(isValidCheckBoxInput())))
         );
     }
-    
     
     public void setRuleCreationListener(RuleCreationListener listener) {
         this.listener = listener;
@@ -170,6 +188,24 @@ public class FXMLCreationViewController{
             audioPathField.setText(selectedFile.getAbsolutePath());
         }
     }
+    
+    @FXML
+    private void singleExecutionAction(ActionEvent event) {
+        if (singleExecutionCheckBox.isSelected()) {
+            hideMultipleExecution();
+            multipleExecutionsCheckBox.setSelected(false);
+        }
+    }
+
+    @FXML
+    private void multipleExecutionsAction(ActionEvent event) {
+        if (multipleExecutionsCheckBox.isSelected()) {
+            showMultipleExecution();
+            singleExecutionCheckBox.setSelected(false);
+        } else {
+            hideMultipleExecution();
+        }
+    }
 
     @FXML
     private void createRuleButtonAction(ActionEvent event) {
@@ -177,27 +213,9 @@ public class FXMLCreationViewController{
         TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
         ActionEnum selectedAction = comboBoxActionRule.getValue();
 
-        int hours = spinnerHours.getValue();
-        int minutes = spinnerMinutes.getValue();
-        String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
-        Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", selectedTrigger.name());
-        triggerData.put("time", timeString);
-
-        Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", selectedAction.name());
-
-        switch (selectedAction) {
-            case AUDIOACTION:
-                String audioFilePath = audioPathField.getText();
-                actionData.put("filePath", audioFilePath);
-                break;
-            case MESSAGEACTION:
-                String message = messageField.getText();
-                actionData.put("message", message);
-                break;
-            // Aggiungere qui altri casi se necessario
-        }
+        // Preparazione dei dati di trigger e azione
+        Map<String, String> triggerData = prepareTriggerData(selectedTrigger);
+        Map<String, String> actionData = prepareActionData(selectedAction);
 
         // Creazione della regola
         Rule rule = ruleManager.createRule(ruleName, triggerData, actionData);
@@ -211,6 +229,42 @@ public class FXMLCreationViewController{
         closeWindow();
     }
 
+    private Map<String, String> prepareActionData(ActionEnum selectedAction) {
+        Map<String, String> actionData = new HashMap<>();
+
+        switch (selectedAction) {
+            case AUDIOACTION:
+                String audioFilePath = audioPathField.getText();
+                actionData.put("type", selectedAction.name());
+                actionData.put("filePath", audioFilePath);
+                break;
+            case MESSAGEACTION:
+                String message = messageField.getText();
+                actionData.put("type", selectedAction.name());
+                actionData.put("message", message);
+                break;
+            // Aggiungere altri casi se necessario
+        }
+
+        return actionData;
+    }
+
+    private Map<String, String> prepareTriggerData(TriggerEnum selectedTrigger) {
+        Map<String, String> triggerData = new HashMap<>();
+
+        switch (selectedTrigger) {
+            case TIMETRIGGER:
+                int hours = spinnerHours.getValue();
+                int minutes = spinnerMinutes.getValue();
+                String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
+                triggerData.put("type", selectedTrigger.name());
+                triggerData.put("time", timeString);
+                break;
+            // Aggiungere altri casi se necessario
+        }
+
+        return triggerData;
+    }
     
     private void resetFields(){
         ruleNameField.clear();
@@ -333,45 +387,6 @@ public class FXMLCreationViewController{
 
     private boolean isFieldsFilled() {
         return !ruleNameField.getText().isEmpty();
-    }
-
-
-    @FXML
-    private void spinnerHoursAciton(MouseEvent event) {
-    }
-
-    @FXML
-    private void spinnerMinutesAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void audioPathFieldAction(ActionEvent event) {
-    }
-
-    @FXML
-    private void messageFieldAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void ruleNameFieldAciton(ActionEvent event) {
-    }
-
-    @FXML
-    private void singleExecutionAction(ActionEvent event) {
-        if (singleExecutionCheckBox.isSelected()) {
-            hideMultipleExecution();
-            multipleExecutionsCheckBox.setSelected(false);
-        }
-    }
-
-    @FXML
-    private void multipleExecutionsAction(ActionEvent event) {
-        if (multipleExecutionsCheckBox.isSelected()) {
-            showMultipleExecution();
-            singleExecutionCheckBox.setSelected(false);
-        } else {
-            hideMultipleExecution();
-        }
     }
     
     private void showMultipleExecution() {

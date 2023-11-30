@@ -33,6 +33,6 @@ public class MessageAction implements ActionInterface{
 
     @Override
     public String toString() {
-        return message;
+        return "POPUP MESSAGE - " + "Message: " + message;
     }
 }
