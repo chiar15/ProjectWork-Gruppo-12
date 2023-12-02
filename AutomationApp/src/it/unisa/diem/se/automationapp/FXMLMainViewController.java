@@ -193,16 +193,30 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     public void startRuleChecker() {
         ruleChecker = new RuleChecker();
 
-        ruleChecker.setPeriod(Duration.seconds(10));
-        ruleChecker.start();
-        
+        Thread checkerThread = new Thread(ruleChecker);
+        checkerThread.setDaemon(true);
+        checkerThread.start();  
     }
     
     public void startRuleExecutor(){
         ruleExecutor = new RuleExecutor();
         
-        ruleExecutor.setPeriod(Duration.millis(500));
-        ruleExecutor.start();
+        Thread executorThread = new Thread(ruleExecutor);
+        executorThread.setDaemon(true);
+        executorThread.start();
+    }
+    
+    public void startRuleSaver(){
+        ruleSaver = new RuleSaver();
+        
+        Thread savingThread = new Thread(ruleSaver);
+        savingThread.setDaemon(true);
+        savingThread.start();
+    }
+    
+    public void loadRulesFromFile(){
+        List<Rule> list = ruleManager.loadRulesFromFile();
+        observableList.addAll(list);
     }
     
     public void startRuleSaver(){

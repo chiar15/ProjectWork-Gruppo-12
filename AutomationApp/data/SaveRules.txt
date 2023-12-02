@@ -1,1 +1,2 @@
 [{"name":"ciao","trigger":{"type":"TIMETRIGGER","attributes":{"time":"17:21"}},"action":{"type":"AUDIOACTION","attributes":{"filePath":"C:\\Users\\chiar\\Documents\\GitHub\\ProjectWork-Gruppo-12\\AutomationApp\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav"}},"wasExecuted":true},{"name":"hola","trigger":{"type":"TIMETRIGGER","attributes":{"time":"17:25"}},"action":{"type":"MESSAGEACTION","attributes":{"message":"aaaaaaaaaaaaaaaaaaaaaaaa"}},"wasExecuted":true}]
+

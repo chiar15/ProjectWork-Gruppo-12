@@ -4,37 +4,27 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-import javafx.concurrent.ScheduledService;
-import javafx.concurrent.Task;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEventType;
 
-public class RuleChecker extends ScheduledService<Void> {
+public class RuleChecker implements Runnable {
     private EventBus eventBus;
     private RuleManager ruleManager;
 
     public RuleChecker() {
         this.eventBus = EventBus.getInstance();
         this.ruleManager = RuleManager.getInstance();;
-        
-        setOnFailed(e->{
-            eventBus.publish(new MessageEvent("Error in the rule control thread, application will be terminated.", MessageEventType.CRITICAL_ERROR));
-        });
     }
-
+    
     @Override
-    protected Task<Void> createTask() {
-        return new Task<Void>() {
-            @Override
-            protected Void call() {
+    public void run() {
+        while(true){
+            try{
                 for (Rule rule : ruleManager.getRuleList()) {
-                if (isCancelled()) {
-                    break;
-                }
-                    try {
+                    if(rule!=null){
                         if(rule instanceof SuspendedRuleDecorator && rule.getWasExecuted()){
-                            SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                        SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                             if(suspendedRule.isReadyToExecute()){
                                 rule.setWasExecuted(false);
                             }
@@ -44,12 +34,17 @@ public class RuleChecker extends ScheduledService<Void> {
                             ruleManager.queueOffer(rule);
                             break;
                         }
-                    } catch (Exception e) {
-                        eventBus.publish(new MessageEvent(e.getMessage(), MessageEventType.ERROR));
-                    }
+                    } 
                 }
-                return null;
+                Thread.sleep(10000);
+            }catch (InterruptedException e){
+                Thread.currentThread().interrupt();
+                eventBus.publish(new MessageEvent("Error in the rule control thread, application will be terminated.", MessageEventType.CRITICAL_ERROR));   
+            }catch (Exception e) {
+                eventBus.publish(new MessageEvent(e.getMessage(), MessageEventType.ERROR));
             }
-        };
+        }
     }
 }
+
+
