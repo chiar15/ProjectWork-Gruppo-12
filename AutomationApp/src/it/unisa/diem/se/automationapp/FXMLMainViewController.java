@@ -219,19 +219,6 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         observableList.addAll(list);
     }
     
-    public void startRuleSaver(){
-        ruleSaver = new RuleSaver();
-        
-        Thread savingThread = new Thread(ruleSaver);
-        savingThread.setDaemon(true);
-        savingThread.start();
-    }
-    
-    public void loadRulesFromFile(){
-        List<Rule> list = ruleManager.loadRulesFromFile();
-        observableList.addAll(list);
-    }
-    
     public void closeApplication(){
         Stage stage = (Stage) addRuleButton.getScene().getWindow();
         stage.close();
