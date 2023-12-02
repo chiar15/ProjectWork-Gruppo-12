@@ -8,19 +8,22 @@ import it.unisa.diem.se.automationapp.action.ActionFactory;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RuleManager {
     private static RuleManager instance;
+    private RulePersistence rulePersistence;
     private CopyOnWriteArrayList<Rule> ruleList;
     private ConcurrentLinkedQueue<Rule> executionQueue;
 
     private RuleManager() {
         this.ruleList = new CopyOnWriteArrayList();
         this.executionQueue = new ConcurrentLinkedQueue<>();
-        
+        this.rulePersistence = new RulePersistence();
     }
 
     public static RuleManager getInstance() {
@@ -73,5 +76,16 @@ public class RuleManager {
 
         return getRuleList().stream()
             .anyMatch(rule -> rule.getName().replaceAll("\\s+", "").equals(trimmedRuleName));
+    }
+    
+    public void saveRulesToFile() throws IOException{
+        rulePersistence.saveRulesToFile(ruleList);
+    }
+    
+    public List<Rule> loadRulesFromFile(){
+       List<Rule> list = rulePersistence.loadRulesFromFile();
+       ruleList.clear();
+       ruleList.addAll(list);
+       return list;
     }
 }

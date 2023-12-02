@@ -12,9 +12,11 @@ import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleChecker;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleExecutor;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleSaver;
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -60,6 +62,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     
     private RuleExecutor ruleExecutor;
     
+    private RuleSaver ruleSaver;
+    
     private RuleManager ruleManager;
     
     private boolean isRuleCreationOpen;
@@ -86,6 +90,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         isRuleCreationOpen = false;
         isPopupDisplayed = false;
         
+        loadRulesFromFile();
+        
         ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
         ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
         ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
@@ -98,6 +104,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         eventBus.subscribe(MessageEvent.class, this::onMessageEvent);
         startRuleChecker();
         startRuleExecutor();
+        startRuleSaver();
     }    
 
     @FXML
@@ -196,6 +203,19 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
         ruleExecutor.setPeriod(Duration.millis(500));
         ruleExecutor.start();
+    }
+    
+    public void startRuleSaver(){
+        ruleSaver = new RuleSaver();
+        
+        Thread savingThread = new Thread(ruleSaver);
+        savingThread.setDaemon(true);
+        savingThread.start();
+    }
+    
+    public void loadRulesFromFile(){
+        List<Rule> list = ruleManager.loadRulesFromFile();
+        observableList.addAll(list);
     }
     
     public void closeApplication(){

@@ -52,4 +52,13 @@ public class AudioActionTest {
         
     }
 
+        @Test
+    public void testGetType() {
+        Map<String, String> actionData = new HashMap<>();
+        String projectDirectory = System.getProperty("user.dir");
+        actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
+
+        AudioAction audioAction = new AudioAction(actionData);
+        assertEquals("Il tipo di azione dovrebbe essere AUDIOACTION", "AUDIOACTION", audioAction.getType());
+    }
 }

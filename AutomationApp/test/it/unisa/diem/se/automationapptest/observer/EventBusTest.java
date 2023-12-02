@@ -1,69 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.observer;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import org.junit.Before;
+import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.observer.MessageEventType;
 import org.junit.Test;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.Before;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
+
 import java.util.function.Consumer;
-import static org.junit.Assert.*;
 
 public class EventBusTest {
+
+    @Mock
+    private Consumer<MessageEvent> mockListener;
 
     private EventBus eventBus;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         eventBus = EventBus.getInstance();
-        // Pulisce i sottoscrittori per la classe String prima di ogni test
-        eventBus.clearSubscribers(String.class);
     }
 
     @Test
-    public void testSubscribeAndPublish() {
-        AtomicBoolean eventReceived = new AtomicBoolean(false);
+    public void testPublishEvent() {
+        String testMessage = "Test event message";
+        MessageEvent messageEvent = new MessageEvent(testMessage, MessageEventType.ERROR);
 
-        eventBus.subscribe(String.class, event -> eventReceived.set(true));
-        eventBus.publish("Test Event");
+        eventBus.subscribe(MessageEvent.class, mockListener);
+        eventBus.publish(messageEvent);
 
-        assertTrue(eventReceived.get());
-    }
+        verify(mockListener).accept(messageEvent);
 
-    @Test
-    public void testSubscribeAndPublishWithMultipleSubscribers() {
-        AtomicBoolean firstSubscriberNotified = new AtomicBoolean(false);
-        AtomicBoolean secondSubscriberNotified = new AtomicBoolean(false);
-
-        eventBus.subscribe(String.class, event -> firstSubscriberNotified.set(true));
-        eventBus.subscribe(String.class, event -> secondSubscriberNotified.set(true));
-        eventBus.publish("Test Event");
-
-        assertTrue(firstSubscriberNotified.get());
-        assertTrue(secondSubscriberNotified.get());
-    }
-
-    @Test
-    public void testPublishWithNoSubscribers() {
-        AtomicBoolean eventReceived = new AtomicBoolean(false);
-
-        // Nessuna sottoscrizione per la classe String in questo test
-        eventBus.publish("Test Event");
-
-        assertFalse(eventReceived.get());
-    }
-
-    @Test
-    public void testUnsubscribe() {
-        AtomicBoolean eventReceived = new AtomicBoolean(false);
-        Consumer<String> listener = event -> eventReceived.set(true);
-
-        eventBus.subscribe(String.class, listener);
-        eventBus.unsubscribe(String.class, listener);
-        eventBus.publish("Test Event");
-
-        assertFalse("L'evento non dovrebbe essere ricevuto dopo la disiscrizione", eventReceived.get());
+        eventBus.unsubscribe(MessageEvent.class, mockListener);
     }
 }

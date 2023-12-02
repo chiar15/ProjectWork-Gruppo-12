@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapptest.action;
 
+import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.action.MessageAction;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
@@ -45,5 +46,15 @@ public class MessageActionTest {
 
         assertTrue("A message event should be published", eventPublished.get());
         assertEquals("Published message should match", testMessage, publishedMessage);
+    }
+    
+    @Test
+    public void testGetType() {
+        Map<String, String> actionData = new HashMap<>();
+        String projectDirectory = System.getProperty("user.dir");
+        actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
+
+        MessageAction messageAction = new MessageAction(actionData);
+        assertEquals("Il tipo di azione dovrebbe essere AUDIOACTION", "AUDIOACTION", messageAction.getType());
     }
 }

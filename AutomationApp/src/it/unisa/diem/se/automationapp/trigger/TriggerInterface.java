@@ -7,4 +7,5 @@ package it.unisa.diem.se.automationapp.trigger;
 
 public interface TriggerInterface {
     boolean isTriggered();
+    String getType();
 }

@@ -8,23 +8,28 @@ import java.time.LocalTime;
 import java.util.Map;
 
 public class TimeTrigger implements TriggerInterface{
-    private LocalTime time;
+    private String time;
     
     public TimeTrigger(Map<String, String> triggerData){
-        this.time = LocalTime.parse(triggerData.get("time"));
+        this.time = triggerData.get("time");
     }
 
-    public LocalTime getTime() {
+    public String getTime() {
         return time;
     }
 
     @Override
     public boolean isTriggered() {
-        return (!(LocalTime.now().isBefore(time)));
+        return (!(LocalTime.now().isBefore(LocalTime.parse(time))));
     }
 
     @Override
     public String toString() {
-        return time.toString();
+        return time;
+    }
+
+    @Override
+    public String getType() {
+        return TriggerEnum.TIMETRIGGER.name();
     }
 }

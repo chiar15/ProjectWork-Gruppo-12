@@ -6,4 +6,5 @@ package it.unisa.diem.se.automationapp.action;
 
 public interface ActionInterface {
     void execute() throws Exception;
+    String getType();
 }

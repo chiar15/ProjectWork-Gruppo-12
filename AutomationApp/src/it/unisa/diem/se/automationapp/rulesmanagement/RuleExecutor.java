@@ -24,7 +24,7 @@ public class RuleExecutor extends ScheduledService<Void> {
         this.ruleManager = RuleManager.getInstance();
         
         setOnFailed(e->{
-            eventBus.publish(new MessageEvent("Errore nel thread di esecuzione delle regole, l'applicazione verrà terminata", MessageEventType.CRITICAL_ERROR));
+            eventBus.publish(new MessageEvent("Error in the rule execution thread, application will be terminated.", MessageEventType.CRITICAL_ERROR));
         });
         
     }
