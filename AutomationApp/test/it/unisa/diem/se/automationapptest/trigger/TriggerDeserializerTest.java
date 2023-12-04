@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
-import it.unisa.diem.se.automationapp.trigger.TriggerDeserializer;
+import it.unisa.diem.se.automationapp.jsonUtility.TriggerDeserializer;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import org.junit.Test;
 import static org.junit.Assert.*;

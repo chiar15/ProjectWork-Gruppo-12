@@ -4,16 +4,10 @@
  */
 package it.unisa.diem.se.automationapp.observer;
 
-public class MessageEvent implements EventInterface{
-    private final String message;
-
-    public MessageEvent(String message) {
-        this.message = message;
-    }
-
-    @Override
-    public String getMessage() {
-        return this.message;
-    }
+/**
+ *
+ * @author chiar
+ */
+public enum SaveEventType {
+    REQUEST, SUCCESS, FAILURE,
 }
-

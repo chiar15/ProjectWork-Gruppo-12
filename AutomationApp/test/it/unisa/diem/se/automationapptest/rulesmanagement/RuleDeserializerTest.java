@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonDeserializationContext;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleDeserializer;
+import it.unisa.diem.se.automationapp.jsonUtility.RuleDeserializer;
 import it.unisa.diem.se.automationapp.rulesmanagement.SuspendedRuleDecorator;
 
 import static org.junit.Assert.*;

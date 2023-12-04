@@ -7,7 +7,7 @@ package it.unisa.diem.se.automationapptest.action;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import it.unisa.diem.se.automationapp.action.ActionDeserializer;
+import it.unisa.diem.se.automationapp.jsonUtility.ActionDeserializer;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.action.MessageAction;
 import it.unisa.diem.se.automationapp.action.AudioAction;

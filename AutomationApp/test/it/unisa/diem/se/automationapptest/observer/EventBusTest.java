@@ -2,7 +2,7 @@ package it.unisa.diem.se.automationapptest.observer;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
 import org.junit.Test;
 import org.junit.Before;
 import org.mockito.Mock;
@@ -27,7 +27,7 @@ public class EventBusTest {
     @Test
     public void testPublishEvent() {
         String testMessage = "Test event message";
-        MessageEvent messageEvent = new MessageEvent(testMessage, MessageEventType.ERROR);
+        MessageEvent messageEvent = new MessageEvent(testMessage);
 
         eventBus.subscribe(MessageEvent.class, mockListener);
         eventBus.publish(messageEvent);

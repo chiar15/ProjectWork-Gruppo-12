@@ -2,6 +2,9 @@ package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.observer.SaveEvent;
+import it.unisa.diem.se.automationapp.observer.SaveEventType;
+import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -31,10 +34,11 @@ public class AutomationApp extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
  
+        EventBus eventBus = EventBus.getInstance();
+        
         stage.setOnCloseRequest(e->{
-            EventBus.getInstance().clearSubscribers(MessageEvent.class);
-            Platform.exit();
-            System.exit(0);
+            e.consume();
+            eventBus.publish(new SaveEvent("Save before closing request", SaveEventType.REQUEST));
         });
             
         stage.show();

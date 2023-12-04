@@ -4,9 +4,10 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
 
 public class RuleChecker implements Runnable {
     private EventBus eventBus;
@@ -14,9 +15,9 @@ public class RuleChecker implements Runnable {
 
     public RuleChecker() {
         this.eventBus = EventBus.getInstance();
-        this.ruleManager = RuleManager.getInstance();;
+        this.ruleManager = RuleManager.getInstance();
     }
-    
+
     @Override
     public void run() {
         while(true){
@@ -29,19 +30,17 @@ public class RuleChecker implements Runnable {
                                 rule.setWasExecuted(false);
                             }
                         }
-                        if (rule.isTriggered() && !rule.getWasExecuted()) {
-                            rule.setWasExecuted(true);
+                        if (rule.isTriggered() && !rule.getWasExecuted() && !ruleManager.queueContainsRule(rule)) {
                             ruleManager.queueOffer(rule);
-                            break;
                         }
                     } 
                 }
-                Thread.sleep(10000);
+                Thread.sleep(6000);
             }catch (InterruptedException e){
                 Thread.currentThread().interrupt();
-                eventBus.publish(new MessageEvent("Error in the rule control thread, application will be terminated.", MessageEventType.CRITICAL_ERROR));   
+                eventBus.publish(new ErrorEvent("Error in the rule control thread, application will be terminated.", ErrorEventType.CRITICAL));   
             }catch (Exception e) {
-                eventBus.publish(new MessageEvent(e.getMessage(), MessageEventType.ERROR));
+                eventBus.publish(new ErrorEvent(e.getMessage(), ErrorEventType.NORMAL));
             }
         }
     }

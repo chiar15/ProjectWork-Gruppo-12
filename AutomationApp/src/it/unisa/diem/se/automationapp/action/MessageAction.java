@@ -6,7 +6,7 @@ package it.unisa.diem.se.automationapp.action;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
 import java.util.Map;
 
 /**
@@ -28,7 +28,7 @@ public class MessageAction implements ActionInterface{
     public void execute() throws Exception {
         EventBus eventBus = EventBus.getInstance();
         
-        eventBus.publish(new MessageEvent(message, MessageEventType.MESSAGE));
+        eventBus.publish(new MessageEvent(message));
     }
 
     @Override

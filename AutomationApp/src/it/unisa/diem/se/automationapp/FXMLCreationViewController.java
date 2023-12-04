@@ -5,7 +5,10 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.action.ActionEnum;
+import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
+import it.unisa.diem.se.automationapp.observer.SaveEvent;
+import it.unisa.diem.se.automationapp.observer.SaveEventType;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
@@ -61,7 +64,6 @@ public class FXMLCreationViewController{
     @FXML
     private Button createRuleButton;
     
-    private RuleCreationListener listener;
     @FXML
     private TextArea messageField;
     @FXML
@@ -77,13 +79,19 @@ public class FXMLCreationViewController{
     @FXML
     private ComboBox<String> suspensionMinutesBox;
     
+    private RuleCreationListener listener;
+        
     private RuleManager ruleManager;
+    
+    private EventBus eventBus;
     
     public void initialize() {
         ruleManager = RuleManager.getInstance();
+        eventBus = EventBus.getInstance();
         configureUIElements();
         setupListeners();
         initializeBindings();
+        eventBus.subscribe(SaveEvent.class, this::onSaveEvent);
     }
 
     @FXML
@@ -228,6 +236,7 @@ public class FXMLCreationViewController{
         configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
     }
     
+    //cambio nome
     private void setupListeners() {
         ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -329,11 +338,6 @@ public class FXMLCreationViewController{
                 }
             }
         });
-    }
-    
-    public void closeWindow(){
-        Stage stage = (Stage) createRuleButton.getScene().getWindow();
-        stage.close();
     }
     
     private void showTimeTriggerControls() {
@@ -494,5 +498,16 @@ public class FXMLCreationViewController{
             alert.setHeaderText(null);
             alert.showAndWait();
         });
+    }
+    
+    private void onSaveEvent(SaveEvent event){
+        if(event.getType() == SaveEventType.REQUEST){
+            closeWindow();
+        }
+    }
+    
+    private void closeWindow(){
+        Stage stage = (Stage) createRuleButton.getScene().getWindow();
+        stage.close();
     }
 }

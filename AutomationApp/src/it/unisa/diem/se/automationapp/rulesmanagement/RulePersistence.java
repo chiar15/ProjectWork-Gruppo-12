@@ -7,15 +7,16 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import it.unisa.diem.se.automationapp.action.ActionDeserializer;
+import it.unisa.diem.se.automationapp.jsonUtility.ActionDeserializer;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
-import it.unisa.diem.se.automationapp.action.ActionSerializer;
+import it.unisa.diem.se.automationapp.jsonUtility.ActionSerializer;
+import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
-import it.unisa.diem.se.automationapp.trigger.TriggerDeserializer;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
+import it.unisa.diem.se.automationapp.jsonUtility.TriggerDeserializer;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
-import it.unisa.diem.se.automationapp.trigger.TriggerSerializer;
+import it.unisa.diem.se.automationapp.jsonUtility.TriggerSerializer;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -71,7 +72,7 @@ public class RulePersistence {
                 Type ruleListType = new TypeToken<List<Rule>>(){}.getType();
                 list = gson.fromJson(jsonBuilder.toString(), ruleListType);
             } catch (IOException e){
-                eventbus.publish(new MessageEvent("Error loading automations from file", MessageEventType.ERROR));
+                eventbus.publish(new ErrorEvent("Error loading automations from file", ErrorEventType.NORMAL));
             }
         }
         return list;

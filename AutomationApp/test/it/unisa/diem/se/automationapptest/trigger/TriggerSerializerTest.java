@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonElement;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
-import it.unisa.diem.se.automationapp.trigger.TriggerSerializer;
+import it.unisa.diem.se.automationapp.jsonUtility.TriggerSerializer;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

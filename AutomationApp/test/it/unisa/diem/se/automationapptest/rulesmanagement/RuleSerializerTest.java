@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 
 import com.google.gson.JsonObject;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleSerializer;
+import it.unisa.diem.se.automationapp.jsonUtility.RuleSerializer;
 import it.unisa.diem.se.automationapp.rulesmanagement.SuspendedRuleDecorator;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import it.unisa.diem.se.automationapp.action.AudioAction;

@@ -5,9 +5,10 @@
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
 
 /**
  *
@@ -20,6 +21,7 @@ public class RuleExecutor implements Runnable {
     public RuleExecutor() {
         this.eventBus = EventBus.getInstance();
         this.ruleManager = RuleManager.getInstance();
+        
     }
 
     @Override
@@ -29,6 +31,7 @@ public class RuleExecutor implements Runnable {
             try {
                 if(rule!= null){
                     rule.execute();
+                    rule.setWasExecuted(true);
                     if(rule instanceof SuspendedRuleDecorator){
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                         suspendedRule.setLastExecutionTime(System.currentTimeMillis());
@@ -36,12 +39,12 @@ public class RuleExecutor implements Runnable {
                 }
                 Thread.sleep(5000);
             } catch (AudioExecutionException e) {
-                eventBus.publish(new MessageEvent("Errore nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), MessageEventType.ERROR));
+                eventBus.publish(new ErrorEvent("Errore nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                eventBus.publish(new MessageEvent("Error in the rule execution thread, application will be terminated.", MessageEventType.CRITICAL_ERROR));
+                eventBus.publish(new ErrorEvent("Error in the rule execution thread, application will be terminated.", ErrorEventType.CRITICAL));
             } catch (Exception e) {
-                eventBus.publish(new MessageEvent("Errore generico nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), MessageEventType.ERROR));
+                eventBus.publish(new ErrorEvent("Errore generico nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
             }
         }
     }

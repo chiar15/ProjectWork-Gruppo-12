@@ -4,9 +4,10 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import it.unisa.diem.se.automationapp.observer.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEventType;
+import it.unisa.diem.se.automationapp.observer.ErrorEventType;
 import java.io.IOException;
 
 /**
@@ -28,13 +29,13 @@ public class RuleSaver implements Runnable{
             try{
                 ruleManager.saveRulesToFile();
             } catch (IOException e){
-                eventBus.publish(new MessageEvent("Error during autosave, automations were not saved. It is recommended to restart the application.", MessageEventType.ERROR));
+                eventBus.publish(new ErrorEvent("Error during autosave, automations were not saved. It is recommended to restart the application.", ErrorEventType.NORMAL));
             }
             
             try{
                 Thread.sleep(20000);
             } catch (InterruptedException e){
-                eventBus.publish(new MessageEvent("Error in the rule saving thread, It is recommended to restart the application.", MessageEventType.ERROR));
+                eventBus.publish(new ErrorEvent("Autosaving is no longer working, It is recommended to restart the application.", ErrorEventType.NORMAL));
             }
         }
     }
