@@ -362,6 +362,7 @@ public class FXMLCreationViewController{
     private void hideAudioActionControls() {
         audioPathField.setVisible(false);
         audioPathButton.setVisible(false);
+        audioPathField.clear();
     }
     
     private void showMessageField() {
@@ -370,6 +371,7 @@ public class FXMLCreationViewController{
 
     private void hideMessageField() {
         messageField.setVisible(false);
+        messageField.clear();
     }
 
 

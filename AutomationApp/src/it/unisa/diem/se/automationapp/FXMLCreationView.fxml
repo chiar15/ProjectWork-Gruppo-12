@@ -16,33 +16,35 @@
    <items>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="367.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="10.0" layoutY="16.0" prefHeight="50.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
+              <VBox layoutX="10.0" layoutY="16.0" prefHeight="362.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
                   <children>
                       <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
                       <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
+                  <VBox prefHeight="10.0" prefWidth="330.0" />
+                    <VBox prefHeight="44.0" prefWidth="330.0">
+                        <children>
+                            <ComboBox fx:id="comboBoxTrigger" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxTriggerAction" prefHeight="30.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                        </children>
+                    </VBox>
                   </children>
               </VBox>
-              <VBox layoutX="12.0" layoutY="66.0" prefHeight="34.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0">
-                  <children>
-                      <ComboBox fx:id="comboBoxTrigger" onAction="#comboBoxTriggerAction" prefHeight="26.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                  </children>
-              </VBox>
-              <VBox layoutX="16.0" layoutY="107.0" prefHeight="50.0" prefWidth="390.0" AnchorPane.leftAnchor="13.0">
-            <VBox layoutX="13.0" layoutY="100.0" prefHeight="63.0" prefWidth="390.0" AnchorPane.leftAnchor="13.0">
+              <VBox layoutX="16.0" layoutY="107.0" prefHeight="50.0" prefWidth="354.0" AnchorPane.leftAnchor="13.0">
+               <VBox prefHeight="18.0" prefWidth="354.0" />
+            <VBox layoutX="13.0" layoutY="100.0" prefHeight="50.0" prefWidth="345.0" AnchorPane.leftAnchor="13.0">
                <children>
-                  <VBox prefHeight="50.0" prefWidth="390.0">
+                  <VBox prefHeight="50.0" prefWidth="326.0">
                      <children>
                         <HBox prefHeight="50.0" prefWidth="336.0">
                            <children>
-                              <Label fx:id="labelHours" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
+                              <Label fx:id="labelHours" prefHeight="20.0" prefWidth="48.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
-                              <Spinner fx:id="spinnerHours" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
+                              <Spinner fx:id="spinnerHours" editable="true" onDragDetected="#spinnerHoursAciton" prefHeight="25.0" prefWidth="98.0" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
-                              <Label fx:id="labelMinutes" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
+                              <Label fx:id="labelMinutes" prefHeight="20.0" prefWidth="58.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
                               <HBox prefHeight="50.0" prefWidth="9.0" />
                               <HBox prefHeight="50.0" prefWidth="145.0">
                                  <children>
-                                    <Spinner fx:id="spinnerMinutes" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
+                                    <Spinner fx:id="spinnerMinutes" editable="true" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="98.0" />
                                  </children>
                               </HBox>
                            </children>
@@ -52,9 +54,9 @@
                </children>
             </VBox>
           </VBox>
-              <VBox layoutX="14.0" layoutY="166.0" prefHeight="34.0" prefWidth="328.0" AnchorPane.leftAnchor="13.0">
+              <VBox layoutX="14.0" layoutY="166.0" prefHeight="34.0" prefWidth="328.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
                   <children>
-                      <ComboBox fx:id="comboBoxActionRule" onAction="#comboBoxActionRule" prefHeight="26.0" prefWidth="349.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                      <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                   </children>
               </VBox>
               <VBox layoutX="16.0" layoutY="200.0" prefHeight="34.0" prefWidth="330.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="82.0">
