@@ -9,5 +9,5 @@ package it.unisa.diem.se.automationapp.trigger;
  * @author asjay
  */
 public enum TriggerEnum {
-    TIMETRIGGER,
+    TIMETRIGGER, DAYOFWEEKTRIGGER,
 }

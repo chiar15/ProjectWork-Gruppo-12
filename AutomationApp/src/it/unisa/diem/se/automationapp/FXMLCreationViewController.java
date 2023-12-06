@@ -20,6 +20,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -34,6 +36,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -78,6 +81,16 @@ public class FXMLCreationViewController{
     private ComboBox<String> suspensionHoursBox;
     @FXML
     private ComboBox<String> suspensionMinutesBox;
+    @FXML
+    private AnchorPane timeTriggerAnchor;
+    @FXML
+    private AnchorPane dayOfTheWeekAnchor;
+    @FXML
+    private ComboBox<String> dayOfWeekComboBox;
+    @FXML
+    private AnchorPane audioActionAnchor;
+    @FXML
+    private AnchorPane messageActionAnchor;
     
     private RuleCreationListener listener;
         
@@ -114,7 +127,13 @@ public class FXMLCreationViewController{
             switch (selectedTrigger) {
                 case TIMETRIGGER:
                     showTimeTriggerControls();
+                    hideDayOfWeekControls();
                     break;
+                case DAYOFWEEKTRIGGER:
+                    showDayOfWeekControls();
+                    hideTimeTriggerControls();
+                    break;
+                // Altri casi
                 default:
                     hideTimeTriggerControls();
                     break;
@@ -200,13 +219,10 @@ public class FXMLCreationViewController{
         closeWindow();
     }
     
-        @FXML
+    @FXML
     private void ruleNameFieldAciton(ActionEvent event) {
     }
 
-    @FXML
-    private void spinnerHoursAciton(MouseEvent event) {
-    }
 
     @FXML
     private void spinnerMinutesAction(MouseEvent event) {
@@ -223,6 +239,7 @@ public class FXMLCreationViewController{
     private void configureUIElements() {
         configureComboBoxes();
         configureSpinners();
+        configureDayOfWeekComboBox();
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
@@ -232,7 +249,7 @@ public class FXMLCreationViewController{
         hideAudioActionControls();
         hideMessageField();
         hideMultipleExecution();
-
+        hideDayOfWeekControls();
     }
     
     private void configureComboBoxes() {
@@ -246,6 +263,13 @@ public class FXMLCreationViewController{
     private void configureSpinners() {
         configureSpinner(spinnerHours, minValue, maxValueHours, java.time.LocalTime.now().getHour());
         configureSpinner(spinnerMinutes, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute());
+    }
+    
+    private void configureDayOfWeekComboBox() {
+        ObservableList<String> daysOfWeek = FXCollections.observableArrayList(
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        );
+        dayOfWeekComboBox.setItems(daysOfWeek);
     }
     
     //cambio nome
@@ -362,37 +386,40 @@ public class FXMLCreationViewController{
     }
     
     private void showTimeTriggerControls() {
-        labelHours.setVisible(true);
-        spinnerHours.setVisible(true);
-        labelMinutes.setVisible(true);
-        spinnerMinutes.setVisible(true);
+        timeTriggerAnchor.setVisible(true);
+        dayOfWeekComboBox.getSelectionModel().clearSelection();
     }
 
     private void hideTimeTriggerControls() {
-        labelHours.setVisible(false);
-        spinnerHours.setVisible(false);
-        labelMinutes.setVisible(false);
-        spinnerMinutes.setVisible(false);
+        timeTriggerAnchor.setVisible(false);
     }
 
     private void showAudioActionControls() {
-        audioPathField.setVisible(true);
-        audioPathButton.setVisible(true);
+        audioActionAnchor.setVisible(true);
     }
 
     private void hideAudioActionControls() {
-        audioPathField.setVisible(false);
-        audioPathButton.setVisible(false);
         audioPathField.clear();
+        audioActionAnchor.setVisible(false);
     }
     
     private void showMessageField() {
-        messageField.setVisible(true);
+        messageActionAnchor.setVisible(true);
     }
 
     private void hideMessageField() {
-        messageField.setVisible(false);
         messageField.clear();
+        messageActionAnchor.setVisible(false);
+    }
+    
+    private void hideDayOfWeekControls() {
+        dayOfTheWeekAnchor.setVisible(false);
+    }
+    
+    private void showDayOfWeekControls() {
+        dayOfTheWeekAnchor.setVisible(true);
+        spinnerHours.getValueFactory().setValue(java.time.LocalTime.now().getHour());
+        spinnerMinutes.getValueFactory().setValue(java.time.LocalTime.now().getMinute());
     }
 
 
@@ -468,10 +495,13 @@ public class FXMLCreationViewController{
         suspensionTimeLabel.setVisible(false);
         suspensionDaysBox.setManaged(false);
         suspensionDaysBox.setVisible(false);
+        suspensionDaysBox.setValue("0 Days");
         suspensionHoursBox.setManaged(false);
         suspensionHoursBox.setVisible(false);
+        suspensionHoursBox.setValue("0 Hours");
         suspensionMinutesBox.setManaged(false);
         suspensionMinutesBox.setVisible(false);
+        suspensionMinutesBox.setValue("0 Minutes");
     }
     
     private BooleanBinding isValidCheckBoxInput() {

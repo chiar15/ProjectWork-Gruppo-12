@@ -23,14 +23,12 @@ import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleSaver;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.ResourceBundle;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,13 +41,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -68,12 +70,10 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     private TableColumn<String, String> ruleTriggerClm;
     @FXML
     private TableColumn<String, String> ruleActionClm;
-    
     @FXML
     private Button deleteRuleButton;
-    
     @FXML
-    private TableColumn<?, ?> ruleStateClm;
+    private TableColumn<Rule, Boolean> ruleStateClm;
     
     private EventBus eventBus;
 
@@ -123,11 +123,15 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
         loadRulesFromFile();
         
+        ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        
         ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
         ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
         ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
         
-        ruleListTable.setItems(observableList);
+        setupRuleStateColumn();
+        
         deleteRuleButton.disableProperty().bind(
             ruleListTable.getSelectionModel().selectedItemProperty().isNull()
         );
@@ -185,21 +189,22 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     
     @FXML
     private void deleteRuleButtonAction(ActionEvent event) {
-        Rule selectedRule = ruleListTable.getSelectionModel().getSelectedItem();
-        
-        if (selectedRule != null) {
+        ObservableList<Rule> selectedRules = ruleListTable.getSelectionModel().getSelectedItems();
+
+        if (!selectedRules.isEmpty()) {
             Platform.runLater(() -> {
-                isPopupDisplayed = true;
-                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
-                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete this rule?", ButtonType.YES, ButtonType.NO);
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rules?", ButtonType.YES, ButtonType.NO);
                 alert.showAndWait();
-                isPopupDisplayed = false;
-                eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+
                 if (alert.getResult() == ButtonType.YES) {
-                    observableList.remove(selectedRule);
-                    ruleManager.deleteRule(selectedRule);
+                    // Creare una copia della lista degli elementi selezionati per evitare ConcurrentModificationException
+                    List<Rule> rulesToRemove = new ArrayList<>(selectedRules);
+
+                    for (Rule rule : rulesToRemove) {
+                        observableList.remove(rule);
+                        ruleManager.deleteRule(rule);
+                    }
                 }
-                processQueuedPopups();
             });
         }
     }
@@ -376,5 +381,65 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     private void closeApplication(){
         Stage stage = (Stage) addRuleButton.getScene().getWindow();
         stage.close();
+    }
+    
+        private void setupRuleStateColumn() {
+        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("wasExecuted"));
+        ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                CheckBox checkBox = new CheckBox();
+                setText(item ? "active" : "deactive");
+
+                checkBox.setSelected(item);
+
+                Rule rule = getTableView().getItems().get(getIndex());
+
+                checkBox.setOnAction(event -> {
+                    rule.setWasExecuted(!checkBox.isSelected());
+                    setText(checkBox.isSelected() ? "active" : "deactive");
+                });
+
+
+                setGraphic(checkBox);
+            }
+        });
+    }
+    
+    private void configureInformationRow() {
+        ruleListTable.setRowFactory(tv -> {
+            TableRow<Rule> row = new TableRow<>();
+            Tooltip tooltip = new Tooltip();
+
+            row.setOnMouseEntered(event -> {
+                Rule rowData = row.getItem();
+                if (rowData != null) {
+                    StringBuilder details = new StringBuilder();
+                    details.append("Name: ").append(rowData.getName()).append("\n");
+                    details.append("Trigger: ").append(rowData.getTrigger()).append("\n");
+                    details.append("Action: ").append(rowData.getAction()).append("\n");
+                    tooltip.setText(details.toString());
+
+                    double mouseX = event.getScreenX();
+                    double mouseY = event.getScreenY();
+
+                    tooltip.show(row, mouseX + 10, mouseY + 10);
+                }
+            });
+
+            row.setOnMouseExited(event -> {
+                tooltip.hide();
+            });
+
+            return row;
+        });
     }
 }

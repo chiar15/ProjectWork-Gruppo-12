@@ -31,7 +31,6 @@ public class EventPersistence {
             try{
                 objectMapper.writeValue(file, eventQueue);
             } catch (IOException e){
-                e.printStackTrace();
             }
         }
     }
@@ -47,7 +46,6 @@ public class EventPersistence {
             // other operations
             writer.close();
         } catch (IOException e){
-            e.printStackTrace();
         } 
         
         return (new LinkedList<>(eventQueue.getEvents()));
