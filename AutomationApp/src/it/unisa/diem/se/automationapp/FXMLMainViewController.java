@@ -130,6 +130,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
         ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
         
+        ruleListTable.setItems(observableList);
         setupRuleStateColumn();
         
         deleteRuleButton.disableProperty().bind(
