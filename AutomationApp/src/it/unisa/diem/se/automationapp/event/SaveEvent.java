@@ -2,19 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.unisa.diem.se.automationapp.observer;
+package it.unisa.diem.se.automationapp.event;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import it.unisa.diem.se.automationapp.event.EventInterface;
 
 /**
  *
  * @author chiar
  */
+@JsonTypeName("save")
 public class SaveEvent implements EventInterface{
-    private final String message;
-    private final SaveEventType type;
+    private String message;
 
-    public SaveEvent(String message, SaveEventType type) {
+    public SaveEvent() {
+    }
+
+    
+    public SaveEvent(String message) {
         this.message = message;
-        this.type = type;
     }
     
     @Override
@@ -22,8 +28,9 @@ public class SaveEvent implements EventInterface{
         return this.message;
     }
 
-    public SaveEventType getType() {
-        return type;
+    public void setMessage(String message) {
+        this.message = message;
     }
+    
     
 }

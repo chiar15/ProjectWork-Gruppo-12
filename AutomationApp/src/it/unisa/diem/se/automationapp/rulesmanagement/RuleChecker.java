@@ -4,10 +4,11 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.event.ErrorEvent;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.ErrorEventType;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
 
 public class RuleChecker implements Runnable {
     private EventBus eventBus;

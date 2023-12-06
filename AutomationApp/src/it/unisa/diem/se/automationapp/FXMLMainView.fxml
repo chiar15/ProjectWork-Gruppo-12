@@ -5,9 +5,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #E8F0FE;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLMainViewController">
 
-    <TableView fx:id="ruleListTable" layoutX="21.0" layoutY="23.0" prefHeight="355.0" prefWidth="557.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.0">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #E8F0FE;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLMainViewController">
+
+             <TableView fx:id="ruleListTable" layoutX="21.0" layoutY="23.0" prefHeight="355.0" prefWidth="557.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="23.0">
         <columns>
             <TableColumn fx:id="ruleNameClm" editable="false" prefWidth="130.0" resizable="false" sortable="false" style="-fx-font-size: 16px; -fx-text-fill: #003366;" text="Rule Name" />
             <TableColumn fx:id="ruleTriggerClm" editable="false" minWidth="1.0" prefWidth="145.0" resizable="false" sortable="false" style="-fx-font-size: 16px; -fx-text-fill: #003366;" text="Trigger" />
@@ -19,6 +20,6 @@
       </columnResizePolicy>
     </TableView>
     
-    <Button fx:id="addRuleButton" layoutX="460.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Add Rule" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="460.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="339.0" />
+             <Button fx:id="addRuleButton" layoutX="460.0" layoutY="339.0" mnemonicParsing="false" onAction="#addRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Add Rule" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="460.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="339.0" />
    <Button fx:id="deleteRuleButton" layoutX="21.0" layoutY="333.0" mnemonicParsing="false" onAction="#deleteRuleButtonAction" prefHeight="30.0" prefWidth="112.0" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px; -fx-pref-width: 120px;" text="Delete Rule" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="459.20000000000005" />
 </AnchorPane>

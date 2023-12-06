@@ -4,18 +4,28 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  *
  * @author chiar
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public class SuspendedRuleDecorator extends Rule {
     private long suspensionPeriod; // Periodo di sospensione in secondi
     private long lastExecutionTime; // Tempo dell'ultima esecuzione in millisecondi
 
+    public SuspendedRuleDecorator(){
+    }
+    
     public SuspendedRuleDecorator(Rule rule, long suspensionPeriod) {
         super(rule.getName(), rule.getTrigger(), rule.getAction());
         this.suspensionPeriod = suspensionPeriod;
         this.lastExecutionTime = System.currentTimeMillis();
+    }
+    
+    public void setSuspensionPeriod(long suspensionPeriod) {
+        this.suspensionPeriod = suspensionPeriod;
     }
 
     public long getSuspensionPeriod() {

@@ -5,8 +5,8 @@
 package it.unisa.diem.se.automationapp.action;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.ErrorEventType;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import java.util.Map;
 
 /**
@@ -16,12 +16,19 @@ import java.util.Map;
 public class MessageAction implements ActionInterface{
     private String message;
 
+    public MessageAction(){     
+    }
+    
     public MessageAction(Map<String, String> actionData) {
         this.message = actionData.get("message");
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
     
     @Override

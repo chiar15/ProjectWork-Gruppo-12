@@ -22,6 +22,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class AudioAction implements ActionInterface{
     private String filePath;
     
+    public AudioAction(){ 
+    }
+    
     public AudioAction(Map<String, String> actionData){
         this.filePath = actionData.get("filePath");
     }
@@ -30,6 +33,11 @@ public class AudioAction implements ActionInterface{
         return filePath;
     }
 
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    
     @Override
     public void execute()throws AudioExecutionException, InterruptedException{
         try{

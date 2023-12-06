@@ -1,8 +1,8 @@
 package it.unisa.diem.se.automationapptest.observer;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.ErrorEventType;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import org.junit.Test;
 import org.junit.Before;
 import org.mockito.Mock;

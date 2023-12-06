@@ -10,6 +10,9 @@ import java.util.Map;
 public class TimeTrigger implements TriggerInterface{
     private String time;
     
+    public TimeTrigger(){
+    }
+    
     public TimeTrigger(Map<String, String> triggerData){
         this.time = triggerData.get("time");
     }
@@ -18,6 +21,11 @@ public class TimeTrigger implements TriggerInterface{
         return time;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    
     @Override
     public boolean isTriggered() {
         return (!(LocalTime.now().isBefore(LocalTime.parse(time))));

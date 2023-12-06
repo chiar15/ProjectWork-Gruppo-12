@@ -94,4 +94,26 @@ public class RuleManagerTest {
         Rule suspendedRule = ruleManager.createRule("SuspendedRule", triggerData, actionData, 1000);
         assertNotNull("La regola sospesa non dovrebbe essere null", suspendedRule);
     }
+    
+    @Test
+    public void testQueueContainsRule() {
+        Rule rule = ruleManager.createRule("ContainTestRule", triggerData, actionData, 0);
+        assertFalse("La coda di esecuzione non dovrebbe contenere la regola prima dell'inserimento", 
+                    ruleManager.queueContainsRule(rule));
+        
+        ruleManager.queueOffer(rule);
+        assertTrue("La coda di esecuzione dovrebbe contenere la regola dopo l'inserimento", 
+                   ruleManager.queueContainsRule(rule));
+    }
+
+    @Test
+    public void testQueuePeek() {
+        Rule rule = ruleManager.createRule("PeekTestRule", triggerData, actionData, 0);
+        ruleManager.queueOffer(rule);
+
+        Rule peekedRule = ruleManager.queuePeek();
+        assertSame("La regola visualizzata dovrebbe essere la stessa inserita", rule, peekedRule);
+        assertFalse("La coda di esecuzione non dovrebbe essere vuota dopo il peek", 
+                    ruleManager.getExecutionQueue().isEmpty());
+    }
 }

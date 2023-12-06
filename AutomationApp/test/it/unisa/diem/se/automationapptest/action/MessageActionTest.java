@@ -1,13 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.action;
 
-import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.action.MessageAction;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.HashMap;
@@ -51,10 +46,9 @@ public class MessageActionTest {
     @Test
     public void testGetType() {
         Map<String, String> actionData = new HashMap<>();
-        String projectDirectory = System.getProperty("user.dir");
-        actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
+        actionData.put("message", "Test message");
 
         MessageAction messageAction = new MessageAction(actionData);
-        assertEquals("Il tipo di azione dovrebbe essere AUDIOACTION", "AUDIOACTION", messageAction.getType());
+        assertEquals("Il tipo di azione dovrebbe essere MESSAGEACTION", "MESSAGEACTION", messageAction.getType());
     }
 }

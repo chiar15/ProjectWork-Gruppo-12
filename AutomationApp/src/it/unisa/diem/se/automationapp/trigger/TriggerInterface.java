@@ -4,6 +4,13 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "triggerType")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = TimeTrigger.class, name = "time")
+})
 
 public interface TriggerInterface {
     boolean isTriggered();

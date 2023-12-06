@@ -7,15 +7,15 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 
-/**
- *
- * @author chiar
- */
 public class Rule {
     private String name;
     private TriggerInterface trigger;
     private ActionInterface action;
     private boolean wasExecuted;
+    
+    public Rule(){
+        
+    }
     
     public Rule(String name, TriggerInterface trigger, ActionInterface action) {
         this.name = name;
@@ -34,6 +34,18 @@ public class Rule {
     
     public ActionInterface getAction() {
         return action;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTrigger(TriggerInterface trigger) {
+        this.trigger = trigger;
+    }
+
+    public void setAction(ActionInterface action) {
+        this.action = action;
     }
 
     public boolean getWasExecuted() {

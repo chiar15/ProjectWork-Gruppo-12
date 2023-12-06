@@ -1,9 +1,8 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.SaveEvent;
-import it.unisa.diem.se.automationapp.observer.SaveEventType;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
+import it.unisa.diem.se.automationapp.event.SaveEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -38,7 +37,7 @@ public class AutomationApp extends Application {
         
         stage.setOnCloseRequest(e->{
             e.consume();
-            eventBus.publish(new SaveEvent("Save before closing request", SaveEventType.REQUEST));
+            eventBus.publish(new SaveEvent("Save before closing request"));
         });
             
         stage.show();

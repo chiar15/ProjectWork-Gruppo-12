@@ -7,8 +7,7 @@ package it.unisa.diem.se.automationapp;
 import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.observer.EventBus;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
-import it.unisa.diem.se.automationapp.observer.SaveEvent;
-import it.unisa.diem.se.automationapp.observer.SaveEventType;
+import it.unisa.diem.se.automationapp.event.SaveEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
@@ -24,6 +23,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -85,7 +85,19 @@ public class FXMLCreationViewController{
     
     private EventBus eventBus;
     
+    private int minValue;
+    
+    private int maxValueHours;
+    
+    private int maxValueMinutes;
+    
+    private int maxValueDays;
+    
     public void initialize() {
+        minValue = 0;
+        maxValueHours = 23;
+        maxValueMinutes = 59;
+        maxValueDays = 30;
         ruleManager = RuleManager.getInstance();
         eventBus = EventBus.getInstance();
         configureUIElements();
@@ -226,14 +238,14 @@ public class FXMLCreationViewController{
     private void configureComboBoxes() {
         comboBoxTrigger.getItems().setAll(TriggerEnum.values());
         comboBoxActionRule.getItems().setAll(ActionEnum.values());
-        configureDaysBox(suspensionDaysBox, 0, 30, 0);
-        configureTimeBox(suspensionHoursBox, 0, 23, 0, "Hours");
-        configureTimeBox(suspensionMinutesBox, 0, 59, 0, "Minutes");
+        configureDaysBox(suspensionDaysBox, minValue, maxValueDays, minValue);
+        configureTimeBox(suspensionHoursBox, minValue, maxValueHours, minValue, "Hours");
+        configureTimeBox(suspensionMinutesBox, minValue, maxValueMinutes, minValue, "Minutes");
     }
     
     private void configureSpinners() {
-        configureSpinner(spinnerHours, 0, 23, java.time.LocalTime.now().getHour());
-        configureSpinner(spinnerMinutes, 0, 59, java.time.LocalTime.now().getMinute());
+        configureSpinner(spinnerHours, minValue, maxValueHours, java.time.LocalTime.now().getHour());
+        configureSpinner(spinnerMinutes, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute());
     }
     
     //cambio nome
@@ -291,7 +303,6 @@ public class FXMLCreationViewController{
                 triggerData.put("type", selectedTrigger.name());
                 triggerData.put("time", timeString);
                 break;
-            // Aggiungere altri casi se necessario
         }
 
         return triggerData;
@@ -320,6 +331,7 @@ public class FXMLCreationViewController{
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, defaultValue);
 
         spinner.setValueFactory(valueFactory);
+        
 
         TextField editor = spinner.getEditor();
         editor.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -329,15 +341,24 @@ public class FXMLCreationViewController{
         });
 
         spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                int value = spinner.getValue();
-                if (value < minValue) {
-                    spinner.getValueFactory().setValue(minValue);
-                } else if (value > maxValue) {
-                    spinner.getValueFactory().setValue(maxValue);
+            if (!newValue) { // Quando lo Spinner perde il focus
+                String text = editor.getText();
+                try {
+                    int value = Integer.parseInt(text);
+                    value = Math.max(minValue, Math.min(value, maxValue)); // Assicurati che il valore sia entro i limiti
+                    valueFactory.setValue(value); // Aggiorna il valore dello Spinner
+                } catch (NumberFormatException e) {
+                    valueFactory.setValue(defaultValue); // Imposta il valore di default se il testo non è un numero valido
                 }
+                editor.setText(valueFactory.getValue().toString()); // Aggiorna l'editor con il valore corretto
             }
         });
+    }
+    
+    private boolean areSpinnerValuesValid() {
+        int hoursValue = spinnerHours.getValue();
+        int minutesValue = spinnerMinutes.getValue();
+        return (hoursValue >= minValue && hoursValue <= maxValueHours) && (minutesValue >= minValue && minutesValue <= maxValueMinutes);
     }
     
     private void showTimeTriggerControls() {
@@ -486,16 +507,16 @@ public class FXMLCreationViewController{
         if(!ruleName.isEmpty()){
             if (ruleManager != null && !ruleManager.getRuleList().isEmpty()) {
                 if (ruleManager.doesRuleNameExist(ruleName)) {
-                    showAlert("Duplicate Rule Name", "A rule with this name already exists. Please choose a different name.");
+                    showAlert("Duplicate Rule Name", "A rule with this name already exists. Please choose a different name.", AlertType.ERROR);
                     ruleNameField.clear();
                 }
             }
         }
     }
 
-    private void showAlert(String title, String content) {
+    private void showAlert(String title, String content, AlertType type) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, content, ButtonType.OK);
+            Alert alert = new Alert(type, content, ButtonType.OK);
             alert.setTitle(title);
             alert.setHeaderText(null);
             alert.showAndWait();
@@ -503,9 +524,7 @@ public class FXMLCreationViewController{
     }
     
     private void onSaveEvent(SaveEvent event){
-        if(event.getType() == SaveEventType.REQUEST){
-            closeWindow();
-        }
+        closeWindow();
     }
     
     private void closeWindow(){

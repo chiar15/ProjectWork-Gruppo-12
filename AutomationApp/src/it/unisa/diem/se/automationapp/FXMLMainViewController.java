@@ -4,14 +4,18 @@
  */
 package it.unisa.diem.se.automationapp;
 
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
+import it.unisa.diem.se.automationapp.event.AudioEvent;
+import it.unisa.diem.se.automationapp.event.AudioEventType;
+import it.unisa.diem.se.automationapp.event.ErrorEvent;
+import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.ErrorEventType;
-import it.unisa.diem.se.automationapp.observer.EventInterface;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
+import it.unisa.diem.se.automationapp.event.EventInterface;
+import it.unisa.diem.se.automationapp.event.EventPersistence;
 import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
-import it.unisa.diem.se.automationapp.observer.SaveEvent;
-import it.unisa.diem.se.automationapp.observer.SaveEventType;
+import it.unisa.diem.se.automationapp.event.SaveEvent;
+import it.unisa.diem.se.automationapp.event.SceneEvent;
+import it.unisa.diem.se.automationapp.event.SceneEventType;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleChecker;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleExecutor;
@@ -23,7 +27,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.ResourceBundle;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +43,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -61,6 +69,12 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     @FXML
     private TableColumn<String, String> ruleActionClm;
     
+    @FXML
+    private Button deleteRuleButton;
+    
+    @FXML
+    private TableColumn<?, ?> ruleStateClm;
+    
     private EventBus eventBus;
 
     private RuleChecker ruleChecker;
@@ -79,8 +93,15 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     
     private boolean isPopupDisplayed;
     
-    @FXML
-    private Button deleteRuleButton;
+    private boolean isAudioPlaying;
+    
+    private Alert audioAlert;
+    
+    private boolean allowCloseAlert;
+    
+    private EventPersistence eventPersistence;
+    
+    private boolean isClosingCritical;
     
     /**
      * Initializes the controller class.
@@ -90,10 +111,15 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         
         eventBus = EventBus.getInstance();
         ruleManager = RuleManager.getInstance();
+        eventPersistence = new EventPersistence();
         observableList = FXCollections.observableArrayList();
         eventQueue = new LinkedList<>();
         isRuleCreationOpen = false;
         isPopupDisplayed = false;
+        isAudioPlaying = false;
+        allowCloseAlert = false;
+        audioAlert = null;
+        isClosingCritical = false;
         
         loadRulesFromFile();
         
@@ -109,7 +135,14 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         eventBus.subscribe(MessageEvent.class, this::onEvent);
         eventBus.subscribe(ErrorEvent.class, this::onEvent);
         eventBus.subscribe(SaveEvent.class, this::onSaveEvent);
+        eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
+       
+        loadEventsFromFile();
 
+        Platform.runLater(() -> {
+            processQueuedPopups();
+        });
+        
         startRuleChecker();
         startRuleExecutor();
         startRuleSaver();
@@ -136,11 +169,14 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
             
             stage.setOnCloseRequest(windowEvent -> {
                 isRuleCreationOpen = false;
+                eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
                 processQueuedPopups();
             });
+            
                         
             stage.show();
             isRuleCreationOpen = true;
+            eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,9 +190,11 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         if (selectedRule != null) {
             Platform.runLater(() -> {
                 isPopupDisplayed = true;
+                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
                 Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete this rule?", ButtonType.YES, ButtonType.NO);
                 alert.showAndWait();
                 isPopupDisplayed = false;
+                eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
                 if (alert.getResult() == ButtonType.YES) {
                     observableList.remove(selectedRule);
                     ruleManager.deleteRule(selectedRule);
@@ -170,12 +208,13 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     public void onRuleCreated(Rule rule) {
         observableList.add(rule);
         isRuleCreationOpen = false;
+        eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
         processQueuedPopups();
     }
     
     //cambiare nome per nuovi eventi
     private void onEvent(EventInterface event) {
-        if (isRuleCreationOpen || isPopupDisplayed) {
+        if (isRuleCreationOpen || isPopupDisplayed || isAudioPlaying) {
             eventQueue.add(event);
         } else{
             this.checkEvent(event);
@@ -188,10 +227,12 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         } else {
             showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
             ErrorEvent errorEvent = (ErrorEvent) event;
-            if(errorEvent.getType() == ErrorEventType.CRITICAL){
+            if(errorEvent.getEventType() == ErrorEventType.CRITICAL){
+                isClosingCritical = true;
                 this.closeApplication();
             }
         }
+        processQueuedPopups();
     }
     
     
@@ -204,27 +245,96 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
     }
 
     private void onSaveEvent(SaveEvent event){
-        if(event.getType() != SaveEventType.REQUEST){
-            if(event.getType() == SaveEventType.FAILURE){
+        String content;
+        
+        if(isClosingCritical){
+            try{
+                ruleManager.saveRulesToFile();
+            } catch (IOException e){
                 showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
+            } finally{
+                Platform.exit();
+                System.exit(0);
             }
-            Platform.exit();
-            System.exit(0);
+        } else{
+            if(!eventQueue.isEmpty()){
+               content = "Some rules are ready to be executed, if you close the application now they will be executed the next time you'll open the application. Are you sure you want to close the application?"; 
+            } else {
+                content = "Are you sure you want to close the application?";
+            }
+
+            Platform.runLater(() -> {
+                isPopupDisplayed = true;
+                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
+                Alert alert = new Alert(AlertType.CONFIRMATION, content, ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+                isPopupDisplayed = false;
+                eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+                if (alert.getResult() == ButtonType.YES) {
+                    if(!eventQueue.isEmpty()){
+                        eventPersistence.saveEventsToFile(eventQueue);
+                    }
+                    try{
+                        ruleManager.saveRulesToFile();
+                    } catch (IOException e){
+                        showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
+                    }finally{
+                        Platform.exit();
+                        System.exit(0);
+                    }
+                    
+                }
+            });
         }
     }
     
     private void showEventAlert(AlertType type, String message, String title) {
         Platform.runLater(() -> {
             isPopupDisplayed = true;
+            eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
             Alert alert = new Alert(type, message, ButtonType.OK);
             alert.setTitle(title);
             alert.showAndWait();
             isPopupDisplayed = false;
-            processQueuedPopups();
+            eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
         });
     }
     
-    public void startRuleChecker() {
+    private void onAudioEvent(AudioEvent event){
+        Platform.runLater(() -> {
+            if(event.getEventType() == AudioEventType.STARTED){
+                isAudioPlaying = true;
+                allowCloseAlert = false;
+                audioAlert = new Alert(Alert.AlertType.NONE);
+                audioAlert.setTitle("Audio Playing");
+                audioAlert.setContentText(event.getMessage());
+
+                // Rendi il dialogo non chiudibile dall'utente
+                DialogPane dialogPane = audioAlert.getDialogPane();
+                dialogPane.getButtonTypes().add(ButtonType.CANCEL);
+                ButtonType cancelButtonType = dialogPane.getButtonTypes().get(0);
+                dialogPane.lookupButton(cancelButtonType).setVisible(false);
+                
+                Stage alertStage = (Stage) audioAlert.getDialogPane().getScene().getWindow();
+                alertStage.setOnCloseRequest(e ->{
+                    if(!allowCloseAlert){
+                        e.consume();
+                    }
+                });
+                
+                audioAlert.show();
+            } else{
+                isAudioPlaying = false;
+                if(audioAlert != null){
+                    allowCloseAlert = true;
+                    audioAlert.close();
+                    audioAlert = null;
+                }
+            }
+        });
+    }
+    
+    private void startRuleChecker() {
         ruleChecker = new RuleChecker();
 
         Thread checkerThread = new Thread(ruleChecker);
@@ -232,7 +342,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         checkerThread.start();  
     }
     
-    public void startRuleExecutor(){
+    private void startRuleExecutor(){
         ruleExecutor = new RuleExecutor();
         
         Thread executorThread = new Thread(ruleExecutor);
@@ -240,7 +350,7 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         executorThread.start();
     }
     
-    public void startRuleSaver(){
+    private void startRuleSaver(){
         ruleSaver = new RuleSaver();
         
         Thread savingThread = new Thread(ruleSaver);
@@ -248,9 +358,19 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         savingThread.start();
     }
     
-    public void loadRulesFromFile(){
+    private void loadRulesFromFile(){
         List<Rule> list = ruleManager.loadRulesFromFile();
-        observableList.addAll(list);
+        if(list != null){
+           observableList.addAll(list); 
+        }
+        
+    }
+    
+    private void loadEventsFromFile(){
+        Queue<EventInterface> queue = eventPersistence.loadEventsFromFile();
+        if(queue != null){
+            eventQueue.addAll(queue);
+        }
     }
     
     private void closeApplication(){

@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 public class RuleTest {
 
@@ -69,5 +71,38 @@ public class RuleTest {
         }
     }
 
+    @Test
+    public void testSetters() {
+        String newName = "UpdatedRule";
+        
+        // Dati validi per TimeTrigger
+        Map<String, String> newTriggerData = new HashMap<>();
+        newTriggerData.put("type", TriggerEnum.TIMETRIGGER.name());
+        newTriggerData.put("time", "12:00");
+        TriggerInterface newTrigger = TriggerFactory.createTrigger(newTriggerData);
 
+        // Dati validi per AudioAction
+        Map<String, String> newActionData = new HashMap<>();
+        newActionData.put("type", ActionEnum.AUDIOACTION.name());
+        newActionData.put("filePath", "path/to/audio/file.wav");
+        ActionInterface newAction = ActionFactory.createAction(newActionData);
+
+        rule.setName(newName);
+        rule.setTrigger(newTrigger);
+        rule.setAction(newAction);
+
+        assertEquals("The name should be updated", newName, rule.getName());
+        assertSame("The trigger should be updated", newTrigger, rule.getTrigger());
+        assertSame("The action should be updated", newAction, rule.getAction());
+    }
+    
+    @Test(expected = Exception.class)
+    public void testExecuteWithException() throws Exception {
+        // Assumiamo che l'azione lanci un'eccezione
+        ActionInterface failingAction = mock(ActionInterface.class);
+        doThrow(new Exception("Test exception")).when(failingAction).execute();
+
+        rule.setAction(failingAction);
+        rule.execute();
+    }
 }

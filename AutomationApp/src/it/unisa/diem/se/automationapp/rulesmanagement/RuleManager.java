@@ -6,9 +6,6 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.ActionFactory;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
-import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.SaveEvent;
-import it.unisa.diem.se.automationapp.observer.SaveEventType;
 import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 import java.io.IOException;
@@ -19,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RuleManager {
     private static RuleManager instance;
-    private EventBus eventBus;
     private RulePersistence rulePersistence;
     private CopyOnWriteArrayList<Rule> ruleList;
     private ConcurrentLinkedQueue<Rule> executionQueue;
@@ -28,8 +24,6 @@ public class RuleManager {
         this.ruleList = new CopyOnWriteArrayList();
         this.executionQueue = new ConcurrentLinkedQueue<>();
         this.rulePersistence = new RulePersistence();
-        this.eventBus = EventBus.getInstance();
-        eventBus.subscribe(SaveEvent.class, this::onSaveBeforeClosing);
     }
 
     public static RuleManager getInstance() {
@@ -63,6 +57,10 @@ public class RuleManager {
         return this.executionQueue.contains(rule);
     }
     
+    public Rule queuePeek(){
+        return this.executionQueue.peek();
+    }
+    
     public Rule createRule(String name, Map<String,String> triggerData, Map<String,String> actionData, long suspensionPeriod){
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -94,20 +92,9 @@ public class RuleManager {
     public List<Rule> loadRulesFromFile(){
        List<Rule> list = rulePersistence.loadRulesFromFile();
        ruleList.clear();
-       ruleList.addAll(list);
+       if(list != null){
+           ruleList.addAll(list);
+       }
        return list;
     }
-    
-    public void onSaveBeforeClosing(SaveEvent event){
-        if(event.getType() == SaveEventType.REQUEST){
-            try{
-                this.saveRulesToFile();
-            } catch (IOException e){
-                eventBus.publish(new SaveEvent("Error while saving rules, the application will be terminated anyway", SaveEventType.FAILURE));
-            } finally {
-                eventBus.publish(new SaveEvent("Saving completed", SaveEventType.SUCCESS));
-            }
-        }
-    }
-    
 }

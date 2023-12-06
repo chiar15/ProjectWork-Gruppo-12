@@ -4,30 +4,15 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import it.unisa.diem.se.automationapp.jsonUtility.ActionDeserializer;
-import it.unisa.diem.se.automationapp.action.ActionInterface;
-import it.unisa.diem.se.automationapp.jsonUtility.ActionSerializer;
-import it.unisa.diem.se.automationapp.observer.ErrorEvent;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import it.unisa.diem.se.automationapp.event.ErrorEvent;
 import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.ErrorEventType;
-import it.unisa.diem.se.automationapp.jsonUtility.TriggerDeserializer;
-import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
-import it.unisa.diem.se.automationapp.jsonUtility.TriggerSerializer;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.List;
@@ -38,43 +23,41 @@ import java.util.List;
  */
 public class RulePersistence {
     private File file;
-    private Gson gson;
+    private ObjectMapper objectMapper;
     private EventBus eventbus;
 
     public RulePersistence() {
-        this.file = new File(System.getProperty("user.dir") + "\\data\\SaveRules.txt");
-        this.gson = new GsonBuilder().registerTypeAdapter(TriggerInterface.class, new TriggerSerializer())
-    .registerTypeAdapter(TriggerInterface.class, new TriggerDeserializer())
-    .registerTypeAdapter(ActionInterface.class, new ActionSerializer())
-    .registerTypeAdapter(ActionInterface.class, new ActionDeserializer())
-    .create();
+        this.file = new File(System.getProperty("user.dir") + "\\data\\SaveRules.json");
+        this.objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         this.eventbus = EventBus.getInstance();
+        // Configura ObjectMapper qui se necessario, come per il polimorfismo
     }
-    
+
+    // Metodo sincronizzato per scrivere le regole nel file
     public void saveRulesToFile(List<Rule> list) throws IOException{
-        String json = gson.toJson(list);
         
-        file.createNewFile();
-        try(PrintWriter fw = new PrintWriter(new BufferedWriter(new FileWriter(file, false)))){
-            fw.write(json);
+        if(file.exists()){
+            objectMapper.writeValue(file, list);
         }
     }
-    
-    public List<Rule> loadRulesFromFile(){
+
+    // Metodo sincronizzato per leggere le regole dal file
+    public List<Rule> loadRulesFromFile() {
         List<Rule> list = new ArrayList<>();
-        if(file.exists()){
-            try(BufferedReader br = new BufferedReader(new FileReader(file))){
-                StringBuilder jsonBuilder = new StringBuilder();
-                String line;
-                while((line = br.readLine())!= null){
-                    jsonBuilder.append(line);
-                }
-                Type ruleListType = new TypeToken<List<Rule>>(){}.getType();
-                list = gson.fromJson(jsonBuilder.toString(), ruleListType);
-            } catch (IOException e){
-                eventbus.publish(new ErrorEvent("Error loading automations from file", ErrorEventType.NORMAL));
-            }
+        
+        
+        try {
+            file.createNewFile();
+            list = objectMapper.readValue(file, new TypeReference<List<Rule>>() {});
+        } catch (MismatchedInputException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            eventbus.publish(new ErrorEvent("Error loading automations from file", ErrorEventType.NORMAL));
         }
+        
         return list;
     }
+
+    // Altri metodi...
 }
