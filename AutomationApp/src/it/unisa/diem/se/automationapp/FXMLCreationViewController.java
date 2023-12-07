@@ -12,9 +12,12 @@ import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -30,16 +33,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -92,6 +97,14 @@ public class FXMLCreationViewController{
     private AnchorPane audioActionAnchor;
     @FXML
     private AnchorPane messageActionAnchor;
+    @FXML
+    private AnchorPane dayOfTheMonthAnchor;
+    @FXML
+    private ComboBox<String> dayOfTheMonthBox;
+    @FXML
+    private AnchorPane datePickerAnchor;
+    @FXML
+    private DatePicker datePicker;
         
     private RuleManager ruleManager;
     
@@ -127,15 +140,28 @@ public class FXMLCreationViewController{
                 case TIMETRIGGER:
                     showTimeTriggerControls();
                     hideDayOfWeekControls();
+                    hideDayOfMonthControls();
+                    hideDatePickerControls();
                     break;
                 case DAYOFWEEKTRIGGER:
                     showDayOfWeekControls();
                     hideTimeTriggerControls();
+                    hideDayOfMonthControls();
+                    hideDatePickerControls();
+                    break;
+                case DAYOFMONTHTRIGGER:
+                    showDayOfMonthControls();
+                    hideTimeTriggerControls();
+                    hideDayOfWeekControls();
+                    hideDatePickerControls();
+                    break;
+                case DATETRIGGER:
+                    showDatePickerControls();
+                    hideTimeTriggerControls();
+                    hideDayOfWeekControls();
+                    hideDayOfMonthControls();
                     break;
                 // Altri casi
-                default:
-                    hideTimeTriggerControls();
-                    break;
             }
         }
     }
@@ -220,6 +246,8 @@ public class FXMLCreationViewController{
         configureComboBoxes();
         configureSpinners();
         configureDayOfWeekComboBox();
+        configureDayOfMonthComboBox();
+        configureDatePicker();
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
         comboBoxActionRule.setFocusTraversable(false);
@@ -230,6 +258,8 @@ public class FXMLCreationViewController{
         hideMessageField();
         hideMultipleExecution();
         hideDayOfWeekControls();
+        hideDayOfMonthControls();
+        hideDatePickerControls();
     }
     
     private void configureComboBoxes() {
@@ -250,6 +280,34 @@ public class FXMLCreationViewController{
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
         );
         dayOfWeekComboBox.setItems(daysOfWeek);
+    }
+    
+    private void configureDayOfMonthComboBox() {
+        ObservableList<String> daysOfMonth = FXCollections.observableArrayList();
+
+        for (int i = 1; i <= 31; i++) {
+            daysOfMonth.add(String.valueOf(i));
+        }
+
+        dayOfTheMonthBox.setItems(daysOfMonth);
+    }
+    
+    private void configureDatePicker() {
+
+        datePicker.setShowWeekNumbers(false);
+        datePicker.setEditable(false);
+        
+        datePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+
+                if (date.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;");
+                }
+            }
+        });
     }
     
     //cambio nome
@@ -285,6 +343,29 @@ public class FXMLCreationViewController{
                 }
             }
         });
+        
+        Tooltip warningTooltip = new Tooltip("Warning: Some months do not have days beyond 28, 29, 30, or 31.");
+        dayOfTheMonthBox.setTooltip(warningTooltip);
+
+        // Timeline per nascondere il tooltip dopo 3 secondi
+        Timeline hideTooltipTimeline = new Timeline(new KeyFrame(Duration.seconds(3), ae -> warningTooltip.hide()));
+
+        dayOfTheMonthBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                int day = Integer.parseInt(newValue);
+                if (day > 28) {
+                    dayOfTheMonthBox.setTooltip(warningTooltip);
+                    warningTooltip.show(dayOfTheMonthBox, 
+                                        dayOfTheMonthBox.localToScreen(dayOfTheMonthBox.getBoundsInLocal()).getMinX(), 
+                                        dayOfTheMonthBox.localToScreen(dayOfTheMonthBox.getBoundsInLocal()).getMaxY());
+                    // Avvia il timeline per nascondere il tooltip dopo 3 secondi
+                    hideTooltipTimeline.playFromStart();
+                } else {
+                    warningTooltip.hide();
+                    hideTooltipTimeline.stop(); // Ferma il timeline se il giorno è <= 28
+                }
+            }
+        });
     }
     
     private void initializeBindings() {
@@ -317,14 +398,28 @@ public class FXMLCreationViewController{
 
     private Map<String, String> prepareTriggerData(TriggerEnum selectedTrigger) {
         Map<String, String> triggerData = new HashMap<>();
-
+        triggerData.put("type", selectedTrigger.name());
         switch (selectedTrigger) {
             case TIMETRIGGER:
                 int hours = spinnerHours.getValue();
                 int minutes = spinnerMinutes.getValue();
                 String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
-                triggerData.put("type", selectedTrigger.name());
                 triggerData.put("time", timeString);
+                break;
+            case DAYOFWEEKTRIGGER:
+                String weekDay = dayOfWeekComboBox.getValue();
+                triggerData.put("day_of_week", weekDay);
+                //preparazione mappa
+                break;
+            case DAYOFMONTHTRIGGER:
+                String day = dayOfTheMonthBox.getValue();
+                triggerData.put("day_of_month", day);
+                //preparazione mappa
+                break;
+            case DATETRIGGER:
+                LocalDate date = datePicker.getValue();
+                triggerData.put("date", date.toString());
+                //preparazione mappa
                 break;
         }
 
@@ -403,6 +498,8 @@ public class FXMLCreationViewController{
 
     private void hideTimeTriggerControls() {
         timeTriggerAnchor.setVisible(false);
+        spinnerHours.getValueFactory().setValue(java.time.LocalTime.now().getHour());
+        spinnerMinutes.getValueFactory().setValue(java.time.LocalTime.now().getMinute());
     }
 
     private void showAudioActionControls() {
@@ -429,11 +526,24 @@ public class FXMLCreationViewController{
     
     private void showDayOfWeekControls() {
         dayOfTheWeekAnchor.setVisible(true);
-        spinnerHours.getValueFactory().setValue(java.time.LocalTime.now().getHour());
-        spinnerMinutes.getValueFactory().setValue(java.time.LocalTime.now().getMinute());
     }
 
-
+    private void hideDayOfMonthControls() {
+        dayOfTheMonthAnchor.setVisible(false);
+        dayOfTheMonthBox.getSelectionModel().clearSelection();
+    }
+    
+    private void showDayOfMonthControls() {
+        dayOfTheMonthAnchor.setVisible(true);
+    }
+    
+    private void hideDatePickerControls() {
+        datePickerAnchor.setVisible(false);
+    }
+        
+    private void showDatePickerControls() {
+        datePickerAnchor.setVisible(true);
+    }
 
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
@@ -446,14 +556,23 @@ public class FXMLCreationViewController{
                         triggerValid = triggerValid &&
                                 (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null) && areTriggerTimeSpinnerValuesValid();
                         break;
-                    // Aggiungere altri casi per altri tipi di trigger se necessario
+                    case DAYOFWEEKTRIGGER:
+                        triggerValid = triggerValid && dayOfWeekComboBox.getValue() != null;
+                        break;
+                    case DAYOFMONTHTRIGGER:
+                        triggerValid = triggerValid && dayOfTheMonthBox.getValue() != null;
+                        break;
+                    case DATETRIGGER:
+                        triggerValid = triggerValid && datePicker.getValue() != null;
+                        break;
+                    // Aggiungi altri casi per altri tipi di trigger se necessario
                     default:
                         break;
                 }
             }
 
             return triggerValid && isFieldsFilled();
-        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty(), singleExecutionCheckBox.selectedProperty(), multipleExecutionsCheckBox.selectedProperty());
+        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty(), singleExecutionCheckBox.selectedProperty(), multipleExecutionsCheckBox.selectedProperty(), dayOfTheMonthBox.valueProperty(), dayOfWeekComboBox.valueProperty(), datePicker.valueProperty());
     }
 
     private BooleanBinding isValidActionInput() {
