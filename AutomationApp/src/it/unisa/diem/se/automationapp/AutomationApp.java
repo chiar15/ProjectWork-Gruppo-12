@@ -1,6 +1,6 @@
 package it.unisa.diem.se.automationapp;
 
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.event.SaveEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;

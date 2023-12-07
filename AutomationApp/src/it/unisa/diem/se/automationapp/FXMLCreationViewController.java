@@ -5,8 +5,8 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.action.ActionEnum;
-import it.unisa.diem.se.automationapp.observer.EventBus;
-import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
+import it.unisa.diem.se.automationapp.event.CreationEvent;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.SaveEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
@@ -91,8 +91,6 @@ public class FXMLCreationViewController{
     private AnchorPane audioActionAnchor;
     @FXML
     private AnchorPane messageActionAnchor;
-    
-    private RuleCreationListener listener;
         
     private RuleManager ruleManager;
     
@@ -212,9 +210,7 @@ public class FXMLCreationViewController{
         Rule rule = ruleManager.createRule(ruleName, triggerData, actionData, suspensionPeriod);
 
         resetFields();
-        if (listener != null) {
-            listener.onRuleCreated(rule);
-        }
+        eventBus.publish(new CreationEvent("Rule Created", rule));
 
         closeWindow();
     }
@@ -291,10 +287,6 @@ public class FXMLCreationViewController{
                 .or(isInvalidMultipleExecution())
             );
     }
-    
-    public void setRuleCreationListener(RuleCreationListener listener) {
-        this.listener = listener;
-    } 
 
     private Map<String, String> prepareActionData(ActionEnum selectedAction) {
         Map<String, String> actionData = new HashMap<>();

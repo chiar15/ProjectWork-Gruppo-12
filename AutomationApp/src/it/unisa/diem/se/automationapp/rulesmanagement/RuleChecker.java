@@ -7,7 +7,7 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 
 public class RuleChecker implements Runnable {
@@ -31,7 +31,7 @@ public class RuleChecker implements Runnable {
                                 rule.setWasExecuted(false);
                             }
                         }
-                        if (rule.isTriggered() && !rule.getWasExecuted() && !ruleManager.queueContainsRule(rule)) {
+                        if (rule.isTriggered() && !rule.getWasExecuted() && !ruleManager.queueContainsRule(rule) && rule.getIsActive()) {
                             ruleManager.queueOffer(rule);
                         }
                     } 

@@ -7,7 +7,7 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import java.io.IOException;

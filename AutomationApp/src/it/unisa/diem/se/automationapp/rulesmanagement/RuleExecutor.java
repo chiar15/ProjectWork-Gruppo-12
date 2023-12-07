@@ -6,11 +6,12 @@ package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
 import it.unisa.diem.se.automationapp.event.AudioEventType;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.event.SceneEvent;
 import it.unisa.diem.se.automationapp.event.SceneEventType;
@@ -50,7 +51,11 @@ public class RuleExecutor implements Runnable {
                     if(rule instanceof SuspendedRuleDecorator){
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                         suspendedRule.setLastExecutionTime(System.currentTimeMillis());
+                    } else{
+                        rule.setIsActive(false);
+                        eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
                     }
+                    
                 } catch (AudioExecutionException e) {
                     eventBus.publish(new ErrorEvent("Errore nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
                     rule.setWasExecuted(true);

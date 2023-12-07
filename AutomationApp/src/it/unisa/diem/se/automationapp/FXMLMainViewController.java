@@ -4,15 +4,16 @@
  */
 package it.unisa.diem.se.automationapp;
 
+import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
 import it.unisa.diem.se.automationapp.event.AudioEventType;
+import it.unisa.diem.se.automationapp.event.CreationEvent;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.event.EventInterface;
-import it.unisa.diem.se.automationapp.event.EventPersistence;
-import it.unisa.diem.se.automationapp.observer.RuleCreationListener;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventPersistence;
 import it.unisa.diem.se.automationapp.event.SaveEvent;
 import it.unisa.diem.se.automationapp.event.SceneEvent;
 import it.unisa.diem.se.automationapp.event.SceneEventType;
@@ -58,7 +59,7 @@ import javafx.stage.Stage;
  *
  * @author agost
  */
-public class FXMLMainViewController implements Initializable, RuleCreationListener {
+public class FXMLMainViewController implements Initializable{
 
     @FXML
     private TableView<Rule> ruleListTable;
@@ -141,6 +142,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         eventBus.subscribe(ErrorEvent.class, this::onEvent);
         eventBus.subscribe(SaveEvent.class, this::onSaveEvent);
         eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
+        eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
+        eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
        
         loadEventsFromFile();
 
@@ -169,7 +172,6 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
             stage.setTitle("Rule Creation Menù");
             FXMLCreationViewController controller = loader.getController();
             controller.initialize();
-            controller.setRuleCreationListener(this);
             stage.setResizable(false);
             
             stage.setOnCloseRequest(windowEvent -> {
@@ -208,14 +210,6 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
                 }
             });
         }
-    }
-    
-    @Override
-    public void onRuleCreated(Rule rule) {
-        observableList.add(rule);
-        isRuleCreationOpen = false;
-        eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
-        processQueuedPopups();
     }
     
     //cambiare nome per nuovi eventi
@@ -340,6 +334,19 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         });
     }
     
+    private void onActiveEvent(ActiveEvent event){
+        int index= observableList.indexOf(event.getRule());
+        observableList.get(index).setIsActive(false);
+        ruleListTable.refresh();
+    }
+    
+    public void onCreationEvent(CreationEvent event) {
+        observableList.add(event.getRule());
+        isRuleCreationOpen = false;
+        eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+        processQueuedPopups();
+    }
+        
     private void startRuleChecker() {
         ruleChecker = new RuleChecker();
 
@@ -384,8 +391,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
         stage.close();
     }
     
-        private void setupRuleStateColumn() {
-        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("wasExecuted"));
+    private void setupRuleStateColumn() {
+        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("isActive"));
         ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
             @Override
             protected void updateItem(Boolean item, boolean empty) {
@@ -405,7 +412,8 @@ public class FXMLMainViewController implements Initializable, RuleCreationListen
                 Rule rule = getTableView().getItems().get(getIndex());
 
                 checkBox.setOnAction(event -> {
-                    rule.setWasExecuted(!checkBox.isSelected());
+                    ruleManager.changeRuleState(rule, checkBox.isSelected());
+                    rule.setIsActive(checkBox.isSelected());
                     setText(checkBox.isSelected() ? "active" : "deactive");
                 });
 

@@ -97,4 +97,15 @@ public class RuleManager {
        }
        return list;
     }
+    
+    public void changeRuleState(Rule rule, boolean state){
+        int index = ruleList.indexOf(rule, 0);
+        ruleList.get(index).setIsActive(state);
+        if(state && rule.getWasExecuted()){
+            rule.setWasExecuted(false);
+        }
+        if(!state && queueContainsRule(rule)){
+            executionQueue.remove(rule);
+        }
+    }
 }

@@ -4,7 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import java.util.Map;

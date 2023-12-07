@@ -12,6 +12,7 @@ public class Rule {
     private TriggerInterface trigger;
     private ActionInterface action;
     private boolean wasExecuted;
+    private boolean isActive;
     
     public Rule(){
         
@@ -22,6 +23,7 @@ public class Rule {
         this.trigger = trigger;
         this.action = action;
         this.wasExecuted = false;
+        this.isActive = true;
     }
 
     public String getName() {
@@ -34,6 +36,14 @@ public class Rule {
     
     public ActionInterface getAction() {
         return action;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public void setName(String name) {

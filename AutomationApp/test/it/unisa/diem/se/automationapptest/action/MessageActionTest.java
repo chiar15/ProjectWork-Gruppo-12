@@ -1,7 +1,7 @@
 package it.unisa.diem.se.automationapptest.action;
 
 import it.unisa.diem.se.automationapp.action.MessageAction;
-import it.unisa.diem.se.automationapp.observer.EventBus;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import org.junit.Before;
 import org.junit.Test;
