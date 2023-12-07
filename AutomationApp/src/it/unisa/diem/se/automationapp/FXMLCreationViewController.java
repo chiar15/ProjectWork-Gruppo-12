@@ -7,12 +7,13 @@ package it.unisa.diem.se.automationapp;
 import it.unisa.diem.se.automationapp.action.ActionEnum;
 import it.unisa.diem.se.automationapp.event.CreationEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
-import it.unisa.diem.se.automationapp.event.SaveEvent;
+import it.unisa.diem.se.automationapp.event.CloseEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
 import java.io.File;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -105,6 +107,40 @@ public class FXMLCreationViewController{
     private AnchorPane datePickerAnchor;
     @FXML
     private DatePicker datePicker;
+    @FXML
+    private AnchorPane stringFileAnchor;
+    @FXML
+    private TextField stringFilePathField;
+    @FXML
+    private Button selectStringFilePathButton;
+    @FXML
+    private AnchorPane copyFileAnchor;
+    @FXML
+    private TextField copyFilePathField;
+    @FXML
+    private Button copyFilePathButton;
+    @FXML
+    private AnchorPane moveFileAnchor;
+    @FXML
+    private AnchorPane deleteFileAnchor;
+    @FXML
+    private TextField moveFilePathField;
+    @FXML
+    private Button moveFilePathButton;
+    @FXML
+    private TextField deleteFilePathField;
+    @FXML
+    private Button deleteFilePathButton;
+    @FXML
+    private TextArea stringAppendField;
+    @FXML
+    private TextField copyFileDestPathField;
+    @FXML
+    private Button copyFileDestPathButton;
+    @FXML
+    private TextField moveFileDestPathField;
+    @FXML
+    private Button moveFieldDestPathButton;
         
     private RuleManager ruleManager;
     
@@ -128,7 +164,7 @@ public class FXMLCreationViewController{
         configureUIElements();
         setupListeners();
         initializeBindings();
-        eventBus.subscribe(SaveEvent.class, this::onSaveEvent);
+        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
     }
 
     @FXML
@@ -174,15 +210,50 @@ public class FXMLCreationViewController{
             switch (selectedAction) {
                 case AUDIOACTION:
                     hideMessageField();
+                    hideStringFileControls();
+                    hideCopyFileControls();
+                    hideMoveFileControls();
+                    hideDeleteFileControls();
                     showAudioActionControls();
                     break;
                 case MESSAGEACTION:
                     hideAudioActionControls();
+                    hideStringFileControls();
+                    hideCopyFileControls();
+                    hideMoveFileControls();
+                    hideDeleteFileControls();
                     showMessageField();
                     break;
-                default:
+                case STRINGACTION:
+                    hideCopyFileControls();
                     hideAudioActionControls();
                     hideMessageField();
+                    hideMoveFileControls();
+                    hideDeleteFileControls();
+                    showStringFileControls();
+                    break;
+                case COPYFILEACTION:
+                    hideStringFileControls();
+                    hideMessageField();
+                    hideMoveFileControls();
+                    hideDeleteFileControls();
+                    showCopyFileControls();
+                    break;
+                case MOVEFILEACTION:
+                    hideAudioActionControls();
+                    hideMessageField();
+                    hideCopyFileControls();
+                    hideStringFileControls();
+                    hideDeleteFileControls();
+                    showMoveFileControls();
+                    break;
+                case DELETEFILEACTION:
+                    hideAudioActionControls();
+                    hideMessageField();
+                    hideCopyFileControls();
+                    hideStringFileControls();
+                    hideMoveFileControls();
+                    showDeleteFileControls();
                     break;
             }
         }
@@ -202,6 +273,92 @@ public class FXMLCreationViewController{
             audioPathField.setText(selectedFile.getAbsolutePath());
         }
     }
+    
+    @FXML
+    private void selectStringFilePathAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the text file");
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+        if (selectedFile != null) {
+            stringFilePathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void copyFilePathAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the file for the copy");
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+        if (selectedFile != null) {
+            copyFilePathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void moveFilePathAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the file to move");
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File selectedFile = fileChooser.showSaveDialog(new Stage());
+
+        if (selectedFile != null) {
+            moveFilePathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+    
+    @FXML
+    private void copyFileDestPathAction(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose destination directory for the copied file");
+
+        File selectedDirectory = directoryChooser.showDialog(new Stage());
+
+        if (selectedDirectory != null) {
+            copyFileDestPathField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void moveFieldDestPathAction(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose destination directory for the moved file");
+
+        File selectedDirectory = directoryChooser.showDialog(new Stage());
+
+        if (selectedDirectory != null) {
+            moveFileDestPathField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+
+    @FXML
+    private void deleteFilePathAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the file to delete");
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File selectedFile = fileChooser.showSaveDialog(new Stage());
+
+        if (selectedFile != null) {
+            deleteFilePathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
+
     
     @FXML
     private void singleExecutionAction(ActionEvent event) {
@@ -260,6 +417,10 @@ public class FXMLCreationViewController{
         hideDayOfWeekControls();
         hideDayOfMonthControls();
         hideDatePickerControls();
+        hideCopyFileControls();
+        hideStringFileControls();
+        hideMoveFileControls();
+        hideDeleteFileControls();
     }
     
     private void configureComboBoxes() {
@@ -378,21 +539,40 @@ public class FXMLCreationViewController{
 
     private Map<String, String> prepareActionData(ActionEnum selectedAction) {
         Map<String, String> actionData = new HashMap<>();
-
+        actionData.put("type", selectedAction.name());
         switch (selectedAction) {
             case AUDIOACTION:
                 String audioFilePath = audioPathField.getText();
-                actionData.put("type", selectedAction.name());
                 actionData.put("filePath", audioFilePath);
                 break;
             case MESSAGEACTION:
                 String message = messageField.getText();
-                actionData.put("type", selectedAction.name());
                 actionData.put("message", message);
                 break;
-            // Aggiungere altri casi se necessario
+            case STRINGACTION:
+                String stringFilePath = stringFilePathField.getText();
+                actionData.put("stringFilePath", stringFilePath);
+                actionData.put("string", stringFilePathField.getText());
+                break;
+            case COPYFILEACTION:
+                String copyFilePath = copyFilePathField.getText();
+                String copyFileDestPath = copyFileDestPathField.getText();
+                actionData.put("copySourcePath", copyFilePath);
+                actionData.put("copyDestPath", copyFileDestPath);
+                break;
+            case MOVEFILEACTION:
+                String moveFilePath = moveFilePathField.getText();
+                String moveFileDestPath = moveFileDestPathField.getText();
+                actionData.put("moveSourcePath", moveFilePath);
+                actionData.put("moveDestPath", moveFileDestPath);
+                break;
+            case DELETEFILEACTION:
+                String deleteFilePath = deleteFilePathField.getText();
+                actionData.put("deleteFilePath", deleteFilePath);
+                break;
+            default:
+                break;
         }
-
         return actionData;
     }
 
@@ -418,7 +598,8 @@ public class FXMLCreationViewController{
                 break;
             case DATETRIGGER:
                 LocalDate date = datePicker.getValue();
-                triggerData.put("date", date.toString());
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                triggerData.put("date", dtf.format(date));
                 //preparazione mappa
                 break;
         }
@@ -521,6 +702,7 @@ public class FXMLCreationViewController{
     }
     
     private void hideDayOfWeekControls() {
+        dayOfWeekComboBox.getSelectionModel().clearSelection();
         dayOfTheWeekAnchor.setVisible(false);
     }
     
@@ -538,11 +720,51 @@ public class FXMLCreationViewController{
     }
     
     private void hideDatePickerControls() {
+        datePicker.setValue(null);
         datePickerAnchor.setVisible(false);
     }
         
     private void showDatePickerControls() {
         datePickerAnchor.setVisible(true);
+    }
+    
+    private void hideStringFileControls() {
+        stringAppendField.clear();
+        stringFilePathField.clear();
+        stringFileAnchor.setVisible(false);
+    }
+    
+    private void showStringFileControls() {
+        stringFileAnchor.setVisible(true);
+    }
+    
+    private void hideCopyFileControls() {
+        copyFilePathField.clear();
+        copyFileDestPathField.clear();
+        copyFileAnchor.setVisible(false);
+    }
+    
+    private void showCopyFileControls() {
+        copyFileAnchor.setVisible(true);
+    }
+    
+    private void hideMoveFileControls() {
+        moveFilePathField.clear();
+        moveFileDestPathField.clear();
+        moveFileAnchor.setVisible(false);
+    }
+    
+    private void showMoveFileControls() {
+        moveFileAnchor.setVisible(true);
+    }
+    
+    private void hideDeleteFileControls() {
+        deleteFilePathField.clear();
+        deleteFileAnchor.setVisible(false);
+    }
+    
+    private void showDeleteFileControls() {
+        deleteFileAnchor.setVisible(true);
     }
 
     private BooleanBinding isValidTriggerInput() {
@@ -588,6 +810,18 @@ public class FXMLCreationViewController{
                     case MESSAGEACTION:
                         actionValid = actionValid && !messageField.getText().isEmpty();
                         break;
+                    case STRINGACTION:
+                        actionValid = actionValid && !stringFilePathField.getText().isEmpty();
+                        break;
+                    case COPYFILEACTION:
+                        actionValid = actionValid && !copyFilePathField.getText().isEmpty() && !copyFileDestPathField.getText().isEmpty();
+                        break;
+                    case MOVEFILEACTION:
+                        actionValid = actionValid && !moveFilePathField.getText().isEmpty() && !moveFileDestPathField.getText().isEmpty();
+                        break;
+                    case DELETEFILEACTION:
+                        actionValid = actionValid && !deleteFilePathField.getText().isEmpty();
+                        break;
                     // Aggiungere altri casi per altri tipi di azione se necessario
                     default:
                         break;
@@ -595,8 +829,9 @@ public class FXMLCreationViewController{
             }
 
             return actionValid && isFieldsFilled();
-        }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
+        }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), stringFilePathField.textProperty(), copyFilePathField.textProperty(), copyFileDestPathField.textProperty(), moveFilePathField.textProperty(), moveFileDestPathField.textProperty(), deleteFilePathField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
     }
+
     
     private BooleanBinding isInvalidMultipleExecution() {
         BooleanBinding daysZero = suspensionDaysBox.valueProperty().isEqualTo("0 Days");
@@ -684,7 +919,7 @@ public class FXMLCreationViewController{
         });
     }
     
-    private void onSaveEvent(SaveEvent event){
+    private void onCloseEvent(CloseEvent event){
         closeWindow();
     }
     

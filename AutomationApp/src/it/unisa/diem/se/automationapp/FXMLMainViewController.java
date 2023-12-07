@@ -14,7 +14,7 @@ import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.event.EventInterface;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventPersistence;
-import it.unisa.diem.se.automationapp.event.SaveEvent;
+import it.unisa.diem.se.automationapp.event.CloseEvent;
 import it.unisa.diem.se.automationapp.event.SceneEvent;
 import it.unisa.diem.se.automationapp.event.SceneEventType;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
@@ -146,7 +146,7 @@ public class FXMLMainViewController implements Initializable{
         
         eventBus.subscribe(MessageEvent.class, this::onEvent);
         eventBus.subscribe(ErrorEvent.class, this::onEvent);
-        eventBus.subscribe(SaveEvent.class, this::onSaveEvent);
+        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
         eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
         eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
         eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
@@ -229,9 +229,9 @@ public class FXMLMainViewController implements Initializable{
     
     private void checkEvent(EventInterface event){
         if(event instanceof MessageEvent){
-            showEventAlert(AlertType.INFORMATION, event.getMessage(), "Message");
+            showAlert(AlertType.INFORMATION, event.getMessage(), "Message");
         } else if(event instanceof ErrorEvent){
-            showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
+            showAlert(AlertType.ERROR, event.getMessage(), "Error");
             ErrorEvent errorEvent = (ErrorEvent) event;
             if(errorEvent.getEventType() == ErrorEventType.CRITICAL){
                 isClosingCritical = true;
@@ -250,14 +250,14 @@ public class FXMLMainViewController implements Initializable{
         }
     }
 
-    private void onSaveEvent(SaveEvent event){
+    private void onCloseEvent(CloseEvent event){
         String content;
         
         if(isClosingCritical){
             try{
                 ruleManager.saveRulesToFile();
             } catch (IOException e){
-                showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
+                showAlert(AlertType.ERROR, event.getMessage(), "Error");
             } finally{
                 Platform.exit();
                 System.exit(0);
@@ -281,7 +281,7 @@ public class FXMLMainViewController implements Initializable{
                     try{
                         ruleManager.saveRulesToFile();
                     } catch (IOException e){
-                        showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
+                        showAlert(AlertType.ERROR, event.getMessage(), "Error");
                     }finally{
                         Platform.exit();
                         System.exit(0);
@@ -292,7 +292,7 @@ public class FXMLMainViewController implements Initializable{
         }
     }
     
-    private void showEventAlert(AlertType type, String message, String title) {
+    private void showAlert(AlertType type, String message, String title) {
         Platform.runLater(() -> {
             isPopupDisplayed = true;
             eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));

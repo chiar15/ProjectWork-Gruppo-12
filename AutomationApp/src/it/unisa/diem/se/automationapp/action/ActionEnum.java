@@ -11,5 +11,5 @@ package it.unisa.diem.se.automationapp.action;
  * @author asjay
  */
 public enum ActionEnum {
-    AUDIOACTION, MESSAGEACTION
+    AUDIOACTION, MESSAGEACTION, STRINGACTION, COPYFILEACTION, MOVEFILEACTION, DELETEFILEACTION
 }

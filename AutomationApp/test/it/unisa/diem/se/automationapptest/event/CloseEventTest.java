@@ -4,17 +4,17 @@
  */
 package it.unisa.diem.se.automationapptest.event;
 
-import it.unisa.diem.se.automationapp.event.SaveEvent;
+import it.unisa.diem.se.automationapp.event.CloseEvent;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class SaveEventTest {
+public class CloseEventTest {
 
     @Test
     public void testCreateAndRetrieveProperties() {
         String testMessage = "Test save message";
 
-        SaveEvent saveEvent = new SaveEvent(testMessage);
+        CloseEvent saveEvent = new CloseEvent(testMessage);
 
         assertEquals("The message should match the one set in constructor", testMessage, saveEvent.getMessage());
     }
@@ -22,7 +22,7 @@ public class SaveEventTest {
     @Test
     public void testSetter() {
         String initialMessage = "Initial save message";
-        SaveEvent saveEvent = new SaveEvent(initialMessage);
+        CloseEvent saveEvent = new CloseEvent(initialMessage);
 
         String newMessage = "New save message";
         saveEvent.setMessage(newMessage);

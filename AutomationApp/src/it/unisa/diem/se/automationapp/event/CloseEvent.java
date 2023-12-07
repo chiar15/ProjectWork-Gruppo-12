@@ -11,15 +11,15 @@ import it.unisa.diem.se.automationapp.event.EventInterface;
  *
  * @author chiar
  */
-@JsonTypeName("save")
-public class SaveEvent implements EventInterface{
+@JsonTypeName("close")
+public class CloseEvent implements EventInterface{
     private String message;
 
-    public SaveEvent() {
+    public CloseEvent() {
     }
 
     
-    public SaveEvent(String message) {
+    public CloseEvent(String message) {
         this.message = message;
     }
     
