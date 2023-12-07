@@ -22,6 +22,7 @@ import it.unisa.diem.se.automationapp.rulesmanagement.RuleChecker;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleExecutor;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleSaver;
+import it.unisa.diem.se.automationapp.rulesmanagement.SuspendedRuleDecorator;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -75,6 +77,8 @@ public class FXMLMainViewController implements Initializable{
     private Button deleteRuleButton;
     @FXML
     private TableColumn<Rule, Boolean> ruleStateClm;
+    @FXML
+    private TableColumn<Rule, String> executionClm;
     
     private EventBus eventBus;
 
@@ -123,6 +127,7 @@ public class FXMLMainViewController implements Initializable{
         isClosingCritical = false;
         
         loadRulesFromFile();
+        configureInformationRow();
         
         ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -133,6 +138,7 @@ public class FXMLMainViewController implements Initializable{
         
         ruleListTable.setItems(observableList);
         setupRuleStateColumn();
+        setupExecutionColumn();
         
         deleteRuleButton.disableProperty().bind(
             ruleListTable.getSelectionModel().selectedItemProperty().isNull()
@@ -161,32 +167,32 @@ public class FXMLMainViewController implements Initializable{
     private void addRuleButtonAction(ActionEvent event) {
         if(!isRuleCreationOpen){
             try {
-            Image icon = new Image(getClass().getResourceAsStream("/icon/icona.png"));
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreationView.fxml"));
-            Parent root = loader.load();
+                Image icon = new Image(getClass().getResourceAsStream("/icon/icona.png"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreationView.fxml"));
+                Parent root = loader.load();
 
-            Stage stage = new Stage();
-            
-            stage.getIcons().add(icon);
-            stage.setScene(new Scene(root));
-            stage.setTitle("Rule Creation Menù");
-            FXMLCreationViewController controller = loader.getController();
-            controller.initialize();
-            stage.setResizable(false);
-            
-            stage.setOnCloseRequest(windowEvent -> {
-                isRuleCreationOpen = false;
-                eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
-                processQueuedPopups();
-            });
-            
-                        
-            stage.show();
-            isRuleCreationOpen = true;
-            eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                Stage stage = new Stage();
+
+                stage.getIcons().add(icon);
+                stage.setScene(new Scene(root));
+                stage.setTitle("Rule Creation Menù");
+                FXMLCreationViewController controller = loader.getController();
+                controller.initialize();
+                stage.setResizable(false);
+
+                stage.setOnCloseRequest(windowEvent -> {
+                    isRuleCreationOpen = false;
+                    eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+                    processQueuedPopups();
+                });
+
+
+                stage.show();
+                isRuleCreationOpen = true;
+                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -426,6 +432,18 @@ public class FXMLMainViewController implements Initializable{
         });
     }
     
+    private void setupExecutionColumn() {
+        executionClm.setCellValueFactory(cellData -> {
+            Rule rule = cellData.getValue();
+            if (rule instanceof SuspendedRuleDecorator) {
+                SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                return new SimpleStringProperty("Multiple Execution (Suspended for " + suspendedRule.getSuspensionPeriod() + " seconds)");
+            } else {
+                return new SimpleStringProperty("Single Execution");
+            }
+        });
+    }
+    
     private void configureInformationRow() {
         ruleListTable.setRowFactory(tv -> {
             TableRow<Rule> row = new TableRow<>();
@@ -438,6 +456,16 @@ public class FXMLMainViewController implements Initializable{
                     details.append("Name: ").append(rowData.getName()).append("\n");
                     details.append("Trigger: ").append(rowData.getTrigger()).append("\n");
                     details.append("Action: ").append(rowData.getAction()).append("\n");
+
+                    if (rowData instanceof SuspendedRuleDecorator) {
+                        SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rowData;
+                        details.append("Execution: Multiple Execution (Suspended for ")
+                                .append(suspendedRule.getSuspensionPeriod())
+                                .append(" seconds)\n");
+                    } else {
+                        details.append("Execution: Single Execution\n");
+                    }
+
                     tooltip.setText(details.toString());
 
                     double mouseX = event.getScreenX();

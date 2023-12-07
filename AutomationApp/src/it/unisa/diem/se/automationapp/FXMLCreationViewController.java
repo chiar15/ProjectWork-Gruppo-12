@@ -35,6 +35,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -257,8 +258,8 @@ public class FXMLCreationViewController{
     }
     
     private void configureSpinners() {
-        configureSpinner(spinnerHours, minValue, maxValueHours, java.time.LocalTime.now().getHour());
-        configureSpinner(spinnerMinutes, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute());
+        configureSpinner(spinnerHours, null, minValue, maxValueHours, java.time.LocalTime.now().getHour(), "Hours");
+        configureSpinner(spinnerMinutes, null, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute(), "Minutes");
     }
     
     private void configureDayOfWeekComboBox() {
@@ -275,6 +276,29 @@ public class FXMLCreationViewController{
             public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) {
                 if (!newPropertyValue) {
                     checkRuleNameValidity();
+                }
+            }
+        });
+        // Listener per spinnerHours
+        spinnerHours.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                spinnerHours.getEditor().setText(oldValue);
+            } else {
+                int value = Integer.parseInt(newValue);
+                if (value < minValue || value > maxValueHours) {
+                    spinnerHours.getEditor().setText(oldValue);
+                }
+            }
+        });
+
+        // Listener per spinnerMinutes
+        spinnerMinutes.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                spinnerMinutes.getEditor().setText(oldValue);
+            } else {
+                int value = Integer.parseInt(newValue);
+                if (value < minValue || value > maxValueMinutes) {
+                    spinnerMinutes.getEditor().setText(oldValue);
                 }
             }
         });
@@ -329,9 +353,6 @@ public class FXMLCreationViewController{
         audioPathField.clear();
         comboBoxTrigger.getSelectionModel().clearSelection();
         comboBoxActionRule.getSelectionModel().clearSelection();
-        
-        spinnerHours.getValueFactory().setValue(Integer.MIN_VALUE);
-        spinnerMinutes.getValueFactory().setValue(Integer.MIN_VALUE);
     }
     
     private long prepareSuspensionPeriod() {
@@ -343,11 +364,10 @@ public class FXMLCreationViewController{
     }
 
     
-    private void configureSpinner(Spinner<Integer> spinner, int minValue, int maxValue, int defaultValue) {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, defaultValue);
+    private void configureSpinner(Spinner<Integer> spinner, Integer initialValue, int minValue, int maxValue, int defaultValue, String unit) {
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initialValue != null ? initialValue : defaultValue);
 
         spinner.setValueFactory(valueFactory);
-        
 
         TextField editor = spinner.getEditor();
         editor.textProperty().addListener((obs, oldValue, newValue) -> {
@@ -356,22 +376,38 @@ public class FXMLCreationViewController{
             }
         });
 
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                spinner.getValueFactory().setValue(defaultValue);
+            }
+        });
+
+        Tooltip tooltip = new Tooltip("Min: " + minValue + ", Max: " + maxValue + " " + unit);
+        spinner.setTooltip(tooltip);
+
+        // Mostra il tooltip quando il cursore passa sopra lo spinner
+        spinner.setOnMouseEntered(event -> {
+            if (!spinner.isFocused()) {
+                tooltip.show(spinner, event.getScreenX(), event.getScreenY() + 20);
+            }
+        });
+
+        // Nascondi il tooltip quando il cursore esce dallo spinner
+        spinner.setOnMouseExited(event -> {
+            if (!spinner.isFocused()) {
+                tooltip.hide();
+            }
+        });
+
+        // Nascondi il tooltip quando lo spinner riceve il focus
         spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Quando lo Spinner perde il focus
-                String text = editor.getText();
-                try {
-                    int value = Integer.parseInt(text);
-                    value = Math.max(minValue, Math.min(value, maxValue)); // Assicurati che il valore sia entro i limiti
-                    valueFactory.setValue(value); // Aggiorna il valore dello Spinner
-                } catch (NumberFormatException e) {
-                    valueFactory.setValue(defaultValue); // Imposta il valore di default se il testo non è un numero valido
-                }
-                editor.setText(valueFactory.getValue().toString()); // Aggiorna l'editor con il valore corretto
+            if (newValue) {
+                tooltip.hide();
             }
         });
     }
     
-    private boolean areSpinnerValuesValid() {
+    private boolean areTriggerTimeSpinnerValuesValid() {
         int hoursValue = spinnerHours.getValue();
         int minutesValue = spinnerMinutes.getValue();
         return (hoursValue >= minValue && hoursValue <= maxValueHours) && (minutesValue >= minValue && minutesValue <= maxValueMinutes);
@@ -415,6 +451,7 @@ public class FXMLCreationViewController{
     }
 
 
+
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
             TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
@@ -424,7 +461,7 @@ public class FXMLCreationViewController{
                 switch (selectedTrigger) {
                     case TIMETRIGGER:
                         triggerValid = triggerValid &&
-                                (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null);
+                                (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null) && areTriggerTimeSpinnerValuesValid();
                         break;
                     // Aggiungere altri casi per altri tipi di trigger se necessario
                     default:
@@ -433,7 +470,7 @@ public class FXMLCreationViewController{
             }
 
             return triggerValid && isFieldsFilled();
-        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty());
+        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty(), singleExecutionCheckBox.selectedProperty(), multipleExecutionsCheckBox.selectedProperty());
     }
 
     private BooleanBinding isValidActionInput() {
