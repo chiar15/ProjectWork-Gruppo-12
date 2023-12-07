@@ -5,12 +5,13 @@
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  *
  * @author chiar
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeName("suspendedRule")
 public class SuspendedRuleDecorator extends Rule {
     private long suspensionPeriod; // Periodo di sospensione in secondi
     private long lastExecutionTime; // Tempo dell'ultima esecuzione in millisecondi

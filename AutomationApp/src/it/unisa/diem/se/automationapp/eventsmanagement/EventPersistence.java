@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unisa.diem.se.automationapp.event.EventInterface;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -42,10 +41,6 @@ public class EventPersistence {
         try {
             file.createNewFile();
             eventQueue = objectMapper.readValue(file, EventQueue.class);
-            PrintWriter writer = new PrintWriter(file.getAbsolutePath());
-            writer.print("");
-            // other operations
-            writer.close();
         } catch (IOException e){
         } 
         

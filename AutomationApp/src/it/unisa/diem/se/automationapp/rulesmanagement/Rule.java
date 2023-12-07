@@ -4,9 +4,20 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
 import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
 
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = "type")
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = Rule.class, name = "rule"),
+  @JsonSubTypes.Type(value = SuspendedRuleDecorator.class, name = "suspendedRule")
+})
 public class Rule {
     private String name;
     private TriggerInterface trigger;

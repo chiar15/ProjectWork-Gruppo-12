@@ -4,11 +4,6 @@
  */
 package it.unisa.diem.se.automationapp.eventsmanagement;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 import it.unisa.diem.se.automationapp.event.EventInterface;
 import java.util.LinkedList;
 import java.util.Queue;

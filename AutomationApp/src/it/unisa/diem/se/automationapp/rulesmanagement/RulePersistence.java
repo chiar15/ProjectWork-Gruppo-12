@@ -13,8 +13,8 @@ import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import static java.util.Collections.list;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,27 +36,28 @@ public class RulePersistence {
 
     // Metodo sincronizzato per scrivere le regole nel file
     public void saveRulesToFile(List<Rule> list) throws IOException{
-        
+        RuleList ruleList = new RuleList();
+        ruleList.setRules(list);
         if(file.exists()){
-            objectMapper.writeValue(file, list);
+            objectMapper.writeValue(file, ruleList);
         }
     }
 
     // Metodo sincronizzato per leggere le regole dal file
     public List<Rule> loadRulesFromFile() {
-        List<Rule> list = new ArrayList<>();
+        //List<Rule> list = new LinkedList<>();
         
-        
+        RuleList ruleList = new RuleList();
         try {
             file.createNewFile();
-            list = objectMapper.readValue(file, new TypeReference<List<Rule>>() {});
+            ruleList = objectMapper.readValue(file, RuleList.class);
         } catch (MismatchedInputException e){
             e.printStackTrace();
         } catch (IOException e){
             eventbus.publish(new ErrorEvent("Error loading automations from file", ErrorEventType.NORMAL));
         }
         
-        return list;
+        return (new LinkedList<>(ruleList.getRules()));
     }
 
     // Altri metodi...

@@ -39,8 +39,15 @@ public class RuleExecutor implements Runnable {
             if(rule != null && !(rule.getAction() instanceof AudioAction && this.sceneBusy)){
                 rule = ruleManager.queuePoll();
                 try {
-                    rule.setWasExecuted(true);
-                    rule.execute();
+                    if(rule.getAction() instanceof AudioAction){
+                        eventBus.publish(new AudioEvent("Playing selected audio", AudioEventType.STARTED));
+                        rule.setWasExecuted(true);
+                        rule.execute();
+                        eventBus.publish(new AudioEvent("Audio stopped", AudioEventType.STOPPED));
+                    } else {
+                        rule.setWasExecuted(true);
+                        rule.execute();
+                    }
                     if(rule instanceof SuspendedRuleDecorator){
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                         suspendedRule.setLastExecutionTime(System.currentTimeMillis());

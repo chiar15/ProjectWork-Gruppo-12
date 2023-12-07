@@ -277,9 +277,7 @@ public class FXMLMainViewController implements Initializable{
                 isPopupDisplayed = false;
                 eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
                 if (alert.getResult() == ButtonType.YES) {
-                    if(!eventQueue.isEmpty()){
-                        eventPersistence.saveEventsToFile(eventQueue);
-                    }
+                    eventPersistence.saveEventsToFile(eventQueue);
                     try{
                         ruleManager.saveRulesToFile();
                     } catch (IOException e){
@@ -462,7 +460,7 @@ public class FXMLMainViewController implements Initializable{
                         details.append("Execution: Multiple Execution (Suspended for ")
                                 .append(suspendedRule.getSuspensionPeriod())
                                 .append(" seconds)\n");
-                    } else {
+                    } else{
                         details.append("Execution: Single Execution\n");
                     }
 
