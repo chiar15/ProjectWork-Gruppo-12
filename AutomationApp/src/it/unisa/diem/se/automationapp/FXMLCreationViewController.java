@@ -216,23 +216,6 @@ public class FXMLCreationViewController{
         closeWindow();
     }
     
-    @FXML
-    private void ruleNameFieldAciton(ActionEvent event) {
-    }
-
-
-    @FXML
-    private void spinnerMinutesAction(MouseEvent event) {
-    }
-
-    @FXML
-    private void audioPathFieldAction(ActionEvent event) {
-    }
-
-    @FXML
-    private void messageFieldAction(MouseEvent event) {
-    }
-    
     private void configureUIElements() {
         configureComboBoxes();
         configureSpinners();

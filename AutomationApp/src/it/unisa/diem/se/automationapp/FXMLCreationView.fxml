@@ -13,102 +13,102 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.5" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
+<SplitPane dividerPositions="0.5" prefHeight="402.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
    <items>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="367.0" style="-fx-background-color: #E8F0FE;">
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="386.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="13.0" layoutY="10.0" prefHeight="93.0" prefWidth="342.0">
+              <VBox layoutX="13.0" layoutY="10.0" prefHeight="378.0" prefWidth="342.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="31.0">
                   <children>
                       <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
-                      <TextField fx:id="ruleNameField" onAction="#ruleNameFieldAciton" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
+                      <TextField fx:id="ruleNameField" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
                   <VBox prefHeight="10.0" prefWidth="330.0" />
                     <VBox prefHeight="44.0" prefWidth="330.0">
                         <children>
                             <ComboBox fx:id="comboBoxTrigger" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxTriggerAction" prefHeight="30.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                         </children>
                     </VBox>
-                  </children>
-              </VBox>
-            <StackPane layoutX="13.0" layoutY="98.0" prefHeight="44.0" prefWidth="346.0">
-               <children>
-                  <AnchorPane fx:id="timeTriggerAnchor" prefHeight="68.0" prefWidth="346.0">
+                  <StackPane prefHeight="35.0" prefWidth="347.0">
                      <children>
-                     <VBox prefHeight="50.0" prefWidth="346.0">
-                        <children>
-                           <VBox prefHeight="40.0" prefWidth="346.0">
+                        <AnchorPane fx:id="timeTriggerAnchor" prefHeight="45.0" prefWidth="346.0">
+                           <children>
+                           <VBox prefHeight="50.0" prefWidth="346.0">
                               <children>
-                                 <HBox prefHeight="40.0" prefWidth="358.0">
+                                 <VBox prefHeight="40.0" prefWidth="346.0">
                                     <children>
-                                       <Label fx:id="labelHours" prefHeight="20.0" prefWidth="61.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
-                                       <HBox prefHeight="50.0" prefWidth="9.0" />
-                                       <Spinner fx:id="spinnerHours" editable="true" prefHeight="25.0" prefWidth="98.0" />
-                                       <HBox prefHeight="40.0" prefWidth="20.0" />
-                                       <Label fx:id="labelMinutes" prefHeight="20.0" prefWidth="73.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
-                                       <HBox prefHeight="50.0" prefWidth="9.0" />
-                                       <HBox prefHeight="50.0" prefWidth="145.0">
+                                       <HBox prefHeight="40.0" prefWidth="358.0">
                                           <children>
-                                             <Spinner fx:id="spinnerMinutes" editable="true" onDragDetected="#spinnerMinutesAction" prefHeight="25.0" prefWidth="85.0" />
+                                             <Label fx:id="labelHours" prefHeight="20.0" prefWidth="61.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Hours:" />
+                                             <HBox prefHeight="50.0" prefWidth="9.0" />
+                                             <Spinner fx:id="spinnerHours" editable="true" prefHeight="25.0" prefWidth="98.0" />
+                                             <HBox prefHeight="40.0" prefWidth="20.0" />
+                                             <Label fx:id="labelMinutes" prefHeight="20.0" prefWidth="73.0" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Minutes:" />
+                                             <HBox prefHeight="50.0" prefWidth="9.0" />
+                                             <HBox prefHeight="50.0" prefWidth="145.0">
+                                                <children>
+                                                   <Spinner fx:id="spinnerMinutes" editable="true" prefHeight="25.0" prefWidth="85.0" />
+                                                </children>
+                                             </HBox>
                                           </children>
                                        </HBox>
                                     </children>
-                                 </HBox>
+                                 </VBox>
                               </children>
                            </VBox>
-                        </children>
-                     </VBox>
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="dayOfTheWeekAnchor" prefHeight="48.0" prefWidth="346.0">
-                     <children>
-                        <VBox prefHeight="33.0" prefWidth="333.0">
-                           <children>
-                              <ComboBox fx:id="dayOfWeekComboBox" prefHeight="25.0" prefWidth="173.0" promptText="Select a day of the week" />
                            </children>
-                        </VBox>
-                     </children>
-                  </AnchorPane>
-               </children>
-            </StackPane>
-              <VBox layoutX="13.0" layoutY="142.0" prefHeight="44.0" prefWidth="347.0">
-                  <children>
-                      <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                  </children>
-              </VBox>
-            <StackPane layoutX="13.0" layoutY="179.0" prefHeight="231.0" prefWidth="347.0">
-               <children>
-                  <AnchorPane fx:id="audioActionAnchor" prefHeight="225.0" prefWidth="347.0">
-                     <children>
-                        <VBox layoutY="-1.0" prefHeight="201.0" prefWidth="342.0">
+                        </AnchorPane>
+                        <AnchorPane fx:id="dayOfTheWeekAnchor" prefHeight="48.0" prefWidth="346.0">
                            <children>
-                                <VBox prefHeight="35.0" prefWidth="333.0">
+                              <VBox prefHeight="50.0" prefWidth="260.0">
+                                 <children>
+                                    <ComboBox fx:id="dayOfWeekComboBox" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="260.0" promptText="Select a day of the week" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </StackPane>
+                    <VBox prefHeight="44.0" prefWidth="342.0">
+                        <children>
+                            <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                        </children>
+                    </VBox>
+                  <StackPane prefHeight="204.0" prefWidth="342.0">
+                     <children>
+                        <AnchorPane fx:id="audioActionAnchor" prefHeight="225.0" prefWidth="347.0">
+                           <children>
+                              <VBox layoutY="-1.0" prefHeight="201.0" prefWidth="342.0">
+                                 <children>
+                                      <VBox prefHeight="35.0" prefWidth="333.0">
+                                          <children>
+                                              <HBox prefHeight="47.0" prefWidth="342.0">
+                                                  <children>
+                                                      <TextField fx:id="audioPathField" editable="false" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                                                <HBox prefHeight="34.0" prefWidth="10.0" />
+                                                      <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                                  </children>
+                                              </HBox>
+                                          </children>
+                                      </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="messageActionAnchor" prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                                <VBox prefHeight="176.0" prefWidth="272.0">
                                     <children>
-                                        <HBox prefHeight="47.0" prefWidth="342.0">
-                                            <children>
-                                                <TextField fx:id="audioPathField" editable="false" onAction="#audioPathFieldAction" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                                          <HBox prefHeight="34.0" prefWidth="10.0" />
-                                                <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                            </children>
-                                        </HBox>
+                                        <TextArea fx:id="messageField" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                                     </children>
                                 </VBox>
                            </children>
-                        </VBox>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="messageActionAnchor" prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                          <VBox prefHeight="176.0" prefWidth="272.0">
-                              <children>
-                                  <TextArea fx:id="messageField" onDragDetected="#messageFieldAction" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                              </children>
-                          </VBox>
-                     </children>
-                  </AnchorPane>
-               </children>
-            </StackPane>
+                  </StackPane>
+                  </children>
+              </VBox>
           </children>
       </AnchorPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #E8F0FE;">
+      <AnchorPane prefHeight="401.0" prefWidth="217.0" style="-fx-background-color: #E8F0FE;">
          <children>
             <VBox layoutX="14.0" layoutY="27.0" prefHeight="186.0" prefWidth="184.0" AnchorPane.leftAnchor="13.0">
                <children>
