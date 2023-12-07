@@ -39,15 +39,8 @@ public class RuleExecutor implements Runnable {
             if(rule != null && !(rule.getAction() instanceof AudioAction && this.sceneBusy)){
                 rule = ruleManager.queuePoll();
                 try {
-                    if(rule.getAction() instanceof AudioAction){
-                        eventBus.publish(new AudioEvent(rule.getName() + ": playing selected audio", AudioEventType.STARTED));
-                        rule.setWasExecuted(true);
-                        rule.execute();
-                        eventBus.publish(new AudioEvent("Audio stopped", AudioEventType.STOPPED));
-                    } else{
-                        rule.execute();
-                        rule.setWasExecuted(true);
-                    }
+                    rule.setWasExecuted(true);
+                    rule.execute();
                     if(rule instanceof SuspendedRuleDecorator){
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                         suspendedRule.setLastExecutionTime(System.currentTimeMillis());
@@ -57,14 +50,17 @@ public class RuleExecutor implements Runnable {
                     }
                     
                 } catch (AudioExecutionException e) {
-                    eventBus.publish(new ErrorEvent("Errore nell'esecuzione della regola " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
-                    rule.setWasExecuted(true);
+                    eventBus.publish(new AudioEvent("Audio stopped", AudioEventType.STOPPED));
+                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
+                    eventBus.publish(new ErrorEvent("Error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
+                    rule.setIsActive(false);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     eventBus.publish(new ErrorEvent("Error in the rule execution thread, application will be terminated.", ErrorEventType.CRITICAL));
                 } catch (Exception e) {
+                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
                     eventBus.publish(new ErrorEvent("Errore generico nell'esecuzione della regola " + rule.getName(), ErrorEventType.NORMAL));
-                    rule.setWasExecuted(true);
+                    rule.setIsActive(false);
                 }
             }
             try{

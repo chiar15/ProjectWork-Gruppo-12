@@ -196,7 +196,7 @@ public class FXMLMainViewController implements Initializable{
 
         if (!selectedRules.isEmpty()) {
             Platform.runLater(() -> {
-                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rules?", ButtonType.YES, ButtonType.NO);
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rule/rules?", ButtonType.YES, ButtonType.NO);
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.YES) {
@@ -224,7 +224,7 @@ public class FXMLMainViewController implements Initializable{
     private void checkEvent(EventInterface event){
         if(event instanceof MessageEvent){
             showEventAlert(AlertType.INFORMATION, event.getMessage(), "Message");
-        } else {
+        } else if(event instanceof ErrorEvent){
             showEventAlert(AlertType.ERROR, event.getMessage(), "Error");
             ErrorEvent errorEvent = (ErrorEvent) event;
             if(errorEvent.getEventType() == ErrorEventType.CRITICAL){
@@ -304,6 +304,7 @@ public class FXMLMainViewController implements Initializable{
         Platform.runLater(() -> {
             if(event.getEventType() == AudioEventType.STARTED){
                 isAudioPlaying = true;
+                isPopupDisplayed = true;
                 allowCloseAlert = false;
                 audioAlert = new Alert(Alert.AlertType.NONE);
                 audioAlert.setTitle("Audio Playing");
@@ -328,8 +329,10 @@ public class FXMLMainViewController implements Initializable{
                 if(audioAlert != null){
                     allowCloseAlert = true;
                     audioAlert.close();
+                    isPopupDisplayed = false;
                     audioAlert = null;
                 }
+                processQueuedPopups();
             }
         });
     }

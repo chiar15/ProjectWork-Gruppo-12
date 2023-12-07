@@ -5,6 +5,9 @@
 package it.unisa.diem.se.automationapp.action;
 
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.event.AudioEvent;
+import it.unisa.diem.se.automationapp.event.AudioEventType;
+import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -17,6 +20,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 
 
 public class AudioAction implements ActionInterface{
@@ -40,7 +44,9 @@ public class AudioAction implements ActionInterface{
     
     @Override
     public void execute()throws AudioExecutionException, InterruptedException{
+        EventBus eventBus = EventBus.getInstance();
         try{
+            eventBus.publish(new AudioEvent("Playing selected audio", AudioEventType.STARTED));
             File audioFile = new File(filePath);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             AudioFormat format = audioStream.getFormat();
@@ -69,6 +75,8 @@ public class AudioAction implements ActionInterface{
             throw new AudioExecutionException ("Audio file format is not supported");
         } catch(IOException e){
             throw new AudioExecutionException ("Cannot access selected audio file");
+        } finally{
+            eventBus.publish(new AudioEvent("Audio stopped", AudioEventType.STOPPED));
         }
     }
     
