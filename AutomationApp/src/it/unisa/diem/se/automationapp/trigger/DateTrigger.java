@@ -38,8 +38,7 @@ public class DateTrigger implements TriggerInterface{
     }
 
     @Override
-    public String getType() {
-        return TriggerEnum.DATETRIGGER.name();
-    }
-    
+    public String toString() {
+        return date;
+    } 
 }

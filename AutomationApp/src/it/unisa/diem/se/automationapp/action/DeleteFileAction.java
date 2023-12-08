@@ -38,10 +38,4 @@ public class DeleteFileAction implements ActionInterface{
         Path deletePath = Paths.get(filePath);
         Files.delete(deletePath);
     }
-
-    @Override
-    public String getType() {
-        return ActionEnum.DELETEFILEACTION.name();
-    }
-    
 }

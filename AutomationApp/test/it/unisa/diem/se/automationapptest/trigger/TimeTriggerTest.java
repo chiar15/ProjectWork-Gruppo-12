@@ -43,14 +43,4 @@ public class TimeTriggerTest {
         TimeTrigger timeTrigger = new TimeTrigger(triggerData);
         assertTrue(timeTrigger.isTriggered());
     }
-    
-    @Test
-    public void testGetType() {
-        Map<String, String> triggerData = new HashMap<>();
-        String projectDirectory = System.getProperty("user.dir");
-        triggerData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
-
-        TimeTrigger timeTrigger = new TimeTrigger(triggerData);
-        assertEquals("Il tipo di azione dovrebbe essere AUDIOACTION", "AUDIOACTION", timeTrigger.getType());
-    }
 }

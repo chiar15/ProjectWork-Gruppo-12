@@ -54,10 +54,4 @@ public class StringAction implements ActionInterface{
             pw.append(string + " ");
         }
     }
-
-    @Override
-    public String getType() {
-        return ActionEnum.STRINGACTION.name();
-    }
-    
 }

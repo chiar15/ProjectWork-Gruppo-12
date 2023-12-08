@@ -20,5 +20,4 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 public interface ActionInterface {
     void execute() throws Exception;
-    String getType();
 }

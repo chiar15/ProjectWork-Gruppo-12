@@ -50,9 +50,4 @@ public class CopyFileAction implements ActionInterface{
         Path destinationPath = Paths.get(destinationFolder, fileName);
         Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
     }
-
-    @Override
-    public String getType() {
-        return ActionEnum.COPYFILEACTION.name();
-    }
 }

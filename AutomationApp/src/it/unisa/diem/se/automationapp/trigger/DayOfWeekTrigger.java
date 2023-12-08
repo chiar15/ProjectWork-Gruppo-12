@@ -38,8 +38,7 @@ public class DayOfWeekTrigger implements TriggerInterface{
     }
 
     @Override
-    public String getType() {
-        return TriggerEnum.DAYOFWEEKTRIGGER.name();
+    public String toString() {
+        return dayOfWeek;
     }
-    
 }

@@ -4,13 +4,21 @@
  */
 package it.unisa.diem.se.automationapp;
 
-import it.unisa.diem.se.automationapp.action.ActionEnum;
+import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.action.CopyFileAction;
+import it.unisa.diem.se.automationapp.action.DeleteFileAction;
+import it.unisa.diem.se.automationapp.action.MessageAction;
+import it.unisa.diem.se.automationapp.action.MoveFileAction;
+import it.unisa.diem.se.automationapp.action.StringAction;
 import it.unisa.diem.se.automationapp.event.CreationEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.CloseEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
-import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
+import it.unisa.diem.se.automationapp.trigger.DateTrigger;
+import it.unisa.diem.se.automationapp.trigger.DayOfMonthTrigger;
+import it.unisa.diem.se.automationapp.trigger.DayOfWeekTrigger;
+import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +65,7 @@ public class FXMLCreationViewController{
     @FXML
     private TextField ruleNameField;
     @FXML
-    private ComboBox<TriggerEnum> comboBoxTrigger;
+    private ComboBox<String> comboBoxTrigger;
     @FXML
     private Label labelHours;
     @FXML
@@ -67,14 +75,13 @@ public class FXMLCreationViewController{
     @FXML
     private Spinner<Integer> spinnerMinutes;
     @FXML
-    private ComboBox<ActionEnum> comboBoxActionRule;
+    private ComboBox<String> comboBoxActionRule;
     @FXML
     private TextField audioPathField;
     @FXML
     private Button audioPathButton;
     @FXML
     private Button createRuleButton;
-    
     @FXML
     private TextArea messageField;
     @FXML
@@ -154,11 +161,27 @@ public class FXMLCreationViewController{
     
     private int maxValueDays;
     
+    private static final String TIME_TRIGGER = "Choose Hour and Minute";
+    
+    private static final String DAY_OF_WEEK_TRIGGER = "Select Day of the Week";
+    
+    private static final String DAY_OF_MONTH_TRIGGER = "Pick a Day of the Month";
+    
+    private static final String DATE_TRIGGER = "Set Specific Date";
+    
+    private static final String AUDIO_ACTION = "Play Audio File";
+    
+    private static final String MESSAGE_ACTION = "Send a Message";
+    
+    private static final String STRING_ACTION = "Insert String in a .txt File";
+    
+    private static final String COPY_FILE_ACTION = "Copy a File";
+    
+    private static final String MOVE_FILE_ACTION = "Move a File";
+    
+    private static final String DELETE_FILE_ACTION = "Delete a File";
+    
     public void initialize() {
-        minValue = 0;
-        maxValueHours = 23;
-        maxValueMinutes = 59;
-        maxValueDays = 30;
         ruleManager = RuleManager.getInstance();
         eventBus = EventBus.getInstance();
         configureUIElements();
@@ -169,29 +192,29 @@ public class FXMLCreationViewController{
 
     @FXML
     private void comboBoxTriggerAction(ActionEvent event) {
-        TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+        String selectedTrigger = comboBoxTrigger.getValue();
 
         if (selectedTrigger != null) {
             switch (selectedTrigger) {
-                case TIMETRIGGER:
+                case TIME_TRIGGER:
                     showTimeTriggerControls();
                     hideDayOfWeekControls();
                     hideDayOfMonthControls();
                     hideDatePickerControls();
                     break;
-                case DAYOFWEEKTRIGGER:
+                case DAY_OF_WEEK_TRIGGER:
                     showDayOfWeekControls();
                     hideTimeTriggerControls();
                     hideDayOfMonthControls();
                     hideDatePickerControls();
                     break;
-                case DAYOFMONTHTRIGGER:
+                case DAY_OF_MONTH_TRIGGER:
                     showDayOfMonthControls();
                     hideTimeTriggerControls();
                     hideDayOfWeekControls();
                     hideDatePickerControls();
                     break;
-                case DATETRIGGER:
+                case DATE_TRIGGER:
                     showDatePickerControls();
                     hideTimeTriggerControls();
                     hideDayOfWeekControls();
@@ -204,11 +227,11 @@ public class FXMLCreationViewController{
 
     @FXML
     private void comboBoxActionRule(ActionEvent event) {
-        ActionEnum selectedAction = comboBoxActionRule.getValue();
+        String selectedAction = comboBoxActionRule.getValue();
 
         if (selectedAction != null) {
             switch (selectedAction) {
-                case AUDIOACTION:
+                case AUDIO_ACTION:
                     hideMessageField();
                     hideStringFileControls();
                     hideCopyFileControls();
@@ -216,7 +239,7 @@ public class FXMLCreationViewController{
                     hideDeleteFileControls();
                     showAudioActionControls();
                     break;
-                case MESSAGEACTION:
+                case MESSAGE_ACTION:
                     hideAudioActionControls();
                     hideStringFileControls();
                     hideCopyFileControls();
@@ -224,7 +247,7 @@ public class FXMLCreationViewController{
                     hideDeleteFileControls();
                     showMessageField();
                     break;
-                case STRINGACTION:
+                case STRING_ACTION:
                     hideCopyFileControls();
                     hideAudioActionControls();
                     hideMessageField();
@@ -232,14 +255,14 @@ public class FXMLCreationViewController{
                     hideDeleteFileControls();
                     showStringFileControls();
                     break;
-                case COPYFILEACTION:
+                case COPY_FILE_ACTION:
                     hideStringFileControls();
                     hideMessageField();
                     hideMoveFileControls();
                     hideDeleteFileControls();
                     showCopyFileControls();
                     break;
-                case MOVEFILEACTION:
+                case MOVE_FILE_ACTION:
                     hideAudioActionControls();
                     hideMessageField();
                     hideCopyFileControls();
@@ -247,7 +270,7 @@ public class FXMLCreationViewController{
                     hideDeleteFileControls();
                     showMoveFileControls();
                     break;
-                case DELETEFILEACTION:
+                case DELETE_FILE_ACTION:
                     hideAudioActionControls();
                     hideMessageField();
                     hideCopyFileControls();
@@ -278,7 +301,7 @@ public class FXMLCreationViewController{
     private void selectStringFilePathAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the text file");
-
+        
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
 
@@ -294,8 +317,7 @@ public class FXMLCreationViewController{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the file for the copy");
 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(new Stage());
 
@@ -309,8 +331,7 @@ public class FXMLCreationViewController{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the file to move");
 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(new Stage());
 
@@ -349,8 +370,7 @@ public class FXMLCreationViewController{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select the file to delete");
 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(new Stage());
 
@@ -382,8 +402,8 @@ public class FXMLCreationViewController{
     private void createRuleButtonAction(ActionEvent event) {
         String ruleName = ruleNameField.getText();
         long suspensionPeriod = 0;
-        TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
-        ActionEnum selectedAction = comboBoxActionRule.getValue();
+        String selectedTrigger = comboBoxTrigger.getValue();
+        String selectedAction = comboBoxActionRule.getValue();
 
         Map<String, String> triggerData = prepareTriggerData(selectedTrigger);
         Map<String, String> actionData = prepareActionData(selectedAction);
@@ -402,8 +422,6 @@ public class FXMLCreationViewController{
     private void configureUIElements() {
         configureComboBoxes();
         configureSpinners();
-        configureDayOfWeekComboBox();
-        configureDayOfMonthComboBox();
         configureDatePicker();
         ruleNameField.setFocusTraversable(false);
         comboBoxTrigger.setFocusTraversable(false);
@@ -424,14 +442,33 @@ public class FXMLCreationViewController{
     }
     
     private void configureComboBoxes() {
-        comboBoxTrigger.getItems().setAll(TriggerEnum.values());
-        comboBoxActionRule.getItems().setAll(ActionEnum.values());
+        comboBoxTrigger.getItems().addAll(
+            TIME_TRIGGER, 
+            DAY_OF_WEEK_TRIGGER, 
+            DAY_OF_MONTH_TRIGGER, 
+            DATE_TRIGGER
+        );
+        comboBoxActionRule.getItems().setAll(
+                AUDIO_ACTION,
+                MESSAGE_ACTION, 
+                STRING_ACTION, 
+                COPY_FILE_ACTION, 
+                MOVE_FILE_ACTION, 
+                DELETE_FILE_ACTION
+        );
         configureDaysBox(suspensionDaysBox, minValue, maxValueDays, minValue);
         configureTimeBox(suspensionHoursBox, minValue, maxValueHours, minValue, "Hours");
         configureTimeBox(suspensionMinutesBox, minValue, maxValueMinutes, minValue, "Minutes");
+
+        configureDayOfWeekComboBox();
+        configureDayOfMonthComboBox();
     }
     
     private void configureSpinners() {
+        minValue = 0;
+        maxValueHours = 23;
+        maxValueMinutes = 59;
+        maxValueDays = 30;
         configureSpinner(spinnerHours, null, minValue, maxValueHours, java.time.LocalTime.now().getHour(), "Hours");
         configureSpinner(spinnerMinutes, null, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute(), "Minutes");
     }
@@ -471,7 +508,6 @@ public class FXMLCreationViewController{
         });
     }
     
-    //cambio nome
     private void setupListeners() {
         ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -481,7 +517,6 @@ public class FXMLCreationViewController{
                 }
             }
         });
-        // Listener per spinnerHours
         spinnerHours.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 spinnerHours.getEditor().setText(oldValue);
@@ -493,7 +528,6 @@ public class FXMLCreationViewController{
             }
         });
 
-        // Listener per spinnerMinutes
         spinnerMinutes.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 spinnerMinutes.getEditor().setText(oldValue);
@@ -508,7 +542,6 @@ public class FXMLCreationViewController{
         Tooltip warningTooltip = new Tooltip("Warning: Some months do not have days beyond 28, 29, 30, or 31.");
         dayOfTheMonthBox.setTooltip(warningTooltip);
 
-        // Timeline per nascondere il tooltip dopo 3 secondi
         Timeline hideTooltipTimeline = new Timeline(new KeyFrame(Duration.seconds(3), ae -> warningTooltip.hide()));
 
         dayOfTheMonthBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -519,11 +552,10 @@ public class FXMLCreationViewController{
                     warningTooltip.show(dayOfTheMonthBox, 
                                         dayOfTheMonthBox.localToScreen(dayOfTheMonthBox.getBoundsInLocal()).getMinX(), 
                                         dayOfTheMonthBox.localToScreen(dayOfTheMonthBox.getBoundsInLocal()).getMaxY());
-                    // Avvia il timeline per nascondere il tooltip dopo 3 secondi
                     hideTooltipTimeline.playFromStart();
                 } else {
                     warningTooltip.hide();
-                    hideTooltipTimeline.stop(); // Ferma il timeline se il giorno è <= 28
+                    hideTooltipTimeline.stop();
                 }
             }
         });
@@ -537,37 +569,42 @@ public class FXMLCreationViewController{
             );
     }
 
-    private Map<String, String> prepareActionData(ActionEnum selectedAction) {
+    private Map<String, String> prepareActionData(String selectedAction) {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", selectedAction.name());
         switch (selectedAction) {
-            case AUDIOACTION:
+            case AUDIO_ACTION:
                 String audioFilePath = audioPathField.getText();
+                actionData.put("type", AudioAction.class.getSimpleName());
                 actionData.put("filePath", audioFilePath);
                 break;
-            case MESSAGEACTION:
+            case MESSAGE_ACTION:
                 String message = messageField.getText();
+                actionData.put("type", MessageAction.class.getSimpleName());
                 actionData.put("message", message);
                 break;
-            case STRINGACTION:
+            case STRING_ACTION:
                 String stringFilePath = stringFilePathField.getText();
+                actionData.put("type", StringAction.class.getSimpleName());
                 actionData.put("stringFilePath", stringFilePath);
                 actionData.put("string", stringAppendField.getText());
                 break;
-            case COPYFILEACTION:
+            case COPY_FILE_ACTION:
                 String copyFilePath = copyFilePathField.getText();
                 String copyFileDestPath = copyFileDestPathField.getText();
+                actionData.put("type", CopyFileAction.class.getSimpleName());
                 actionData.put("copySourcePath", copyFilePath);
                 actionData.put("copyDestPath", copyFileDestPath);
                 break;
-            case MOVEFILEACTION:
+            case MOVE_FILE_ACTION:
                 String moveFilePath = moveFilePathField.getText();
                 String moveFileDestPath = moveFileDestPathField.getText();
+                actionData.put("type", MoveFileAction.class.getSimpleName());
                 actionData.put("moveSourcePath", moveFilePath);
                 actionData.put("moveDestPath", moveFileDestPath);
                 break;
-            case DELETEFILEACTION:
+            case DELETE_FILE_ACTION:
                 String deleteFilePath = deleteFilePathField.getText();
+                actionData.put("type", DeleteFileAction.class.getSimpleName());
                 actionData.put("deleteFilePath", deleteFilePath);
                 break;
             default:
@@ -576,31 +613,31 @@ public class FXMLCreationViewController{
         return actionData;
     }
 
-    private Map<String, String> prepareTriggerData(TriggerEnum selectedTrigger) {
+    private Map<String, String> prepareTriggerData(String selectedTrigger) {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", selectedTrigger.name());
         switch (selectedTrigger) {
-            case TIMETRIGGER:
+            case TIME_TRIGGER:
                 int hours = spinnerHours.getValue();
                 int minutes = spinnerMinutes.getValue();
                 String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
+                triggerData.put("type", TimeTrigger.class.getSimpleName());
                 triggerData.put("time", timeString);
                 break;
-            case DAYOFWEEKTRIGGER:
+            case DAY_OF_WEEK_TRIGGER:
                 String weekDay = dayOfWeekComboBox.getValue();
+                triggerData.put("type", DayOfWeekTrigger.class.getSimpleName());
                 triggerData.put("day_of_week", weekDay);
-                //preparazione mappa
                 break;
-            case DAYOFMONTHTRIGGER:
+            case DAY_OF_MONTH_TRIGGER:
                 String day = dayOfTheMonthBox.getValue();
+                triggerData.put("type", DayOfMonthTrigger.class.getSimpleName());
                 triggerData.put("day_of_month", day);
-                //preparazione mappa
                 break;
-            case DATETRIGGER:
+            case DATE_TRIGGER:
                 LocalDate date = datePicker.getValue();
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                triggerData.put("type", DateTrigger.class.getSimpleName());
                 triggerData.put("date", dtf.format(date));
-                //preparazione mappa
                 break;
         }
 
@@ -769,22 +806,22 @@ public class FXMLCreationViewController{
 
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
-            TriggerEnum selectedTrigger = comboBoxTrigger.getValue();
+            String selectedTrigger = comboBoxTrigger.getValue();
             boolean triggerValid = selectedTrigger != null;
 
             if (selectedTrigger != null) {
                 switch (selectedTrigger) {
-                    case TIMETRIGGER:
+                    case TIME_TRIGGER:
                         triggerValid = triggerValid &&
                                 (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null) && areTriggerTimeSpinnerValuesValid();
                         break;
-                    case DAYOFWEEKTRIGGER:
+                    case DAY_OF_WEEK_TRIGGER:
                         triggerValid = triggerValid && dayOfWeekComboBox.getValue() != null;
                         break;
-                    case DAYOFMONTHTRIGGER:
+                    case DAY_OF_MONTH_TRIGGER:
                         triggerValid = triggerValid && dayOfTheMonthBox.getValue() != null;
                         break;
-                    case DATETRIGGER:
+                    case DATE_TRIGGER:
                         triggerValid = triggerValid && datePicker.getValue() != null;
                         break;
                     // Aggiungi altri casi per altri tipi di trigger se necessario
@@ -799,27 +836,27 @@ public class FXMLCreationViewController{
 
     private BooleanBinding isValidActionInput() {
         return Bindings.createBooleanBinding(() -> {
-            ActionEnum selectedAction = comboBoxActionRule.getValue();
+            String selectedAction = comboBoxActionRule.getValue();
             boolean actionValid = selectedAction != null;
 
             if (selectedAction != null) {
                 switch (selectedAction) {
-                    case AUDIOACTION:
+                    case AUDIO_ACTION:
                         actionValid = actionValid && !audioPathField.getText().isEmpty();
                         break;
-                    case MESSAGEACTION:
+                    case MESSAGE_ACTION:
                         actionValid = actionValid && !messageField.getText().isEmpty();
                         break;
-                    case STRINGACTION:
+                    case STRING_ACTION:
                         actionValid = actionValid && !stringFilePathField.getText().isEmpty();
                         break;
-                    case COPYFILEACTION:
+                    case COPY_FILE_ACTION:
                         actionValid = actionValid && !copyFilePathField.getText().isEmpty() && !copyFileDestPathField.getText().isEmpty();
                         break;
-                    case MOVEFILEACTION:
+                    case MOVE_FILE_ACTION:
                         actionValid = actionValid && !moveFilePathField.getText().isEmpty() && !moveFileDestPathField.getText().isEmpty();
                         break;
-                    case DELETEFILEACTION:
+                    case DELETE_FILE_ACTION:
                         actionValid = actionValid && !deleteFilePathField.getText().isEmpty();
                         break;
                     // Aggiungere altri casi per altri tipi di azione se necessario

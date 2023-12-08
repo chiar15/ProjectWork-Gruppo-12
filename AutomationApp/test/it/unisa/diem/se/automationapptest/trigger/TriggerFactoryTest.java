@@ -15,7 +15,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateTimeTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
+        triggerData.put("type", TimeTrigger.class.getSimpleName());
         triggerData.put("time", "10:00");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
@@ -25,7 +25,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDayOfWeekTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", TriggerEnum.DAYOFWEEKTRIGGER.name());
+        triggerData.put("type", DayOfWeekTrigger.class.getSimpleName());
         triggerData.put("day_of_week", "MONDAY");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
@@ -35,7 +35,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDayOfMonthTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", TriggerEnum.DAYOFMONTHTRIGGER.name());
+        triggerData.put("type", DayOfMonthTrigger.class.getSimpleName());
         triggerData.put("day_of_month", "15");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
@@ -45,7 +45,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDateTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", TriggerEnum.DATETRIGGER.name());
+        triggerData.put("type", DateTrigger.class.getSimpleName());
         triggerData.put("date", "01/01/2023");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);

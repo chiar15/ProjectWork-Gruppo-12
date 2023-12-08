@@ -5,6 +5,7 @@
 package it.unisa.diem.se.automationapptest.trigger;
 
 import it.unisa.diem.se.automationapp.trigger.DateTrigger;
+import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -43,11 +44,6 @@ public class DateTriggerTest {
     @Test
     public void testIsTriggered() {
         assertTrue("The trigger should be activated on the current date", dateTrigger.isTriggered());
-    }
-
-    @Test
-    public void testGetType() {
-        assertEquals("The trigger type should be DATETRIGGER", "DATETRIGGER", dateTrigger.getType());
     }
 }
 

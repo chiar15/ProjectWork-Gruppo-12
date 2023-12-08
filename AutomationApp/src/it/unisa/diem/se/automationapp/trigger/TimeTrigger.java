@@ -35,9 +35,4 @@ public class TimeTrigger implements TriggerInterface{
     public String toString() {
         return time;
     }
-
-    @Override
-    public String getType() {
-        return TriggerEnum.TIMETRIGGER.name();
-    }
 }

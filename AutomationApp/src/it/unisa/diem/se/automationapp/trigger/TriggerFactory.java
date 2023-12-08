@@ -11,13 +11,13 @@ public class TriggerFactory {
     public static TriggerInterface createTrigger(Map<String, String> triggerData){
         String type = triggerData.get("type");
         
-        if(type.equalsIgnoreCase(TriggerEnum.TIMETRIGGER.name())){
+        if(type.equalsIgnoreCase(TimeTrigger.class.getSimpleName())){
             return new TimeTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(TriggerEnum.DAYOFWEEKTRIGGER.name())) {
+        } else if (type.equalsIgnoreCase(DayOfWeekTrigger.class.getSimpleName())) {
             return new DayOfWeekTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(TriggerEnum.DAYOFMONTHTRIGGER.name())) {
+        } else if (type.equalsIgnoreCase(DayOfMonthTrigger.class.getSimpleName())) {
             return new DayOfMonthTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(TriggerEnum.DATETRIGGER.name())) {
+        } else if (type.equalsIgnoreCase(DateTrigger.class.getSimpleName())) {
             return new DateTrigger(triggerData);
         } else {
             throw new IllegalArgumentException("Invalid trigger type: " + type);

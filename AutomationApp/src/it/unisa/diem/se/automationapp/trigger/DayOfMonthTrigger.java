@@ -36,8 +36,7 @@ public class DayOfMonthTrigger implements TriggerInterface{
     }
 
     @Override
-    public String getType() {
-        return TriggerEnum.DAYOFMONTHTRIGGER.name();
+    public String toString() {
+        return dayOfMonth;
     }
-    
 }

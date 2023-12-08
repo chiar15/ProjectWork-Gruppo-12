@@ -44,9 +44,4 @@ public class DayOfWeekTriggerTest {
     public void testIsTriggered() {
         assertTrue("The trigger should be activated on the current day of the week", dayOfWeekTrigger.isTriggered());
     }
-
-    @Test
-    public void testGetType() {
-        assertEquals("The trigger type should be DAYOFWEEKTRIGGER", "DAYOFWEEKTRIGGER", dayOfWeekTrigger.getType());
-    }
 }

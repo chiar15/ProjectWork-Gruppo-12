@@ -42,10 +42,5 @@ public class DayOfMonthTriggerTest {
     public void testIsTriggered() {
         assertTrue("The trigger should be activated on the current day of the month", dayOfMonthTrigger.isTriggered());
     }
-
-    @Test
-    public void testGetType() {
-        assertEquals("The trigger type should be DAYOFMONTHTRIGGER", "DAYOFMONTHTRIGGER", dayOfMonthTrigger.getType());
-    }
 }
 

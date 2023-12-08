@@ -42,9 +42,4 @@ public class MessageAction implements ActionInterface{
     public String toString() {
         return "POPUP MESSAGE - " + "Message: " + message;
     }
-
-    @Override
-    public String getType() {
-        return ActionEnum.MESSAGEACTION.name();
-    }
 }
