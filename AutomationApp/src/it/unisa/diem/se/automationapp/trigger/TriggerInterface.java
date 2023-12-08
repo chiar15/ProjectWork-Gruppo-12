@@ -9,7 +9,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "triggerType")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = TimeTrigger.class, name = "time")
+    @JsonSubTypes.Type(value = TimeTrigger.class, name = "time"),
+    @JsonSubTypes.Type(value = DayOfWeekTrigger.class, name = "dayOfWeek"),
+    @JsonSubTypes.Type(value = DayOfMonthTrigger.class, name = "dayOfMonth"),
+    @JsonSubTypes.Type(value = DateTrigger.class, name = "date")
 })
 
 public interface TriggerInterface {

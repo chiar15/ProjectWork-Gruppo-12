@@ -4,10 +4,7 @@
  */
 package it.unisa.diem.se.automationapptest.trigger;
 
-import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
-import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
-import it.unisa.diem.se.automationapp.trigger.TriggerFactory;
-import it.unisa.diem.se.automationapp.trigger.TriggerInterface;
+import it.unisa.diem.se.automationapp.trigger.*;
 import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +19,44 @@ public class TriggerFactoryTest {
         triggerData.put("time", "10:00");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
-
-        assertNotNull(trigger);
         assertTrue(trigger instanceof TimeTrigger);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateTriggerWithInvalidType() {
+    @Test
+    public void testCreateDayOfWeekTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", "InvalidTriggerType");
-        triggerData.put("someKey", "someValue");
+        triggerData.put("type", TriggerEnum.DAYOFWEEKTRIGGER.name());
+        triggerData.put("day_of_week", "MONDAY");
+
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
+        assertTrue(trigger instanceof DayOfWeekTrigger);
+    }
+
+    @Test
+    public void testCreateDayOfMonthTrigger() {
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", TriggerEnum.DAYOFMONTHTRIGGER.name());
+        triggerData.put("day_of_month", "15");
+
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
+        assertTrue(trigger instanceof DayOfMonthTrigger);
+    }
+
+    @Test
+    public void testCreateDateTrigger() {
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", TriggerEnum.DATETRIGGER.name());
+        triggerData.put("date", "01/01/2023");
+
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
+        assertTrue(trigger instanceof DateTrigger);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateInvalidTrigger() {
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", "INVALID_TYPE");
 
         TriggerFactory.createTrigger(triggerData);
     }
 }
-

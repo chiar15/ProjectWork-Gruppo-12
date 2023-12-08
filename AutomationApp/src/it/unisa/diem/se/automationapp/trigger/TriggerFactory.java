@@ -13,7 +13,13 @@ public class TriggerFactory {
         
         if(type.equalsIgnoreCase(TriggerEnum.TIMETRIGGER.name())){
             return new TimeTrigger(triggerData);
-        } else{
+        } else if (type.equalsIgnoreCase(TriggerEnum.DAYOFWEEKTRIGGER.name())) {
+            return new DayOfWeekTrigger(triggerData);
+        } else if (type.equalsIgnoreCase(TriggerEnum.DAYOFMONTHTRIGGER.name())) {
+            return new DayOfMonthTrigger(triggerData);
+        } else if (type.equalsIgnoreCase(TriggerEnum.DATETRIGGER.name())) {
+            return new DateTrigger(triggerData);
+        } else {
             throw new IllegalArgumentException("Invalid trigger type: " + type);
         }
     }
