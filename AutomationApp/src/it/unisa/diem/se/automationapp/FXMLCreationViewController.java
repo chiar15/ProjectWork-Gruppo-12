@@ -442,12 +442,14 @@ public class FXMLCreationViewController{
     }
     
     private void configureComboBoxes() {
+        comboBoxTrigger.getItems().clear();
         comboBoxTrigger.getItems().addAll(
             TIME_TRIGGER, 
             DAY_OF_WEEK_TRIGGER, 
             DAY_OF_MONTH_TRIGGER, 
             DATE_TRIGGER
         );
+        comboBoxActionRule.getItems().clear();
         comboBoxActionRule.getItems().setAll(
                 AUDIO_ACTION,
                 MESSAGE_ACTION, 
