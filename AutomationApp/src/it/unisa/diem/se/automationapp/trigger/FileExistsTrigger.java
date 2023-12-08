@@ -48,5 +48,9 @@ public class FileExistsTrigger implements TriggerInterface{
         Path filePath = Paths.get(folder, fileName);
         return Files.exists(filePath);
     }
-    
+
+    @Override
+    public String toString() {
+        return "File name to check existence: " + fileName + " in the directory: '" + folder + "'";
+    }
 }

@@ -57,5 +57,9 @@ public class FileDimensionTrigger implements TriggerInterface{
         
         return fileDimension >= dimension;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Path of the file to check size: '" + filePath + "' with size limit: " + dimension + " Byte";
+    }
 }

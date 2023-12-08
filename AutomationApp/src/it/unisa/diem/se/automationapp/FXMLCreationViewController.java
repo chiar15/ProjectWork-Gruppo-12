@@ -18,6 +18,8 @@ import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import it.unisa.diem.se.automationapp.trigger.DateTrigger;
 import it.unisa.diem.se.automationapp.trigger.DayOfMonthTrigger;
 import it.unisa.diem.se.automationapp.trigger.DayOfWeekTrigger;
+import it.unisa.diem.se.automationapp.trigger.FileDimensionTrigger;
+import it.unisa.diem.se.automationapp.trigger.FileExistsTrigger;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import java.io.File;
 import java.time.LocalDate;
@@ -148,6 +150,22 @@ public class FXMLCreationViewController{
     private TextField moveFileDestPathField;
     @FXML
     private Button moveFieldDestPathButton;
+    @FXML
+    private AnchorPane existFileAnchor;
+    @FXML
+    private TextField fileNameField;
+    @FXML
+    private TextField fileNamePathField;
+    @FXML
+    private Button existFileButton;
+    @FXML
+    private AnchorPane fileDimensionAnchor;
+    @FXML
+    private TextField fileDimensionField;
+    @FXML
+    private TextField fileDimensionPathField;
+    @FXML
+    private Button fileDimensionButton;
         
     private RuleManager ruleManager;
     
@@ -168,6 +186,10 @@ public class FXMLCreationViewController{
     private static final String DAY_OF_MONTH_TRIGGER = "Pick a Day of the Month";
     
     private static final String DATE_TRIGGER = "Set Specific Date";
+    
+    private static final String FILE_EXISTENCE_TRIGGER = "Control File Existence";
+    
+    private static final String FILE_DIMENSION_TRIGGER = "Control File Dimension";
     
     private static final String AUDIO_ACTION = "Play Audio File";
     
@@ -201,26 +223,49 @@ public class FXMLCreationViewController{
                     hideDayOfWeekControls();
                     hideDayOfMonthControls();
                     hideDatePickerControls();
+                    hideFileExistenceControls();
+                    hideFileDimensionControls();
                     break;
                 case DAY_OF_WEEK_TRIGGER:
                     showDayOfWeekControls();
                     hideTimeTriggerControls();
                     hideDayOfMonthControls();
                     hideDatePickerControls();
+                    hideFileExistenceControls();
+                    hideFileDimensionControls();
                     break;
                 case DAY_OF_MONTH_TRIGGER:
                     showDayOfMonthControls();
                     hideTimeTriggerControls();
                     hideDayOfWeekControls();
                     hideDatePickerControls();
+                    hideFileExistenceControls();
+                    hideFileDimensionControls();
                     break;
                 case DATE_TRIGGER:
                     showDatePickerControls();
                     hideTimeTriggerControls();
                     hideDayOfWeekControls();
                     hideDayOfMonthControls();
+                    hideFileExistenceControls();
+                    hideFileDimensionControls();
                     break;
-                // Altri casi
+                case FILE_EXISTENCE_TRIGGER:
+                    showFileExistenceControls();
+                    hideTimeTriggerControls();
+                    hideDayOfWeekControls();
+                    hideDayOfMonthControls();
+                    hideDatePickerControls();
+                    hideFileDimensionControls();
+                    break;
+                case FILE_DIMENSION_TRIGGER:
+                    showFileDimensionControls();
+                    hideTimeTriggerControls();
+                    hideDayOfWeekControls();
+                    hideDayOfMonthControls();
+                    hideDatePickerControls();
+                    hideFileExistenceControls();
+                    break;
             }
         }
     }
@@ -378,7 +423,32 @@ public class FXMLCreationViewController{
             deleteFilePathField.setText(selectedFile.getAbsolutePath());
         }
     }
+    
+    @FXML
+    private void existFileButtonAction(ActionEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose the directory for file");
 
+        File selectedDirectory = directoryChooser.showDialog(new Stage());
+
+        if (selectedDirectory != null) {
+            fileNamePathField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void fileDimensionButtonAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select the file to control");
+
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+
+        if (selectedFile != null) {
+            fileDimensionPathField.setText(selectedFile.getAbsolutePath());
+        }
+    }
     
     @FXML
     private void singleExecutionAction(ActionEvent event) {
@@ -439,6 +509,8 @@ public class FXMLCreationViewController{
         hideStringFileControls();
         hideMoveFileControls();
         hideDeleteFileControls();
+        hideFileExistenceControls();
+        hideFileDimensionControls();
     }
     
     private void configureComboBoxes() {
@@ -447,7 +519,9 @@ public class FXMLCreationViewController{
             TIME_TRIGGER, 
             DAY_OF_WEEK_TRIGGER, 
             DAY_OF_MONTH_TRIGGER, 
-            DATE_TRIGGER
+            DATE_TRIGGER,
+            FILE_EXISTENCE_TRIGGER,
+            FILE_DIMENSION_TRIGGER
         );
         comboBoxActionRule.getItems().clear();
         comboBoxActionRule.getItems().setAll(
@@ -561,6 +635,23 @@ public class FXMLCreationViewController{
                 }
             }
         });
+        
+        fileDimensionField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                fileDimensionField.setText(oldValue);
+            } else {
+                try {
+                    if (!newValue.isEmpty()) {
+                        int intValue = Integer.parseInt(newValue);
+                        if (intValue > Integer.MAX_VALUE) {
+                            fileDimensionField.setText(oldValue);
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    fileDimensionField.setText(oldValue); 
+                }
+            }
+        });
     }
     
     private void initializeBindings() {
@@ -628,12 +719,12 @@ public class FXMLCreationViewController{
             case DAY_OF_WEEK_TRIGGER:
                 String weekDay = dayOfWeekComboBox.getValue();
                 triggerData.put("type", DayOfWeekTrigger.class.getSimpleName());
-                triggerData.put("day_of_week", weekDay);
+                triggerData.put("dayOfWeek", weekDay);
                 break;
             case DAY_OF_MONTH_TRIGGER:
                 String day = dayOfTheMonthBox.getValue();
                 triggerData.put("type", DayOfMonthTrigger.class.getSimpleName());
-                triggerData.put("day_of_month", day);
+                triggerData.put("dayOfMonth", day);
                 break;
             case DATE_TRIGGER:
                 LocalDate date = datePicker.getValue();
@@ -641,6 +732,19 @@ public class FXMLCreationViewController{
                 triggerData.put("type", DateTrigger.class.getSimpleName());
                 triggerData.put("date", dtf.format(date));
                 break;
+            case FILE_EXISTENCE_TRIGGER:
+                String fileName = fileNameField.getText();
+                String pathFileName = fileNamePathField.getText();
+                triggerData.put("type", FileExistsTrigger.class.getSimpleName());
+                triggerData.put("fileName", fileName);
+                triggerData.put("fileDirectory", pathFileName);
+                break;
+            case FILE_DIMENSION_TRIGGER:
+                String dimension = fileDimensionField.getText();
+                String filePath = fileDimensionPathField.getText();
+                triggerData.put("type", FileDimensionTrigger.class.getSimpleName());
+                triggerData.put("dimension", dimension);
+                triggerData.put("filePath", filePath);
         }
 
         return triggerData;
@@ -669,7 +773,7 @@ public class FXMLCreationViewController{
 
         TextField editor = spinner.getEditor();
         editor.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) { // Accetta solo numeri
+            if (!newValue.matches("\\d*")) {
                 editor.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
@@ -683,21 +787,18 @@ public class FXMLCreationViewController{
         Tooltip tooltip = new Tooltip("Min: " + minValue + ", Max: " + maxValue + " " + unit);
         spinner.setTooltip(tooltip);
 
-        // Mostra il tooltip quando il cursore passa sopra lo spinner
         spinner.setOnMouseEntered(event -> {
             if (!spinner.isFocused()) {
                 tooltip.show(spinner, event.getScreenX(), event.getScreenY() + 20);
             }
         });
 
-        // Nascondi il tooltip quando il cursore esce dallo spinner
         spinner.setOnMouseExited(event -> {
             if (!spinner.isFocused()) {
                 tooltip.hide();
             }
         });
 
-        // Nascondi il tooltip quando lo spinner riceve il focus
         spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 tooltip.hide();
@@ -805,6 +906,26 @@ public class FXMLCreationViewController{
     private void showDeleteFileControls() {
         deleteFileAnchor.setVisible(true);
     }
+    
+    private void showFileExistenceControls() {
+        existFileAnchor.setVisible(true);
+    }
+    
+    private void hideFileExistenceControls() {
+        fileNameField.clear();
+        fileNamePathField.clear();
+        existFileAnchor.setVisible(false);
+    }
+    
+    private void showFileDimensionControls() {
+        fileDimensionAnchor.setVisible(true);
+    }
+    
+    private void hideFileDimensionControls() {
+        fileDimensionField.clear();
+        fileDimensionPathField.clear();
+        fileDimensionAnchor.setVisible(false);
+    }
 
     private BooleanBinding isValidTriggerInput() {
         return Bindings.createBooleanBinding(() -> {
@@ -826,7 +947,12 @@ public class FXMLCreationViewController{
                     case DATE_TRIGGER:
                         triggerValid = triggerValid && datePicker.getValue() != null;
                         break;
-                    // Aggiungi altri casi per altri tipi di trigger se necessario
+                    case FILE_EXISTENCE_TRIGGER:
+                        triggerValid = triggerValid && (fileNameField.getText() != null && fileNamePathField.getText() != null);
+                        break;
+                    case FILE_DIMENSION_TRIGGER:
+                        triggerValid = triggerValid && (fileDimensionField.getText() != null && fileDimensionPathField.getText() != null);
+                        break;
                     default:
                         break;
                 }
@@ -861,7 +987,6 @@ public class FXMLCreationViewController{
                     case DELETE_FILE_ACTION:
                         actionValid = actionValid && !deleteFilePathField.getText().isEmpty();
                         break;
-                    // Aggiungere altri casi per altri tipi di azione se necessario
                     default:
                         break;
                 }

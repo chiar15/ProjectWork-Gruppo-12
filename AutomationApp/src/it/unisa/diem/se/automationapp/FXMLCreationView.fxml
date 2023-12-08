@@ -18,14 +18,14 @@
    <items>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="386.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="13.0" layoutY="10.0" prefHeight="378.0" prefWidth="342.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="31.0">
+              <VBox layoutX="13.0" layoutY="10.0" prefHeight="157.0" prefWidth="342.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="31.0">
                   <children>
                       <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
                       <TextField fx:id="ruleNameField" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
                   <VBox prefHeight="10.0" prefWidth="330.0" />
-                    <VBox prefHeight="44.0" prefWidth="330.0">
+                    <VBox prefHeight="36.0" prefWidth="342.0">
                         <children>
-                            <ComboBox fx:id="comboBoxTrigger" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxTriggerAction" prefHeight="30.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                            <ComboBox fx:id="comboBoxTrigger" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxTriggerAction" prefHeight="30.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                         </children>
                     </VBox>
                   <StackPane prefHeight="35.0" prefWidth="347.0">
@@ -61,7 +61,7 @@
                            <children>
                               <VBox prefHeight="50.0" prefWidth="260.0">
                                  <children>
-                                    <ComboBox fx:id="dayOfWeekComboBox" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="260.0" promptText="Select a day of the current week" />
+                                    <ComboBox fx:id="dayOfWeekComboBox" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="260.0" promptText="Select a day of the current week" style="-fx-background-color: #D7E5FF; -fx-text-fill: #2556A7; -fx-font-size: 12px; -fx-border-color: #2556A7; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                                  </children>
                               </VBox>
                            </children>
@@ -70,7 +70,7 @@
                            <children>
                               <VBox prefHeight="30.0" prefWidth="260.0">
                                  <children>
-                                    <ComboBox fx:id="dayOfTheMonthBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="260.0" promptText="Select the day of the current month" />
+                                    <ComboBox fx:id="dayOfTheMonthBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="260.0" promptText="Select the day of the current month" style="-fx-background-color: #D7E5FF; -fx-text-fill: #2556A7; -fx-font-size: 12px; -fx-border-color: #2556A7; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                                  </children>
                               </VBox>
                            </children>
@@ -84,41 +84,82 @@
                               </VBox>
                            </children>
                         </AnchorPane>
+                        <AnchorPane fx:id="existFileAnchor" prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <TextField fx:id="fileNameField" prefHeight="25.0" prefWidth="260.0" promptText="Insert the name of the file" />
+                              <VBox layoutY="28.0" prefHeight="30.0" prefWidth="342.0">
+                                 <children>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <TextField fx:id="fileNamePathField" editable="false" prefHeight="25.0" prefWidth="260.0" promptText="Path of the file to control" />
+                                          <HBox prefHeight="50.0" prefWidth="6.0" />
+                                          <Button fx:id="existFileButton" mnemonicParsing="false" onAction="#existFileButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 12px;" text="Select" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="fileDimensionAnchor" prefHeight="31.0" prefWidth="346.0">
+                           <children>
+                              <VBox prefHeight="58.0" prefWidth="342.0">
+                                 <children>
+                                    <TextField fx:id="fileDimensionField" prefHeight="25.0" prefWidth="290.0" promptText="Insert the dimension (byte value)" />
+                                    <VBox prefHeight="5.0" prefWidth="342.0" />
+                                    <VBox prefHeight="10.0" prefWidth="342.0">
+                                       <children>
+                                          <HBox prefHeight="50.0" prefWidth="342.0">
+                                             <children>
+                                                <TextField fx:id="fileDimensionPathField" editable="false" maxWidth="1.7976931348623157E308" prefHeight="10.0" prefWidth="222.0" promptText="Path of the file to control" />
+                                                <HBox prefHeight="25.0" prefWidth="9.0" />
+                                                <Button fx:id="fileDimensionButton" mnemonicParsing="false" onAction="#fileDimensionButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 12px;" text="Select" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
                      </children>
                   </StackPane>
-                    <VBox prefHeight="44.0" prefWidth="342.0">
-                        <children>
-                            <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                        </children>
-                    </VBox>
-                  <StackPane prefHeight="204.0" prefWidth="342.0">
+                  </children>
+              </VBox>
+            <VBox layoutX="14.0" layoutY="163.0" prefHeight="237.0" prefWidth="346.0">
+               <children>
+                  <VBox prefHeight="45.0" prefWidth="346.0">
+                     <children>
+                        <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
+                     </children>
+                  </VBox>
+                  <StackPane prefHeight="167.0" prefWidth="346.0">
                      <children>
                         <AnchorPane fx:id="audioActionAnchor" prefHeight="225.0" prefWidth="347.0">
                            <children>
                               <VBox layoutY="-1.0" prefHeight="201.0" prefWidth="342.0">
                                  <children>
-                                      <VBox prefHeight="35.0" prefWidth="333.0">
-                                          <children>
-                                              <HBox prefHeight="47.0" prefWidth="342.0">
-                                                  <children>
-                                                      <TextField fx:id="audioPathField" editable="false" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                                    <VBox prefHeight="35.0" prefWidth="333.0">
+                                       <children>
+                                          <HBox prefHeight="47.0" prefWidth="342.0">
+                                             <children>
+                                                <TextField fx:id="audioPathField" editable="false" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                                                 <HBox prefHeight="34.0" prefWidth="10.0" />
-                                                      <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                                  </children>
-                                              </HBox>
-                                          </children>
-                                      </VBox>
+                                                <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="messageActionAnchor" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                                <VBox prefHeight="176.0" prefWidth="272.0">
-                                    <children>
-                                        <TextArea fx:id="messageField" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                                    </children>
-                                </VBox>
+                              <VBox prefHeight="176.0" prefWidth="272.0">
+                                 <children>
+                                    <TextArea fx:id="messageField" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                                 </children>
+                              </VBox>
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="stringFileAnchor" prefHeight="200.0" prefWidth="200.0">
@@ -213,8 +254,8 @@
                         </AnchorPane>
                      </children>
                   </StackPane>
-                  </children>
-              </VBox>
+               </children>
+            </VBox>
           </children>
       </AnchorPane>
       <AnchorPane prefHeight="401.0" prefWidth="217.0" style="-fx-background-color: #E8F0FE;">
@@ -230,11 +271,11 @@
                         <Label fx:id="suspensionTimeLabel" style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Suspension Time:" />
                      </children>
                   </VBox>
-                  <ComboBox fx:id="suspensionDaysBox" prefWidth="150.0" promptText="Days" />
+                  <ComboBox fx:id="suspensionDaysBox" prefWidth="150.0" promptText="Days" style="-fx-font-size: 12px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
-                  <ComboBox fx:id="suspensionHoursBox" prefWidth="150.0" promptText="Hours" />
+                  <ComboBox fx:id="suspensionHoursBox" prefWidth="150.0" promptText="Hours" style="-fx-font-size: 12px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                   <VBox prefHeight="17.0" prefWidth="151.0" />
-                  <ComboBox fx:id="suspensionMinutesBox" prefWidth="150.0" promptText="Minutes" />
+                  <ComboBox fx:id="suspensionMinutesBox" prefWidth="150.0" promptText="Minutes" style="-fx-font-size: 12px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                </children>
             </VBox>
               <Button fx:id="createRuleButton" disable="true" layoutX="97.0" layoutY="356.0" mnemonicParsing="false" onAction="#createRuleButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Create Rule" AnchorPane.rightAnchor="13.0" />

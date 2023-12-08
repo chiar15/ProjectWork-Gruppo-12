@@ -446,8 +446,8 @@ public class FXMLMainViewController implements Initializable{
             alert.showAndWait();
             isPopupDisplayed = false;
             eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
-            ruleListTable.refresh();
         });
+        ruleListTable.refresh();
     }
     
     private void onAudioEvent(AudioEvent event){

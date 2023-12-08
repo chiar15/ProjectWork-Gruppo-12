@@ -1,11 +1,8 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
-import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.event.CloseEvent;
-import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
