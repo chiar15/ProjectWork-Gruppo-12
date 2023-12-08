@@ -202,7 +202,7 @@
                                  <children>
                                     <HBox prefHeight="30.0" prefWidth="329.0">
                                        <children>
-                                          <TextField fx:id="deleteFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file to delete" />
+                                          <TextField fx:id="deleteFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the path of the file to delete" />
                                           <HBox prefHeight="30.0" prefWidth="6.0" />
                                           <Button fx:id="deleteFilePathButton" mnemonicParsing="false" onAction="#deleteFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
                                        </children>

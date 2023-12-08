@@ -312,7 +312,7 @@ public class FXMLCreationViewController{
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
 
-        File selectedFile = fileChooser.showOpenDialog(new Stage());
+        File selectedFile = fileChooser.showSaveDialog(new Stage());
 
         if (selectedFile != null) {
             moveFilePathField.setText(selectedFile.getAbsolutePath());
@@ -352,7 +352,7 @@ public class FXMLCreationViewController{
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
 
-        File selectedFile = fileChooser.showOpenDialog(new Stage());
+        File selectedFile = fileChooser.showSaveDialog(new Stage());
 
         if (selectedFile != null) {
             deleteFilePathField.setText(selectedFile.getAbsolutePath());
