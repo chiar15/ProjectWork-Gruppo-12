@@ -12,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = TimeTrigger.class, name = "time"),
     @JsonSubTypes.Type(value = DayOfWeekTrigger.class, name = "dayOfWeek"),
     @JsonSubTypes.Type(value = DayOfMonthTrigger.class, name = "dayOfMonth"),
-    @JsonSubTypes.Type(value = DateTrigger.class, name = "date")
+    @JsonSubTypes.Type(value = DateTrigger.class, name = "date"),
+    @JsonSubTypes.Type(value = FileExistsTrigger.class, name = "fileExists"),
+    @JsonSubTypes.Type(value = FileDimensionTrigger.class, name = "fileDimension")
 })
 
 public interface TriggerInterface {

@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class DayOfWeekTrigger implements TriggerInterface{
     }
 
     public DayOfWeekTrigger(Map<String, String> triggerData) {
-        this.dayOfWeek = triggerData.get("day_of_week");
+        this.dayOfWeek = triggerData.get("dayOfWeek");
     }
 
     public String getDayOfWeek() {
@@ -30,7 +31,7 @@ public class DayOfWeekTrigger implements TriggerInterface{
         this.dayOfWeek = dayOfWeek;
     }
     
-    
+    @JsonIgnore
     @Override
     public boolean isTriggered() {
         DayOfWeek currentDay = LocalDate.now().getDayOfWeek();

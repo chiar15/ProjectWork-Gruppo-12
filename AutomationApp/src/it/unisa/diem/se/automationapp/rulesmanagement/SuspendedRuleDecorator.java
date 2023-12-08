@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -41,6 +42,7 @@ public class SuspendedRuleDecorator extends Rule {
         this.lastExecutionTime = lastExecutionTime;
     }
     
+    @JsonIgnore
     public String getSimpleSuspensionPeriod(){
         String simpleSuspension = "";
         
@@ -55,11 +57,11 @@ public class SuspendedRuleDecorator extends Rule {
         long minutes = seconds / 60L;
         
         if(days != 0){
-            simpleSuspension += days + " days ";
+            simpleSuspension += days + "days ";
         }
         
         if(hours != 0){
-            simpleSuspension += hours + " hours ";
+            simpleSuspension += hours + "hours ";
         }
         
         if(minutes != 0){
@@ -69,6 +71,7 @@ public class SuspendedRuleDecorator extends Rule {
         return simpleSuspension;
     }
     
+    @JsonIgnore
     public boolean isReadyToExecute(){
         long currentTime = System.currentTimeMillis();
         long elapsedSeconds = (currentTime - lastExecutionTime) / 1000;

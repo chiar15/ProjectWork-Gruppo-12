@@ -5,6 +5,7 @@
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.unisa.diem.se.automationapp.action.ActionInterface;
@@ -77,6 +78,7 @@ public class Rule {
         this.wasExecuted = wasExecuted;
     }
     
+    @JsonIgnore
     public boolean isTriggered(){
         return this.trigger.isTriggered();
     }

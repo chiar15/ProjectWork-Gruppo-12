@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class DateTrigger implements TriggerInterface{
         this.date = date;
     }
     
+    @JsonIgnore
     @Override
     public boolean isTriggered() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");  

@@ -327,6 +327,7 @@ public class FXMLMainViewController implements Initializable{
             } catch (IOException e) {
                 showAlert(AlertType.ERROR, "Unable to open the creation window. The application will be terminated.", "Error");
                 isClosingCritical = true;
+                closeApplication();
             }
         }
     }
@@ -353,6 +354,7 @@ public class FXMLMainViewController implements Initializable{
                         ruleManager.deleteRule(rule);
                     }
                 }
+                ruleListTable.refresh();
                 processQueuedPopups();
             });
         }
@@ -413,6 +415,9 @@ public class FXMLMainViewController implements Initializable{
                 eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
                 if (alert.getResult() == ButtonType.YES) {
                     manageClose(); 
+                } else{
+                    ruleListTable.refresh();
+                    processQueuedPopups();
                 }
             });
         }
@@ -441,6 +446,7 @@ public class FXMLMainViewController implements Initializable{
             alert.showAndWait();
             isPopupDisplayed = false;
             eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+            ruleListTable.refresh();
         });
     }
     
@@ -478,6 +484,7 @@ public class FXMLMainViewController implements Initializable{
                     isPopupDisplayed = false;
                     audioAlert = null;
                 }
+                ruleListTable.refresh();
                 processQueuedPopups();
             }
         });
@@ -486,7 +493,10 @@ public class FXMLMainViewController implements Initializable{
     private void onActiveEvent(ActiveEvent event){
         int index= observableList.indexOf(event.getRule());
         observableList.get(index).setIsActive(false);
-        ruleListTable.refresh();
+        if(!isPopupDisplayed){
+            ruleListTable.refresh();
+        }
+        
     }
     
     public void onCreationEvent(CreationEvent event) {

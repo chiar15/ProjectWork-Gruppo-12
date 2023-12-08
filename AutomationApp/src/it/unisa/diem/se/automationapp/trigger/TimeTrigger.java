@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalTime;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class TimeTrigger implements TriggerInterface{
         this.time = time;
     }
 
-
+    @JsonIgnore
     @Override
     public boolean isTriggered() {
         return (!(LocalTime.now().isBefore(LocalTime.parse(time))));

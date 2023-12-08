@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public class DayOfMonthTrigger implements TriggerInterface{
     }
 
     public DayOfMonthTrigger(Map<String, String> triggerData) {
-        this.dayOfMonth = triggerData.get("day_of_month");
+        this.dayOfMonth = triggerData.get("dayOfMonth");
     }
 
     public String getDayOfMonth() {
@@ -29,6 +30,7 @@ public class DayOfMonthTrigger implements TriggerInterface{
         this.dayOfMonth = dayOfMonth;
     }
     
+    @JsonIgnore
     @Override
     public boolean isTriggered() {
         int currentDay = LocalDate.now().getDayOfMonth();
