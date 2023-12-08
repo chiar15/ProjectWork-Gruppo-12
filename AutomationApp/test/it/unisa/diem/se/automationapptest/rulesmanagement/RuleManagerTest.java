@@ -1,9 +1,9 @@
 package it.unisa.diem.se.automationapptest.rulesmanagement;
 
-import it.unisa.diem.se.automationapp.action.ActionEnum;
+import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
-import it.unisa.diem.se.automationapp.trigger.TriggerEnum;
+import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +27,11 @@ public class RuleManagerTest {
         ruleManager.getRuleList().clear();
         ruleManager.getExecutionQueue().clear();
         triggerData = new HashMap<>();
-        triggerData.put("type", TriggerEnum.TIMETRIGGER.name());
+        triggerData.put("type", TimeTrigger.class.getSimpleName());
         triggerData.put("time", "10:00");
         String projectDirectory = System.getProperty("user.dir");
         actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.AUDIOACTION.name());
+        actionData.put("type", AudioAction.class.getSimpleName());
         actionData.put("filePath", projectDirectory + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav");
     }
 
