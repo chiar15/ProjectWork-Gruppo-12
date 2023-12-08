@@ -24,13 +24,13 @@ import java.util.List;
 public class RulePersistence {
     private File file;
     private ObjectMapper objectMapper;
-    private EventBus eventbus;
+    private EventBus eventBus;
 
     public RulePersistence() {
         this.file = new File(System.getProperty("user.dir") + "\\data\\SaveRules.json");
         this.objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        this.eventbus = EventBus.getInstance();
+        this.eventBus = EventBus.getInstance();
         // Configura ObjectMapper qui se necessario, come per il polimorfismo
     }
 
@@ -51,10 +51,8 @@ public class RulePersistence {
         try {
             file.createNewFile();
             ruleList = objectMapper.readValue(file, RuleList.class);
-        } catch (MismatchedInputException e){
-            e.printStackTrace();
-        } catch (IOException e){
-            eventbus.publish(new ErrorEvent("Error loading automations from file", ErrorEventType.NORMAL));
+        }catch (IOException e){
+            eventBus.publish(new ErrorEvent("Error loading rules from file", ErrorEventType.NORMAL)); 
         }
         
         return (new LinkedList<>(ruleList.getRules()));

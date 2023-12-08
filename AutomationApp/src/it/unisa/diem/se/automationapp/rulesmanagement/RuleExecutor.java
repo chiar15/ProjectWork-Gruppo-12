@@ -5,6 +5,10 @@
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.action.AudioAction;
+import it.unisa.diem.se.automationapp.action.CopyFileAction;
+import it.unisa.diem.se.automationapp.action.DeleteFileAction;
+import it.unisa.diem.se.automationapp.action.MoveFileAction;
+import it.unisa.diem.se.automationapp.action.StringAction;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
 import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
@@ -13,8 +17,11 @@ import it.unisa.diem.se.automationapp.event.ErrorEvent;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
+import it.unisa.diem.se.automationapp.event.FileEvent;
 import it.unisa.diem.se.automationapp.event.SceneEvent;
 import it.unisa.diem.se.automationapp.event.SceneEventType;
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
 /**
  *
@@ -48,6 +55,9 @@ public class RuleExecutor implements Runnable {
                         rule.setWasExecuted(true);
                         rule.execute();
                     }
+                    if(rule.getAction() instanceof StringAction || rule.getAction() instanceof CopyFileAction || rule.getAction() instanceof MoveFileAction || rule.getAction() instanceof DeleteFileAction){
+                        eventBus.publish(new FileEvent(rule.getName() + " was successfully executed!"));
+                    }
                     if(rule instanceof SuspendedRuleDecorator){
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                         suspendedRule.setLastExecutionTime(System.currentTimeMillis());
@@ -58,16 +68,24 @@ public class RuleExecutor implements Runnable {
                     
                 } catch (AudioExecutionException e) {
                     eventBus.publish(new AudioEvent("Audio stopped", AudioEventType.STOPPED));
+                    rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
                     eventBus.publish(new ErrorEvent("Error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
-                    rule.setIsActive(false);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     eventBus.publish(new ErrorEvent("Error in the rule execution thread, application will be terminated.", ErrorEventType.CRITICAL));
-                } catch (Exception e) {
-                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
-                    eventBus.publish(new ErrorEvent("Errore generico nell'esecuzione della regola " + rule.getName(), ErrorEventType.NORMAL));
+                } catch (NoSuchFileException e) {
                     rule.setIsActive(false);
+                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
+                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".The selected file was not found.", ErrorEventType.NORMAL));
+                }catch (IOException e) {
+                    rule.setIsActive(false);
+                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
+                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".There might some conflicts with system restrictions.", ErrorEventType.NORMAL));
+                }catch (Exception e) {
+                    rule.setIsActive(false);
+                    eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
+                    eventBus.publish(new ErrorEvent("Generic error while executing rule: " + rule.getName(), ErrorEventType.NORMAL));
                 }
             }
             try{

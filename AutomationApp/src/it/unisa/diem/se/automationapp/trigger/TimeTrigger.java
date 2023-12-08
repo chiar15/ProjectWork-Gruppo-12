@@ -25,7 +25,7 @@ public class TimeTrigger implements TriggerInterface{
         this.time = time;
     }
 
-    
+
     @Override
     public boolean isTriggered() {
         return (!(LocalTime.now().isBefore(LocalTime.parse(time))));

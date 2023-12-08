@@ -1,14 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.action;
 
-import it.unisa.diem.se.automationapp.action.ActionEnum;
-import it.unisa.diem.se.automationapp.action.ActionFactory;
-import it.unisa.diem.se.automationapp.action.ActionInterface;
-import it.unisa.diem.se.automationapp.action.AudioAction;
-import it.unisa.diem.se.automationapp.action.MessageAction;
+import it.unisa.diem.se.automationapp.action.*;
 import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +32,54 @@ public class ActionFactoryTest {
         assertTrue(action instanceof MessageAction);
     }
 
+    @Test
+    public void testCreateStringAction() {
+        Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", ActionEnum.STRINGACTION.name());
+        actionData.put("string", "Test string");
+
+        ActionInterface action = ActionFactory.createAction(actionData);
+
+        assertNotNull(action);
+        assertTrue(action instanceof StringAction);
+    }
+
+    @Test
+    public void testCreateCopyFileAction() {
+        Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", ActionEnum.COPYFILEACTION.name());
+        // Include additional required data for CopyFileAction
+
+        ActionInterface action = ActionFactory.createAction(actionData);
+
+        assertNotNull(action);
+        assertTrue(action instanceof CopyFileAction);
+    }
+
+    @Test
+    public void testCreateMoveFileAction() {
+        Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", ActionEnum.MOVEFILEACTION.name());
+        // Include additional required data for MoveFileAction
+
+        ActionInterface action = ActionFactory.createAction(actionData);
+
+        assertNotNull(action);
+        assertTrue(action instanceof MoveFileAction);
+    }
+
+    @Test
+    public void testCreateDeleteFileAction() {
+        Map<String, String> actionData = new HashMap<>();
+        actionData.put("type", ActionEnum.DELETEFILEACTION.name());
+        // Include additional required data for DeleteFileAction
+
+        ActionInterface action = ActionFactory.createAction(actionData);
+
+        assertNotNull(action);
+        assertTrue(action instanceof DeleteFileAction);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testCreateActionWithInvalidType() {
         Map<String, String> actionData = new HashMap<>();
@@ -49,4 +89,3 @@ public class ActionFactoryTest {
         ActionFactory.createAction(actionData);
     }
 }
-

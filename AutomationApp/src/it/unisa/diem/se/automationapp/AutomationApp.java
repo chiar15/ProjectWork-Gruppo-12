@@ -37,7 +37,7 @@ public class AutomationApp extends Application {
         
         stage.setOnCloseRequest(e->{
             e.consume();
-            eventBus.publish(new CloseEvent("Save before closing request"));
+            eventBus.publish(new CloseEvent("Close request"));
         });
             
         stage.show();

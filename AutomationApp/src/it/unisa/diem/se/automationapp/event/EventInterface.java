@@ -15,7 +15,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = CloseEvent.class, name = "close"),
     @JsonSubTypes.Type(value = SceneEvent.class, name = "scene"),
     @JsonSubTypes.Type(value = CreationEvent.class, name = "creation"),
-    @JsonSubTypes.Type(value = CreationEvent.class, name = "active")
+    @JsonSubTypes.Type(value = ActiveEvent.class, name = "active"),
+    @JsonSubTypes.Type(value = FileEvent.class, name = "file")
 })
 
 public interface EventInterface {

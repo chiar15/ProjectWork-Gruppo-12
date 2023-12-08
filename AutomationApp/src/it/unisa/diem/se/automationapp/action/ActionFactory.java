@@ -14,11 +14,19 @@ public class ActionFactory {
     public static ActionInterface createAction(Map<String, String> actionData){
         String type = actionData.get("type");
         
-        if(type.equalsIgnoreCase(ActionEnum.AUDIOACTION.name())){
+        if(type.equalsIgnoreCase(AudioAction.class.getSimpleName())){
             return new AudioAction(actionData);
-        } else if (type.equalsIgnoreCase(ActionEnum.MESSAGEACTION.name())){
+        } else if (type.equalsIgnoreCase(MessageAction.class.getSimpleName())){
             return new MessageAction(actionData);
-        } else{
+        }   else if (type.equalsIgnoreCase(StringAction.class.getSimpleName())){
+            return new StringAction(actionData);
+        } else if (type.equalsIgnoreCase(CopyFileAction.class.getSimpleName())){
+            return new CopyFileAction(actionData);
+        } else if (type.equalsIgnoreCase(MoveFileAction.class.getSimpleName())){
+            return new MoveFileAction(actionData);
+        } else if (type.equalsIgnoreCase(DeleteFileAction.class.getSimpleName())){
+            return new DeleteFileAction(actionData);
+        }else{
             throw new IllegalArgumentException("Invalid action type: " + type);
         }
     }

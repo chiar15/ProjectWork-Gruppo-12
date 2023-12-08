@@ -13,6 +13,7 @@ import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.event.EventInterface;
+import it.unisa.diem.se.automationapp.event.FileEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventPersistence;
 import it.unisa.diem.se.automationapp.event.CloseEvent;
 import it.unisa.diem.se.automationapp.event.SceneEvent;
@@ -146,6 +147,7 @@ public class FXMLMainViewController implements Initializable{
         
         eventBus.subscribe(MessageEvent.class, this::onEvent);
         eventBus.subscribe(ErrorEvent.class, this::onEvent);
+        eventBus.subscribe(FileEvent.class, this::onEvent);
         eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
         eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
         eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
@@ -191,7 +193,8 @@ public class FXMLMainViewController implements Initializable{
                 isRuleCreationOpen = true;
                 eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
             } catch (IOException e) {
-                e.printStackTrace();
+                showAlert(AlertType.ERROR, "Unable to open the creation window. The application will be terminated.", "Error");
+                isClosingCritical = true;
             }
         }
     }
@@ -202,8 +205,12 @@ public class FXMLMainViewController implements Initializable{
 
         if (!selectedRules.isEmpty()) {
             Platform.runLater(() -> {
+                isPopupDisplayed = true;
+                eventBus.publish(new SceneEvent("Busy Scene", SceneEventType.BUSY));
                 Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rule/rules?", ButtonType.YES, ButtonType.NO);
                 alert.showAndWait();
+                isPopupDisplayed = false;
+                eventBus.publish(new SceneEvent("Free Scene", SceneEventType.FREE));
 
                 if (alert.getResult() == ButtonType.YES) {
                     // Creare una copia della lista degli elementi selezionati per evitare ConcurrentModificationException
@@ -214,6 +221,7 @@ public class FXMLMainViewController implements Initializable{
                         ruleManager.deleteRule(rule);
                     }
                 }
+                processQueuedPopups();
             });
         }
     }
@@ -230,6 +238,8 @@ public class FXMLMainViewController implements Initializable{
     private void checkEvent(EventInterface event){
         if(event instanceof MessageEvent){
             showAlert(AlertType.INFORMATION, event.getMessage(), "Message");
+        } else if(event instanceof FileEvent){
+            showAlert(AlertType.INFORMATION, event.getMessage(), "Feedback");
         } else if(event instanceof ErrorEvent){
             showAlert(AlertType.ERROR, event.getMessage(), "Error");
             ErrorEvent errorEvent = (ErrorEvent) event;
@@ -254,14 +264,7 @@ public class FXMLMainViewController implements Initializable{
         String content;
         
         if(isClosingCritical){
-            try{
-                ruleManager.saveRulesToFile();
-            } catch (IOException e){
-                showAlert(AlertType.ERROR, event.getMessage(), "Error");
-            } finally{
-                Platform.exit();
-                System.exit(0);
-            }
+            manageClose();
         } else{
             if(!eventQueue.isEmpty()){
                content = "Some rules are ready to be executed, if you close the application now they will be executed the next time you'll open the application. Are you sure you want to close the application?"; 
@@ -277,18 +280,23 @@ public class FXMLMainViewController implements Initializable{
                 isPopupDisplayed = false;
                 eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
                 if (alert.getResult() == ButtonType.YES) {
-                    eventPersistence.saveEventsToFile(eventQueue);
-                    try{
-                        ruleManager.saveRulesToFile();
-                    } catch (IOException e){
-                        showAlert(AlertType.ERROR, event.getMessage(), "Error");
-                    }finally{
-                        Platform.exit();
-                        System.exit(0);
-                    }
-                    
+                    manageClose(); 
                 }
             });
+        }
+    }
+    
+    private void manageClose(){
+        try{
+            ruleManager.saveRulesToFile();
+            eventPersistence.saveEventsToFile(eventQueue);
+        } catch (IOException e){
+            showAlert(AlertType.ERROR, "Error while saving, some changes may have not been saved", "Error");
+            Platform.exit();
+            System.exit(0);
+        } finally{
+            Platform.exit();
+            System.exit(0);
         }
     }
     
@@ -310,6 +318,7 @@ public class FXMLMainViewController implements Initializable{
                 isAudioPlaying = true;
                 isPopupDisplayed = true;
                 allowCloseAlert = false;
+                
                 audioAlert = new Alert(Alert.AlertType.NONE);
                 audioAlert.setTitle("Audio Playing");
                 audioAlert.setContentText(event.getMessage());
@@ -321,6 +330,7 @@ public class FXMLMainViewController implements Initializable{
                 dialogPane.lookupButton(cancelButtonType).setVisible(false);
                 
                 Stage alertStage = (Stage) audioAlert.getDialogPane().getScene().getWindow();
+                
                 alertStage.setOnCloseRequest(e ->{
                     if(!allowCloseAlert){
                         e.consume();

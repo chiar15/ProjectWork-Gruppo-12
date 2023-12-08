@@ -552,7 +552,7 @@ public class FXMLCreationViewController{
             case STRINGACTION:
                 String stringFilePath = stringFilePathField.getText();
                 actionData.put("stringFilePath", stringFilePath);
-                actionData.put("string", stringFilePathField.getText());
+                actionData.put("string", stringAppendField.getText());
                 break;
             case COPYFILEACTION:
                 String copyFilePath = copyFilePathField.getText();

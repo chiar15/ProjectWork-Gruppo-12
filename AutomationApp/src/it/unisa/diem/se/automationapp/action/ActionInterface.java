@@ -10,7 +10,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "actionType")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AudioAction.class, name = "audio"),
-    @JsonSubTypes.Type(value = MessageAction.class, name = "message")
+    @JsonSubTypes.Type(value = MessageAction.class, name = "message"),
+    @JsonSubTypes.Type(value = StringAction.class, name = "string"),
+    @JsonSubTypes.Type(value = CopyFileAction.class, name = "copyFile"),
+    @JsonSubTypes.Type(value = MoveFileAction.class, name = "moveFile"),
+    @JsonSubTypes.Type(value = DeleteFileAction.class, name = "deleteFile")
     // Aggiungi altre sottoclassi qui
 })
 
