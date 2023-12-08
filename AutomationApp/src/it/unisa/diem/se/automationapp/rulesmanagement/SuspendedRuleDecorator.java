@@ -41,6 +41,33 @@ public class SuspendedRuleDecorator extends Rule {
         this.lastExecutionTime = lastExecutionTime;
     }
     
+    public String getSimpleSuspensionPeriod(){
+        String simpleSuspension = "";
+        
+        long seconds = suspensionPeriod;
+        
+        long days =  seconds / 86400L;
+        seconds %= 86400L;
+
+        long hours = seconds / 3600L;
+        seconds %= 3600L;
+
+        long minutes = seconds / 60L;
+        
+        if(days != 0){
+            simpleSuspension += days + "days ";
+        }
+        
+        if(hours != 0){
+            simpleSuspension += hours + "hours ";
+        }
+        
+        if(minutes != 0){
+            simpleSuspension += minutes + "minutes ";
+        }
+        
+        return simpleSuspension;
+    }
     
     public boolean isReadyToExecute(){
         long currentTime = System.currentTimeMillis();
