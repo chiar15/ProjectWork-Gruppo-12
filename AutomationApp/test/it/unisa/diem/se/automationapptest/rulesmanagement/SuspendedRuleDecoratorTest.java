@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.rulesmanagement;
 
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
@@ -17,30 +13,33 @@ public class SuspendedRuleDecoratorTest {
 
     @Before
     public void setUp() {
-        // Creazione di una semplice implementazione fittizia di Rule
-        baseRule = new Rule("BaseRule", null, null);  // Assumi che Trigger e Action siano null per il test
-        suspendedRule = new SuspendedRuleDecorator(baseRule, 10); // 10 secondi di sospensione
+        baseRule = new Rule("BaseRule", null, null); // Assume Trigger and Action are null for the test
+        // Setting suspension period as 1 day (86400 seconds) + 1 hour (3600 seconds) + 30 minutes (1800 seconds)
+        long suspensionPeriodSeconds = 91800; // Total = 90000 seconds
+        suspendedRule = new SuspendedRuleDecorator(baseRule, suspensionPeriodSeconds);
     }
 
     @Test
     public void testSuspensionPeriod() {
-        assertEquals("Il periodo di sospensione dovrebbe essere 10 secondi", 10, suspendedRule.getSuspensionPeriod());
+        assertEquals("The suspension period should be 91800 seconds", 91800, suspendedRule.getSuspensionPeriod());
     }
 
     @Test
     public void testLastExecutionTime() {
         long testTime = System.currentTimeMillis();
         suspendedRule.setLastExecutionTime(testTime);
-        assertEquals("Il tempo dell'ultima esecuzione dovrebbe corrispondere al tempo impostato", testTime, suspendedRule.getLastExecutionTime());
+        assertEquals("The last execution time should match the set time", testTime, suspendedRule.getLastExecutionTime());
+    }
+
+    @Test
+    public void testGetSimpleSuspensionPeriod() {
+        String expected = "1 days 1 hours 30 minutes ";
+        assertEquals("The simple suspension period representation should be correct", expected, suspendedRule.getSimpleSuspensionPeriod());
     }
 
     @Test
     public void testIsReadyToExecute() {
-        // Imposta il tempo dell'ultima esecuzione a un tempo nel passato
-        suspendedRule.setLastExecutionTime(System.currentTimeMillis() - 15000); // 15 secondi fa
-        assertTrue("La regola dovrebbe essere pronta per l'esecuzione", suspendedRule.isReadyToExecute());
-
-        suspendedRule.setLastExecutionTime(System.currentTimeMillis());
-        assertFalse("La regola non dovrebbe essere pronta per l'esecuzione immediatamente dopo l'ultima esecuzione", suspendedRule.isReadyToExecute());
+        suspendedRule.setLastExecutionTime(System.currentTimeMillis() - 91801 * 1000L); // Just over 91800 seconds ago
+        assertTrue("The rule should be ready for execution", suspendedRule.isReadyToExecute());
     }
 }

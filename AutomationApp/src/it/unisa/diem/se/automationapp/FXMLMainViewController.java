@@ -186,8 +186,7 @@ public class FXMLMainViewController implements Initializable{
                     if (rowData instanceof SuspendedRuleDecorator) {
                         SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rowData;
                         details.append("Execution: Multiple Execution (Suspended for ")
-                                .append(suspendedRule.getSuspensionPeriod())
-                                .append(" seconds)\n");
+                                .append(suspendedRule.getSimpleSuspensionPeriod() + ")");
                     } else{
                         details.append("Execution: Single Execution\n");
                     }
