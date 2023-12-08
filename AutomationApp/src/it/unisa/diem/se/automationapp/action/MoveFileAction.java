@@ -51,4 +51,9 @@ public class MoveFileAction implements ActionInterface{
         Path destinationPath = Paths.get(destinationFolder, fileName);
         Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
     }
+
+    @Override
+    public String toString() {
+        return "Moving the file " + sourceFile + " to the folder at the path: " + destinationFolder;
+    }
 }

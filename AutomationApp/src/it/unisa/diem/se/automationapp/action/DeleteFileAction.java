@@ -38,4 +38,9 @@ public class DeleteFileAction implements ActionInterface{
         Path deletePath = Paths.get(filePath);
         Files.delete(deletePath);
     }
+
+    @Override
+    public String toString() {
+        return "Delete the file located in the folder at path: " + filePath;
+    }
 }

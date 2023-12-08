@@ -40,6 +40,6 @@ public class MessageAction implements ActionInterface{
 
     @Override
     public String toString() {
-        return "POPUP MESSAGE - " + "Message: " + message;
+        return "Visual reminder of the message: " + message;
     }
 }

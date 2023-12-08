@@ -54,4 +54,9 @@ public class StringAction implements ActionInterface{
             pw.append(string + " ");
         }
     }
+
+    @Override
+    public String toString() {
+        return "Appending the string '" + string + "' to the end of the txt file at the path: " + filePath;
+    }
 }
