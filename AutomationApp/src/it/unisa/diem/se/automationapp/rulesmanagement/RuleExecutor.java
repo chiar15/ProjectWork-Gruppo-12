@@ -14,7 +14,6 @@ import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
 import it.unisa.diem.se.automationapp.event.AudioEventType;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
-import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.event.FileEvent;

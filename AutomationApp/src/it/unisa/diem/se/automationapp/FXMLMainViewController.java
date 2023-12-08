@@ -130,28 +130,13 @@ public class FXMLMainViewController implements Initializable{
         loadRulesFromFile();
         configureInformationRow();
         
-        ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        
-        ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
-        ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
-        ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
-        
-        ruleListTable.setItems(observableList);
-        setupRuleStateColumn();
-        setupExecutionColumn();
+        setupRuleTable();
         
         deleteRuleButton.disableProperty().bind(
             ruleListTable.getSelectionModel().selectedItemProperty().isNull()
         );
         
-        eventBus.subscribe(MessageEvent.class, this::onEvent);
-        eventBus.subscribe(ErrorEvent.class, this::onEvent);
-        eventBus.subscribe(FileEvent.class, this::onEvent);
-        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
-        eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
-        eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
-        eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
+        configureEventsSubscription();
        
         loadEventsFromFile();
 
@@ -159,12 +144,160 @@ public class FXMLMainViewController implements Initializable{
             processQueuedPopups();
         });
         
-        startRuleChecker();
-        startRuleExecutor();
-        startRuleSaver();
+        startAllThreads();
         
     }    
 
+    private void configureEventsSubscription(){
+        eventBus.subscribe(MessageEvent.class, this::onEvent);
+        eventBus.subscribe(ErrorEvent.class, this::onEvent);
+        eventBus.subscribe(FileEvent.class, this::onEvent);
+        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
+        eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
+        eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
+        eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
+    }
+    
+     private void setupExecutionColumn() {
+        executionClm.setCellValueFactory(cellData -> {
+            Rule rule = cellData.getValue();
+            if (rule instanceof SuspendedRuleDecorator) {
+                SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                return new SimpleStringProperty("Multiple Execution (Suspended for " + suspendedRule.getSuspensionPeriod() + " seconds)");
+            } else {
+                return new SimpleStringProperty("Single Execution");
+            }
+        });
+    }
+    
+    private void configureInformationRow() {
+        ruleListTable.setRowFactory(tv -> {
+            TableRow<Rule> row = new TableRow<>();
+            Tooltip tooltip = new Tooltip();
+
+            row.setOnMouseEntered(event -> {
+                Rule rowData = row.getItem();
+                if (rowData != null) {
+                    StringBuilder details = new StringBuilder();
+                    details.append("Name: ").append(rowData.getName()).append("\n");
+                    details.append("Trigger: ").append(rowData.getTrigger()).append("\n");
+                    details.append("Action: ").append(rowData.getAction()).append("\n");
+
+                    if (rowData instanceof SuspendedRuleDecorator) {
+                        SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rowData;
+                        details.append("Execution: Multiple Execution (Suspended for ")
+                                .append(suspendedRule.getSuspensionPeriod())
+                                .append(" seconds)\n");
+                    } else{
+                        details.append("Execution: Single Execution\n");
+                    }
+
+                    tooltip.setText(details.toString());
+
+                    double mouseX = event.getScreenX();
+                    double mouseY = event.getScreenY();
+
+                    tooltip.show(row, mouseX + 10, mouseY + 10);
+                }
+            });
+
+            row.setOnMouseExited(event -> {
+                tooltip.hide();
+            });
+
+            return row;
+        });
+    }
+    
+    private void setupRuleStateColumn() {
+        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("isActive"));
+        ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                CheckBox checkBox = new CheckBox();
+                setText(item ? "active" : "deactive");
+
+                checkBox.setSelected(item);
+
+                Rule rule = getTableView().getItems().get(getIndex());
+
+                checkBox.setOnAction(event -> {
+                    ruleManager.changeRuleState(rule, checkBox.isSelected());
+                    rule.setIsActive(checkBox.isSelected());
+                    setText(checkBox.isSelected() ? "active" : "deactive");
+                });
+
+
+                setGraphic(checkBox);
+            }
+        });
+    }
+    
+    private void setupRuleTable(){
+        ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
+        ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
+        ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
+        
+        ruleListTable.setItems(observableList);
+        setupRuleStateColumn();
+        setupExecutionColumn();
+    }
+    
+    private void loadRulesFromFile(){
+        List<Rule> list = ruleManager.loadRulesFromFile();
+        if(list != null){
+           observableList.addAll(list); 
+        }
+        
+    }
+    
+    private void loadEventsFromFile(){
+        Queue<EventInterface> queue = eventPersistence.loadEventsFromFile();
+        if(queue != null){
+            eventQueue.addAll(queue);
+        }
+    }
+    
+    private void startRuleChecker() {
+        ruleChecker = new RuleChecker();
+
+        Thread checkerThread = new Thread(ruleChecker);
+        checkerThread.setDaemon(true);
+        checkerThread.start();  
+    }
+    
+    private void startRuleExecutor(){
+        ruleExecutor = new RuleExecutor();
+        
+        Thread executorThread = new Thread(ruleExecutor);
+        executorThread.setDaemon(true);
+        executorThread.start();
+    }
+    
+    private void startRuleSaver(){
+        ruleSaver = new RuleSaver();
+        
+        Thread savingThread = new Thread(ruleSaver);
+        savingThread.setDaemon(true);
+        savingThread.start();
+    }
+    
+    private void startAllThreads(){
+        startRuleChecker();
+        startRuleExecutor();
+        startRuleSaver();
+    }
+    
     @FXML
     private void addRuleButtonAction(ActionEvent event) {
         if(!isRuleCreationOpen){
@@ -363,131 +496,10 @@ public class FXMLMainViewController implements Initializable{
         eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
         processQueuedPopups();
     }
-        
-    private void startRuleChecker() {
-        ruleChecker = new RuleChecker();
-
-        Thread checkerThread = new Thread(ruleChecker);
-        checkerThread.setDaemon(true);
-        checkerThread.start();  
-    }
-    
-    private void startRuleExecutor(){
-        ruleExecutor = new RuleExecutor();
-        
-        Thread executorThread = new Thread(ruleExecutor);
-        executorThread.setDaemon(true);
-        executorThread.start();
-    }
-    
-    private void startRuleSaver(){
-        ruleSaver = new RuleSaver();
-        
-        Thread savingThread = new Thread(ruleSaver);
-        savingThread.setDaemon(true);
-        savingThread.start();
-    }
-    
-    private void loadRulesFromFile(){
-        List<Rule> list = ruleManager.loadRulesFromFile();
-        if(list != null){
-           observableList.addAll(list); 
-        }
-        
-    }
-    
-    private void loadEventsFromFile(){
-        Queue<EventInterface> queue = eventPersistence.loadEventsFromFile();
-        if(queue != null){
-            eventQueue.addAll(queue);
-        }
-    }
     
     private void closeApplication(){
         Stage stage = (Stage) addRuleButton.getScene().getWindow();
         stage.close();
     }
     
-    private void setupRuleStateColumn() {
-        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("isActive"));
-        ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setGraphic(null);
-                    setText(null);
-                    return;
-                }
-
-                CheckBox checkBox = new CheckBox();
-                setText(item ? "active" : "deactive");
-
-                checkBox.setSelected(item);
-
-                Rule rule = getTableView().getItems().get(getIndex());
-
-                checkBox.setOnAction(event -> {
-                    ruleManager.changeRuleState(rule, checkBox.isSelected());
-                    rule.setIsActive(checkBox.isSelected());
-                    setText(checkBox.isSelected() ? "active" : "deactive");
-                });
-
-
-                setGraphic(checkBox);
-            }
-        });
-    }
-    
-    private void setupExecutionColumn() {
-        executionClm.setCellValueFactory(cellData -> {
-            Rule rule = cellData.getValue();
-            if (rule instanceof SuspendedRuleDecorator) {
-                SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
-                return new SimpleStringProperty("Multiple Execution (Suspended for " + suspendedRule.getSuspensionPeriod() + " seconds)");
-            } else {
-                return new SimpleStringProperty("Single Execution");
-            }
-        });
-    }
-    
-    private void configureInformationRow() {
-        ruleListTable.setRowFactory(tv -> {
-            TableRow<Rule> row = new TableRow<>();
-            Tooltip tooltip = new Tooltip();
-
-            row.setOnMouseEntered(event -> {
-                Rule rowData = row.getItem();
-                if (rowData != null) {
-                    StringBuilder details = new StringBuilder();
-                    details.append("Name: ").append(rowData.getName()).append("\n");
-                    details.append("Trigger: ").append(rowData.getTrigger()).append("\n");
-                    details.append("Action: ").append(rowData.getAction()).append("\n");
-
-                    if (rowData instanceof SuspendedRuleDecorator) {
-                        SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rowData;
-                        details.append("Execution: Multiple Execution (Suspended for ")
-                                .append(suspendedRule.getSuspensionPeriod())
-                                .append(" seconds)\n");
-                    } else{
-                        details.append("Execution: Single Execution\n");
-                    }
-
-                    tooltip.setText(details.toString());
-
-                    double mouseX = event.getScreenX();
-                    double mouseY = event.getScreenY();
-
-                    tooltip.show(row, mouseX + 10, mouseY + 10);
-                }
-            });
-
-            row.setOnMouseExited(event -> {
-                tooltip.hide();
-            });
-
-            return row;
-        });
-    }
 }
