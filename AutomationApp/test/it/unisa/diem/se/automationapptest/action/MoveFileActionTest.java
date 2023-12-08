@@ -60,11 +60,6 @@ public class MoveFileActionTest {
         assertEquals("The destination folder path should be updated", newDestinationPath, moveFileAction.getDestinationFolder());
     }
 
-    @Test
-    public void testGetType() {
-        assertEquals("The action type should be MOVEFILEACTION", "MOVEFILEACTION", moveFileAction.getType());
-    }
-
     @After
     public void tearDown() throws IOException {
         // Clean up destination directory and moved file

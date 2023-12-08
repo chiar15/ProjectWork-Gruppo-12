@@ -11,7 +11,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateAudioAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.AUDIOACTION.name());
+        actionData.put("type", AudioAction.class.getSimpleName());
         actionData.put("filePath", "path/to/audio/file.wav");
 
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -23,7 +23,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateMessageAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.MESSAGEACTION.name());
+        actionData.put("type", MessageAction.class.getSimpleName());
         actionData.put("message", "Test message");
 
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -35,7 +35,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateStringAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.STRINGACTION.name());
+        actionData.put("type", StringAction.class.getSimpleName());
         actionData.put("string", "Test string");
 
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -47,7 +47,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateCopyFileAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.COPYFILEACTION.name());
+        actionData.put("type", CopyFileAction.class.getSimpleName());
         // Include additional required data for CopyFileAction
 
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -59,7 +59,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateMoveFileAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.MOVEFILEACTION.name());
+        actionData.put("type", MoveFileAction.class.getSimpleName());
         // Include additional required data for MoveFileAction
 
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -71,7 +71,7 @@ public class ActionFactoryTest {
     @Test
     public void testCreateDeleteFileAction() {
         Map<String, String> actionData = new HashMap<>();
-        actionData.put("type", ActionEnum.DELETEFILEACTION.name());
+        actionData.put("type", DeleteFileAction.class.getSimpleName());
         // Include additional required data for DeleteFileAction
 
         ActionInterface action = ActionFactory.createAction(actionData);

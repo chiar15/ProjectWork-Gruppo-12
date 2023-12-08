@@ -55,11 +55,6 @@ public class DeleteFileActionTest {
 
         assertEquals("The file path should be updated", newFilePath, deleteFileAction.getFilePath());
     }
-
-    @Test
-    public void testGetType() {
-        assertEquals("The action type should be DELETEFILEACTION", "DELETEFILEACTION", deleteFileAction.getType());
-    }
     
     @After
     public void tearDown() throws IOException {

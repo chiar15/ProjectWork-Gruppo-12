@@ -42,13 +42,4 @@ public class MessageActionTest {
         assertTrue("A message event should be published", eventPublished.get());
         assertEquals("Published message should match", testMessage, publishedMessage);
     }
-    
-    @Test
-    public void testGetType() {
-        Map<String, String> actionData = new HashMap<>();
-        actionData.put("message", "Test message");
-
-        MessageAction messageAction = new MessageAction(actionData);
-        assertEquals("Il tipo di azione dovrebbe essere MESSAGEACTION", "MESSAGEACTION", messageAction.getType());
-    }
 }

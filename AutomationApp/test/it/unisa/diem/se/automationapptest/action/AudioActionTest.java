@@ -47,9 +47,4 @@ public class AudioActionTest {
         audioAction.setFilePath(invalidFilePath);
         audioAction.execute();
     }
-
-    @Test
-    public void testGetType() {
-        assertEquals("The action type should be AUDIOACTION", "AUDIOACTION", audioAction.getType());
-    }
 }

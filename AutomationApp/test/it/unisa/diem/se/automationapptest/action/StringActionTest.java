@@ -46,11 +46,6 @@ public class StringActionTest {
     }
 
     @Test
-    public void testGetType() {
-        assertEquals("The action type should be STRINGACTION", "STRINGACTION", stringAction.getType());
-    }
-
-    @Test
     public void testSettersAndGetters() {
         String newString = "New test string";
         String newFilePath = "newTestFile.txt";

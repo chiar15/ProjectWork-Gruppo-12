@@ -53,11 +53,6 @@ public class CopyFileActionTest {
         assertEquals("The destination path should be updated", newDestinationPath, copyFileAction.getDestinationPath());
     }
 
-    @Test
-    public void testGetType() {
-        assertEquals("The action type should be COPYFILEACTION", "COPYFILEACTION", copyFileAction.getType());
-    }
-
     @After
     public void tearDown() throws IOException {
         // Clean up test file and directory
