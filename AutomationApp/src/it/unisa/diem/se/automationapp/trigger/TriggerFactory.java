@@ -19,7 +19,11 @@ public class TriggerFactory {
             return new DayOfMonthTrigger(triggerData);
         } else if (type.equalsIgnoreCase(DateTrigger.class.getSimpleName())) {
             return new DateTrigger(triggerData);
-        } else {
+        } else if (type.equalsIgnoreCase(FileExistsTrigger.class.getSimpleName())) {
+            return new FileExistsTrigger(triggerData);
+        } else if (type.equalsIgnoreCase(FileDimensionTrigger.class.getSimpleName())) {
+            return new FileDimensionTrigger(triggerData);
+        }else {
             throw new IllegalArgumentException("Invalid trigger type: " + type);
         }
     }
