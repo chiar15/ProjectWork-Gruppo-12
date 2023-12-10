@@ -14,21 +14,24 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.5" prefHeight="402.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
+<SplitPane dividerPositions="0.5" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unisa.diem.se.automationapp.FXMLCreationViewController">
    <items>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="386.0" style="-fx-background-color: #E8F0FE;">
           <children>
-              <VBox layoutX="13.0" layoutY="10.0" prefHeight="157.0" prefWidth="342.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="31.0">
+              <VBox layoutX="13.0" layoutY="10.0" prefHeight="391.0" prefWidth="342.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="31.0">
                   <children>
-                      <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
-                      <TextField fx:id="ruleNameField" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
-                  <VBox prefHeight="10.0" prefWidth="330.0" />
-                    <VBox prefHeight="36.0" prefWidth="342.0">
+                  <VBox prefHeight="57.0" prefWidth="342.0">
+                     <children>
+                            <Label style="-fx-font-size: 14px; -fx-text-fill: #003366;" text="Rule name:" />
+                            <TextField fx:id="ruleNameField" prefHeight="25.0" prefWidth="316.0" promptText="Enter a name for the rule" />
+                     </children>
+                  </VBox>
+                    <VBox prefHeight="42.0" prefWidth="342.0">
                         <children>
                             <ComboBox fx:id="comboBoxTrigger" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxTriggerAction" prefHeight="30.0" prefWidth="342.0" promptText="Select the Trigger" style="-fx-font-size: 14px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                         </children>
                     </VBox>
-                  <StackPane prefHeight="35.0" prefWidth="347.0">
+                  <StackPane prefHeight="70.0" prefWidth="346.0">
                      <children>
                         <AnchorPane fx:id="timeTriggerAnchor" prefHeight="45.0" prefWidth="346.0">
                            <children>
@@ -86,33 +89,50 @@
                         </AnchorPane>
                         <AnchorPane fx:id="existFileAnchor" prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <TextField fx:id="fileNameField" prefHeight="25.0" prefWidth="260.0" promptText="Insert the name of the file" />
-                              <VBox layoutY="28.0" prefHeight="30.0" prefWidth="342.0">
+                              <VBox prefHeight="70.0" prefWidth="342.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <VBox prefHeight="41.0" prefWidth="342.0">
                                        <children>
-                                          <TextField fx:id="fileNamePathField" editable="false" prefHeight="25.0" prefWidth="260.0" promptText="Path of the file to control" />
-                                          <HBox prefHeight="50.0" prefWidth="6.0" />
-                                          <Button fx:id="existFileButton" mnemonicParsing="false" onAction="#existFileButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 12px;" text="Select" />
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="327.0" promptText="Insert the name of the file" />
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
+                                    </VBox>
+                                    <VBox prefHeight="14.0" prefWidth="342.0" />
+                                    <VBox prefHeight="30.0" prefWidth="342.0">
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <TextField fx:id="fileNamePathField" editable="false" prefHeight="32.0" prefWidth="260.0" promptText="Path of the file to control" />
+                                                <HBox prefHeight="50.0" prefWidth="6.0" />
+                                                <Button fx:id="existFileButton" mnemonicParsing="false" onAction="#existFileButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="fileDimensionAnchor" prefHeight="31.0" prefWidth="346.0">
+                        <AnchorPane fx:id="fileDimensionAnchor" prefHeight="77.0" prefWidth="346.0">
                            <children>
-                              <VBox prefHeight="58.0" prefWidth="342.0">
+                              <VBox prefHeight="70.0" prefWidth="330.0">
                                  <children>
-                                    <TextField fx:id="fileDimensionField" prefHeight="25.0" prefWidth="290.0" promptText="Insert the dimension (byte value)" />
-                                    <VBox prefHeight="5.0" prefWidth="342.0" />
-                                    <VBox prefHeight="10.0" prefWidth="342.0">
+                                    <VBox maxHeight="1.7976931348623157E308" prefHeight="43.0" prefWidth="330.0">
                                        <children>
-                                          <HBox prefHeight="50.0" prefWidth="342.0">
+                                          <TextField fx:id="fileDimensionField" prefHeight="46.0" prefWidth="330.0" promptText="Insert the dimension (byte value)" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefHeight="17.0" prefWidth="330.0" />
+                                    <VBox prefHeight="30.0" prefWidth="342.0">
+                                       <children>
+                                          <HBox prefHeight="30.0" prefWidth="342.0">
                                              <children>
-                                                <TextField fx:id="fileDimensionPathField" editable="false" maxWidth="1.7976931348623157E308" prefHeight="10.0" prefWidth="222.0" promptText="Path of the file to control" />
+                                                <TextField fx:id="fileDimensionPathField" editable="false" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="260.0" promptText="Path of the file to control" />
                                                 <HBox prefHeight="25.0" prefWidth="9.0" />
-                                                <Button fx:id="fileDimensionButton" mnemonicParsing="false" onAction="#fileDimensionButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 12px;" text="Select" />
+                                                <Button fx:id="fileDimensionButton" mnemonicParsing="false" onAction="#fileDimensionButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -123,26 +143,23 @@
                         </AnchorPane>
                      </children>
                   </StackPane>
-                  </children>
-              </VBox>
-            <VBox layoutX="14.0" layoutY="163.0" prefHeight="237.0" prefWidth="346.0">
-               <children>
-                  <VBox prefHeight="45.0" prefWidth="346.0">
+                  <VBox prefHeight="14.0" prefWidth="342.0" />
+                  <VBox prefHeight="42.0" prefWidth="342.0">
                      <children>
                         <ComboBox fx:id="comboBoxActionRule" minHeight="-Infinity" minWidth="-Infinity" onAction="#comboBoxActionRule" prefHeight="30.0" prefWidth="342.0" promptText="Select the Action" style="-fx-font-size: 14px; -fx-text-fill: #003366; -fx-background-color: #C8D8F4; -fx-border-color: #003366; -fx-border-width: 1px; -fx-border-radius: 3px;" />
                      </children>
                   </VBox>
-                  <StackPane prefHeight="167.0" prefWidth="346.0">
+                  <VBox prefHeight="136.0" prefWidth="342.0">
                      <children>
-                        <AnchorPane fx:id="audioActionAnchor" prefHeight="225.0" prefWidth="347.0">
+                        <StackPane prefHeight="200.0" prefWidth="342.0">
                            <children>
-                              <VBox layoutY="-1.0" prefHeight="201.0" prefWidth="342.0">
+                              <AnchorPane fx:id="audioActionAnchor">
                                  <children>
-                                    <VBox prefHeight="35.0" prefWidth="333.0">
+                                    <VBox layoutY="-1.0" prefHeight="25.0" prefWidth="342.0">
                                        <children>
-                                          <HBox prefHeight="47.0" prefWidth="342.0">
+                                          <HBox prefHeight="30.0" prefWidth="342.0">
                                              <children>
-                                                <TextField fx:id="audioPathField" editable="false" prefHeight="25.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
+                                                <TextField fx:id="audioPathField" editable="false" prefHeight="30.0" prefWidth="204.0" promptText="Path of the audio file" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                                                 <HBox prefHeight="34.0" prefWidth="10.0" />
                                                 <Button fx:id="audioPathButton" mnemonicParsing="false" onAction="#audioPathButtonAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
                                              </children>
@@ -150,112 +167,120 @@
                                        </children>
                                     </VBox>
                                  </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="messageActionAnchor" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox prefHeight="176.0" prefWidth="272.0">
+                              </AnchorPane>
+                              <AnchorPane fx:id="messageActionAnchor">
                                  <children>
-                                    <TextArea fx:id="messageField" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="stringFileAnchor" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="342.0">
+                                    <VBox prefHeight="136.0" prefWidth="272.0">
                                        <children>
-                                          <TextField fx:id="stringFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
-                                          <HBox prefHeight="25.0" prefWidth="5.0" />
-                                          <Button fx:id="selectStringFilePathButton" mnemonicParsing="false" onAction="#selectStringFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                    <VBox prefHeight="14.0" prefWidth="342.0" />
-                                    <VBox prefHeight="26.0" prefWidth="283.0">
-                                       <children>
-                                          <TextArea fx:id="stringAppendField" prefHeight="94.0" prefWidth="342.0" promptText="Insert the string to append" />
+                                          <TextArea fx:id="messageField" prefHeight="137.0" prefWidth="272.0" promptText="Insert the message here" style="-fx-font-size: 14px; -fx-text-fill: #003366;" />
                                        </children>
                                     </VBox>
                                  </children>
-                              </VBox>
+                              </AnchorPane>
+                              <AnchorPane fx:id="stringFileAnchor">
+                                 <children>
+                                    <VBox prefHeight="83.0" prefWidth="342.0">
+                                       <children>
+                                          <HBox prefHeight="30.0" prefWidth="342.0">
+                                             <children>
+                                                <TextField fx:id="stringFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
+                                                <HBox prefHeight="25.0" prefWidth="5.0" />
+                                                <Button fx:id="selectStringFilePathButton" mnemonicParsing="false" onAction="#selectStringFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                             </children>
+                                          </HBox>
+                                          <VBox prefHeight="12.0" prefWidth="342.0" />
+                                          <VBox prefHeight="40.0" prefWidth="283.0">
+                                             <children>
+                                                <TextArea fx:id="stringAppendField" prefHeight="94.0" prefWidth="342.0" promptText="Insert the string to append" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane fx:id="copyFileAnchor">
+                                 <children>
+                                    <VBox prefHeight="69.0" prefWidth="342.0">
+                                       <children>
+                                          <VBox prefHeight="30.0" prefWidth="342.0">
+                                             <children>
+                                                <HBox prefHeight="30.0" prefWidth="342.0">
+                                                   <children>
+                                                      <TextField fx:id="copyFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
+                                                      <HBox prefHeight="30.0" prefWidth="7.0" />
+                                                      <Button fx:id="copyFilePathButton" mnemonicParsing="false" onAction="#copyFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="47.0" prefWidth="342.0" />
+                                          <VBox prefHeight="30.0" prefWidth="342.0">
+                                             <children>
+                                                <HBox prefHeight="30.0" prefWidth="342.0">
+                                                   <children>
+                                                      <TextField fx:id="copyFileDestPathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Destination path of the file" />
+                                                      <HBox prefHeight="30.0" prefWidth="7.0" />
+                                                      <Button fx:id="copyFileDestPathButton" mnemonicParsing="false" onAction="#copyFileDestPathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane fx:id="moveFileAnchor">
+                                 <children>
+                                    <VBox prefHeight="75.0" prefWidth="342.0">
+                                       <children>
+                                          <VBox prefHeight="30.0" prefWidth="342.0">
+                                             <children>
+                                                <HBox prefHeight="30.0" prefWidth="342.0">
+                                                   <children>
+                                                      <TextField fx:id="moveFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
+                                                      <HBox prefHeight="30.0" prefWidth="7.0" />
+                                                      <Button fx:id="moveFilePathButton" mnemonicParsing="false" onAction="#moveFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="7.0" prefWidth="342.0" />
+                                          <VBox prefHeight="33.0" prefWidth="342.0">
+                                             <children>
+                                                <HBox prefHeight="42.0" prefWidth="342.0">
+                                                   <children>
+                                                      <TextField fx:id="moveFileDestPathField" editable="false" prefHeight="41.0" prefWidth="273.0" promptText="Destination path of the file" />
+                                                      <HBox prefHeight="30.0" prefWidth="7.0" />
+                                                      <Button fx:id="moveFieldDestPathButton" mnemonicParsing="false" onAction="#moveFieldDestPathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane fx:id="deleteFileAnchor">
+                                 <children>
+                                    <VBox prefHeight="30.0" prefWidth="342.0">
+                                       <children>
+                                          <HBox prefHeight="30.0" prefWidth="329.0">
+                                             <children>
+                                                <TextField fx:id="deleteFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file to delete" />
+                                                <HBox prefHeight="30.0" prefWidth="6.0" />
+                                                <Button fx:id="deleteFilePathButton" mnemonicParsing="false" onAction="#deleteFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="copyFileAnchor" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="342.0">
-                                       <children>
-                                          <TextField fx:id="copyFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
-                                          <HBox prefHeight="30.0" prefWidth="7.0" />
-                                          <Button fx:id="copyFilePathButton" mnemonicParsing="false" onAction="#copyFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                              <VBox layoutY="30.0" prefHeight="20.0" prefWidth="342.0" />
-                              <VBox layoutY="43.0" prefHeight="157.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="342.0">
-                                       <children>
-                                          <TextField fx:id="copyFileDestPathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Destination path of the file" />
-                                          <HBox prefHeight="30.0" prefWidth="7.0" />
-                                          <Button fx:id="copyFileDestPathButton" mnemonicParsing="false" onAction="#copyFileDestPathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="moveFileAnchor" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="342.0">
-                                       <children>
-                                          <TextField fx:id="moveFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file" />
-                                          <HBox prefHeight="30.0" prefWidth="7.0" />
-                                          <Button fx:id="moveFilePathButton" mnemonicParsing="false" onAction="#moveFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                              <VBox layoutY="43.0" prefHeight="157.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="342.0">
-                                       <children>
-                                          <TextField fx:id="moveFileDestPathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Destination path of the file" />
-                                          <HBox prefHeight="30.0" prefWidth="7.0" />
-                                          <Button fx:id="moveFieldDestPathButton" mnemonicParsing="false" onAction="#moveFieldDestPathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="deleteFileAnchor" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="342.0">
-                                 <children>
-                                    <HBox prefHeight="30.0" prefWidth="329.0">
-                                       <children>
-                                          <TextField fx:id="deleteFilePathField" editable="false" prefHeight="30.0" prefWidth="273.0" promptText="Select the file to delete" />
-                                          <HBox prefHeight="30.0" prefWidth="6.0" />
-                                          <Button fx:id="deleteFilePathButton" mnemonicParsing="false" onAction="#deleteFilePathAction" style="-fx-background-color: #003366; -fx-text-fill: white; -fx-font-size: 14px;" text="Select" />
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
+                        </StackPane>
                      </children>
-                  </StackPane>
-               </children>
-            </VBox>
+                  </VBox>
+                  </children>
+              </VBox>
           </children>
       </AnchorPane>
       <AnchorPane prefHeight="401.0" prefWidth="217.0" style="-fx-background-color: #E8F0FE;">

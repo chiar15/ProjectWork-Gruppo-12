@@ -59,7 +59,7 @@ import javafx.stage.Stage;
 
 /**
  * FXML Controller class
- *
+ * Controller managing the main user interface (table view containing the created rules).
  * @author agost
  */
 public class FXMLMainViewController implements Initializable{
@@ -111,10 +111,96 @@ public class FXMLMainViewController implements Initializable{
     
     /**
      * Initializes the controller class.
+     * @param url The initialization URL (not used)
+     * @param rb The initialization resource bundle (not used)
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
+        initializeVariables();
+        loadRulesFromFile();
+        setupUI();
+        configureEventsSubscription();
+        loadEventsFromFile();
+        startAllThreads();
+    }
+    
+    /**
+     * Button action to add a new rule.
+     * Opens a window for creating a new rule.
+     * @param event The button event (not used)
+     */
+    @FXML
+    private void addRuleButtonAction(ActionEvent event) {
+        if(!isRuleCreationOpen){
+            try {
+                Image icon = new Image(getClass().getResourceAsStream("/icon/icona.png"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreationView.fxml"));
+                Parent root = loader.load();
+
+                Stage stage = new Stage();
+
+                stage.getIcons().add(icon);
+                stage.setScene(new Scene(root));
+                stage.setTitle("Rule Creation Menù");
+                FXMLCreationViewController controller = loader.getController();
+                controller.initialize();
+                stage.setResizable(false);
+
+                stage.setOnCloseRequest(windowEvent -> {
+                    isRuleCreationOpen = false;
+                    eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
+                    processQueuedPopups();
+                });
+
+
+                stage.show();
+                isRuleCreationOpen = true;
+                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
+            } catch (IOException e) {
+                showAlert(AlertType.ERROR, "Unable to open the creation window. The application will be terminated.", "Error");
+                isClosingCritical = true;
+                closeApplication();
+            }
+        }
+    }
+    
+    /**
+     * Button action to delete a selected rule.
+     * Deletes one or more selected rules in the rules table.
+     * @param event The button event (not used)
+     */
+    @FXML
+    private void deleteRuleButtonAction(ActionEvent event) {
+        ObservableList<Rule> selectedRules = ruleListTable.getSelectionModel().getSelectedItems();
+
+        if (!selectedRules.isEmpty()) {
+            Platform.runLater(() -> {
+                isPopupDisplayed = true;
+                eventBus.publish(new SceneEvent("Busy Scene", SceneEventType.BUSY));
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rule/rules?", ButtonType.YES, ButtonType.NO);
+                alert.showAndWait();
+                isPopupDisplayed = false;
+                eventBus.publish(new SceneEvent("Free Scene", SceneEventType.FREE));
+
+                if (alert.getResult() == ButtonType.YES) {
+                    List<Rule> rulesToRemove = new ArrayList<>(selectedRules);
+
+                    for (Rule rule : rulesToRemove) {
+                        observableList.remove(rule);
+                        ruleManager.deleteRule(rule);
+                    }
+                }
+                ruleListTable.refresh();
+                processQueuedPopups();
+            });
+        }
+    }
+    
+    /**
+     * Initializes the controller's variables.
+     */
+    private void initializeVariables() {
         eventBus = EventBus.getInstance();
         ruleManager = RuleManager.getInstance();
         eventPersistence = new EventPersistence();
@@ -126,39 +212,47 @@ public class FXMLMainViewController implements Initializable{
         allowCloseAlert = false;
         audioAlert = null;
         isClosingCritical = false;
-        
-        loadRulesFromFile();
-        configureInformationRow();
-        
-        setupRuleTable();
-        
-        deleteRuleButton.disableProperty().bind(
-            ruleListTable.getSelectionModel().selectedItemProperty().isNull()
-        );
-        
-        configureEventsSubscription();
-       
-        loadEventsFromFile();
-
-        Platform.runLater(() -> {
-            processQueuedPopups();
-        });
-        
-        startAllThreads();
-        
-    }    
-
-    private void configureEventsSubscription(){
-        eventBus.subscribe(MessageEvent.class, this::onEvent);
-        eventBus.subscribe(ErrorEvent.class, this::onEvent);
-        eventBus.subscribe(FileEvent.class, this::onEvent);
-        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
-        eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
-        eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
-        eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
     }
     
-     private void setupExecutionColumn() {
+    /**
+     * Loads rules from file on application startup.
+     */
+    private void loadRulesFromFile(){
+        List<Rule> list = ruleManager.loadRulesFromFile();
+        if(list != null){
+           observableList.addAll(list); 
+        }
+    }
+    
+    /**
+     * Sets up the user interface (Table view, table columns, Tooltip, delete button, etc..).
+     */
+    private void setupUI() {
+        setupRuleTable();
+        configureInformationRow();
+        deleteRuleButtonSetup();
+    }
+    
+    /**
+    * Sets up the rule table view, configuring various columns and their properties.
+    */
+    private void setupRuleTable(){
+        ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
+        ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
+        ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
+        
+        ruleListTable.setItems(observableList);
+        setupRuleStateColumn();
+        setupExecutionColumn();
+    }
+    
+    /**
+    * Sets up the execution column of the rule table.
+    * Determines the displayed value based on the rule's execution type.
+    */
+    private void setupExecutionColumn() {
         executionClm.setCellValueFactory(cellData -> {
             Rule rule = cellData.getValue();
             if (rule instanceof SuspendedRuleDecorator) {
@@ -170,6 +264,45 @@ public class FXMLMainViewController implements Initializable{
         });
     }
     
+    /**
+    * Sets up the rule state column with checkboxes for activation/deactivation.
+    */
+    private void setupRuleStateColumn() {
+        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("isActive"));
+        ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                CheckBox checkBox = new CheckBox();
+                setText(item ? "active" : "deactive");
+
+                checkBox.setSelected(item);
+
+                Rule rule = getTableView().getItems().get(getIndex());
+
+                checkBox.setOnAction(event -> {
+                    ruleManager.changeRuleState(rule, checkBox.isSelected());
+                    rule.setIsActive(checkBox.isSelected());
+                    setText(checkBox.isSelected() ? "active" : "deactive");
+                });
+
+
+                setGraphic(checkBox);
+            }
+        });
+    }
+    
+    /**
+    * Configures the information display row for the rule list table.
+    * Shows tooltip details when hovering over a row with rule information.
+    */
     private void configureInformationRow() {
         ruleListTable.setRowFactory(tv -> {
             TableRow<Rule> row = new TableRow<>();
@@ -208,65 +341,53 @@ public class FXMLMainViewController implements Initializable{
         });
     }
     
-    private void setupRuleStateColumn() {
-        ruleStateClm.setCellValueFactory(new PropertyValueFactory<>("isActive"));
-        ruleStateClm.setCellFactory(column -> new TableCell<Rule, Boolean>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setGraphic(null);
-                    setText(null);
-                    return;
-                }
-
-                CheckBox checkBox = new CheckBox();
-                setText(item ? "active" : "deactive");
-
-                checkBox.setSelected(item);
-
-                Rule rule = getTableView().getItems().get(getIndex());
-
-                checkBox.setOnAction(event -> {
-                    ruleManager.changeRuleState(rule, checkBox.isSelected());
-                    rule.setIsActive(checkBox.isSelected());
-                    setText(checkBox.isSelected() ? "active" : "deactive");
-                });
-
-
-                setGraphic(checkBox);
-            }
-        });
+    /**
+    * Sets up the deletion rule button by enabling/disabling based on selection.
+    */
+    private void deleteRuleButtonSetup() {
+        deleteRuleButton.disableProperty().bind(
+            ruleListTable.getSelectionModel().selectedItemProperty().isNull()
+        );
     }
     
-    private void setupRuleTable(){
-        ruleListTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        ruleNameClm.setCellValueFactory(new PropertyValueFactory("name"));
-        ruleTriggerClm.setCellValueFactory(new PropertyValueFactory("trigger"));
-        ruleActionClm.setCellValueFactory(new PropertyValueFactory("action"));
-        
-        ruleListTable.setItems(observableList);
-        setupRuleStateColumn();
-        setupExecutionColumn();
+    /**
+    * Configures event subscriptions for different types of events.
+    */
+    private void configureEventsSubscription(){
+        eventBus.subscribe(MessageEvent.class, this::onEvent);
+        eventBus.subscribe(ErrorEvent.class, this::onEvent);
+        eventBus.subscribe(FileEvent.class, this::onEvent);
+        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
+        eventBus.subscribe(AudioEvent.class,this::onAudioEvent );
+        eventBus.subscribe(CreationEvent.class,this::onCreationEvent);
+        eventBus.subscribe(ActiveEvent.class,this::onActiveEvent);
     }
     
-    private void loadRulesFromFile(){
-        List<Rule> list = ruleManager.loadRulesFromFile();
-        if(list != null){
-           observableList.addAll(list); 
-        }
-        
-    }
-    
+    /**
+    * Loads events from a file into the event queue if available.
+    */
     private void loadEventsFromFile(){
         Queue<EventInterface> queue = eventPersistence.loadEventsFromFile();
         if(queue != null){
             eventQueue.addAll(queue);
+            Platform.runLater(() -> {
+                processQueuedPopups();
+            });
         }
     }
     
+    /**
+    * Starts the threads responsible for checking rules, executing rules, and saving rules.
+    */
+    private void startAllThreads(){
+        startRuleChecker();
+        startRuleExecutor();
+        startRuleSaver();
+    }
+    
+    /**
+    * Starts the thread responsible for rule checking.
+    */
     private void startRuleChecker() {
         ruleChecker = new RuleChecker();
 
@@ -275,6 +396,9 @@ public class FXMLMainViewController implements Initializable{
         checkerThread.start();  
     }
     
+    /**
+    * Starts the thread responsible for rule execution.
+    */
     private void startRuleExecutor(){
         ruleExecutor = new RuleExecutor();
         
@@ -283,6 +407,9 @@ public class FXMLMainViewController implements Initializable{
         executorThread.start();
     }
     
+    /**
+    * Starts the thread responsible for rule saving.
+    */
     private void startRuleSaver(){
         ruleSaver = new RuleSaver();
         
@@ -291,76 +418,12 @@ public class FXMLMainViewController implements Initializable{
         savingThread.start();
     }
     
-    private void startAllThreads(){
-        startRuleChecker();
-        startRuleExecutor();
-        startRuleSaver();
-    }
-    
-    @FXML
-    private void addRuleButtonAction(ActionEvent event) {
-        if(!isRuleCreationOpen){
-            try {
-                Image icon = new Image(getClass().getResourceAsStream("/icon/icona.png"));
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreationView.fxml"));
-                Parent root = loader.load();
-
-                Stage stage = new Stage();
-
-                stage.getIcons().add(icon);
-                stage.setScene(new Scene(root));
-                stage.setTitle("Rule Creation Menù");
-                FXMLCreationViewController controller = loader.getController();
-                controller.initialize();
-                stage.setResizable(false);
-
-                stage.setOnCloseRequest(windowEvent -> {
-                    isRuleCreationOpen = false;
-                    eventBus.publish(new SceneEvent("Free scene", SceneEventType.FREE));
-                    processQueuedPopups();
-                });
-
-
-                stage.show();
-                isRuleCreationOpen = true;
-                eventBus.publish(new SceneEvent("Busy scene", SceneEventType.BUSY));
-            } catch (IOException e) {
-                showAlert(AlertType.ERROR, "Unable to open the creation window. The application will be terminated.", "Error");
-                isClosingCritical = true;
-                closeApplication();
-            }
-        }
-    }
-    
-    @FXML
-    private void deleteRuleButtonAction(ActionEvent event) {
-        ObservableList<Rule> selectedRules = ruleListTable.getSelectionModel().getSelectedItems();
-
-        if (!selectedRules.isEmpty()) {
-            Platform.runLater(() -> {
-                isPopupDisplayed = true;
-                eventBus.publish(new SceneEvent("Busy Scene", SceneEventType.BUSY));
-                Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want to delete the selected rule/rules?", ButtonType.YES, ButtonType.NO);
-                alert.showAndWait();
-                isPopupDisplayed = false;
-                eventBus.publish(new SceneEvent("Free Scene", SceneEventType.FREE));
-
-                if (alert.getResult() == ButtonType.YES) {
-                    // Creare una copia della lista degli elementi selezionati per evitare ConcurrentModificationException
-                    List<Rule> rulesToRemove = new ArrayList<>(selectedRules);
-
-                    for (Rule rule : rulesToRemove) {
-                        observableList.remove(rule);
-                        ruleManager.deleteRule(rule);
-                    }
-                }
-                ruleListTable.refresh();
-                processQueuedPopups();
-            });
-        }
-    }
-    
-    //cambiare nome per nuovi eventi
+    /**
+    * Handles incoming events and processes them accordingly.
+    * If certain conditions are met, adds events to the queue for later processing.
+    * 
+    * @param event The incoming event
+    */
     private void onEvent(EventInterface event) {
         if (isRuleCreationOpen || isPopupDisplayed || isAudioPlaying) {
             eventQueue.add(event);
@@ -369,6 +432,11 @@ public class FXMLMainViewController implements Initializable{
         }
     }
     
+    /**
+    * Checks and processes the incoming event.
+    * 
+    * @param event The event to be checked and processed
+    */
     private void checkEvent(EventInterface event){
         if(event instanceof MessageEvent){
             showAlert(AlertType.INFORMATION, event.getMessage(), "Message");
@@ -386,6 +454,9 @@ public class FXMLMainViewController implements Initializable{
     }
     
     
+    /**
+    * Processes queued popups by handling events in the event queue.
+    */
     private void processQueuedPopups() {
         EventInterface event;
         if (!eventQueue.isEmpty()) {
@@ -394,6 +465,11 @@ public class FXMLMainViewController implements Initializable{
         }
     }
 
+    /**
+    * Handles the event when the application is about to close.
+    * 
+    * @param event The close event triggered
+    */
     private void onCloseEvent(CloseEvent event){
         String content;
         
@@ -423,6 +499,10 @@ public class FXMLMainViewController implements Initializable{
         }
     }
     
+    /**
+    * Manages the closing operation of the application by saving rules and events to files,
+    * and exits the application.
+    */
     private void manageClose(){
         try{
             ruleManager.saveRulesToFile();
@@ -437,6 +517,14 @@ public class FXMLMainViewController implements Initializable{
         }
     }
     
+    /**
+    * Shows an alert dialog box with a specified type, message, and title.
+    * Refreshes the rule list table after showing the alert.
+    * 
+    * @param type    The type of alert to display (e.g., INFORMATION, ERROR)
+    * @param message The message content of the alert
+    * @param title   The title of the alert dialog
+    */
     private void showAlert(AlertType type, String message, String title) {
         Platform.runLater(() -> {
             isPopupDisplayed = true;
@@ -450,6 +538,12 @@ public class FXMLMainViewController implements Initializable{
         ruleListTable.refresh();
     }
     
+    /**
+    * Handles audio events by displaying or closing an audio alert dialog accordingly.
+    * Refreshes the rule list table and processes queued popups after handling the event.
+    * 
+    * @param event The audio event triggered
+    */
     private void onAudioEvent(AudioEvent event){
         Platform.runLater(() -> {
             if(event.getEventType() == AudioEventType.STARTED){
@@ -461,7 +555,6 @@ public class FXMLMainViewController implements Initializable{
                 audioAlert.setTitle("Audio Playing");
                 audioAlert.setContentText(event.getMessage());
 
-                // Rendi il dialogo non chiudibile dall'utente
                 DialogPane dialogPane = audioAlert.getDialogPane();
                 dialogPane.getButtonTypes().add(ButtonType.CANCEL);
                 ButtonType cancelButtonType = dialogPane.getButtonTypes().get(0);
@@ -490,6 +583,12 @@ public class FXMLMainViewController implements Initializable{
         });
     }
     
+    /**
+    * Handles the active event by updating the status of a rule in the observable list.
+    * and refreshes the rule list table if no popup is displayed.
+    * 
+    * @param event The active event triggered
+    */
     private void onActiveEvent(ActiveEvent event){
         int index= observableList.indexOf(event.getRule());
         observableList.get(index).setIsActive(false);
@@ -499,6 +598,12 @@ public class FXMLMainViewController implements Initializable{
         
     }
     
+    /**
+    * Handles the creation event by adding a rule to the observable list,
+    * closing the rule creation window, and processing queued popups.
+    * 
+    * @param event The creation event triggered
+    */
     public void onCreationEvent(CreationEvent event) {
         observableList.add(event.getRule());
         isRuleCreationOpen = false;
@@ -506,9 +611,11 @@ public class FXMLMainViewController implements Initializable{
         processQueuedPopups();
     }
     
+    /**
+    * Closes the application by closing the current stage/window.
+    */
     private void closeApplication(){
         Stage stage = (Stage) addRuleButton.getScene().getWindow();
         stage.close();
     }
-    
 }

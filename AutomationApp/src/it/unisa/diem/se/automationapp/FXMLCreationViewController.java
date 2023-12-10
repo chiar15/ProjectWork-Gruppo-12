@@ -5,27 +5,14 @@
 package it.unisa.diem.se.automationapp;
 
 import it.unisa.diem.se.automationapp.action.ActionType;
-import it.unisa.diem.se.automationapp.action.AudioAction;
-import it.unisa.diem.se.automationapp.action.CopyFileAction;
-import it.unisa.diem.se.automationapp.action.DeleteFileAction;
-import it.unisa.diem.se.automationapp.action.MessageAction;
-import it.unisa.diem.se.automationapp.action.MoveFileAction;
-import it.unisa.diem.se.automationapp.action.StringAction;
 import it.unisa.diem.se.automationapp.event.CreationEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.CloseEvent;
 import it.unisa.diem.se.automationapp.rulesmanagement.Rule;
 import it.unisa.diem.se.automationapp.rulesmanagement.RuleManager;
-import it.unisa.diem.se.automationapp.trigger.DateTrigger;
-import it.unisa.diem.se.automationapp.trigger.DayOfMonthTrigger;
-import it.unisa.diem.se.automationapp.trigger.DayOfWeekTrigger;
-import it.unisa.diem.se.automationapp.trigger.FileDimensionTrigger;
-import it.unisa.diem.se.automationapp.trigger.FileExistsTrigger;
-import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import it.unisa.diem.se.automationapp.trigger.TriggerType;
 import java.io.File;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +48,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- *
+ * FXML Controller class
+ * Controller class for managing rule creation through FXML elements.
+ * Provides methods for initializing, configuring UI elements, setting up listeners,
+ * handling actions, and managing the creation of rules based on user input.
  * @author agost
  */
 public class FXMLCreationViewController{
@@ -205,15 +195,24 @@ public class FXMLCreationViewController{
     
     private static final String DELETE_FILE_ACTION = "Delete a File";
     
+    /**
+     * Initializes the controller by setting up variables, UI elements, listeners,
+     * bindings, and event subscriptions.
+     */
     public void initialize() {
-        ruleManager = RuleManager.getInstance();
-        eventBus = EventBus.getInstance();
+        initializeVariables();
         configureUIElements();
         setupListeners();
         initializeBindings();
-        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
+        eventSubscription();
     }
 
+    /**
+     * Handles the action event when the trigger selection combobox changes.
+     * Updates the UI elements based on the selected trigger type.
+     *
+     * @param event The ActionEvent triggered by the combobox selection change.
+     */
     @FXML
     private void comboBoxTriggerAction(ActionEvent event) {
         String selectedTrigger = comboBoxTrigger.getValue();
@@ -272,6 +271,12 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+     * Handles the action event when the action selection combobox changes.
+     * Updates the UI elements based on the selected action type.
+     *
+     * @param event The ActionEvent triggered by the combobox selection change.
+     */
     @FXML
     private void comboBoxActionRule(ActionEvent event) {
         String selectedAction = comboBoxActionRule.getValue();
@@ -307,6 +312,7 @@ public class FXMLCreationViewController{
                     hideMessageField();
                     hideMoveFileControls();
                     hideDeleteFileControls();
+                    hideAudioActionControls();
                     showCopyFileControls();
                     break;
                 case MOVE_FILE_ACTION:
@@ -329,6 +335,12 @@ public class FXMLCreationViewController{
         }
     }
     
+    /**
+     * Handles the action event when the audio path button is clicked.
+     * Opens a file chooser dialog to select an audio file.
+     *
+     * @param event The ActionEvent triggered by clicking the audio path button.
+     */
     @FXML
     private void audioPathButtonAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -344,6 +356,12 @@ public class FXMLCreationViewController{
         }
     }
     
+    /**
+     * Handles the action event when selecting a string file path.
+     * Opens a file chooser dialog to select a text file.
+     * 
+     * @param event The ActionEvent triggered by selecting the string file path.
+     */
     @FXML
     private void selectStringFilePathAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -358,7 +376,13 @@ public class FXMLCreationViewController{
             stringFilePathField.setText(selectedFile.getAbsolutePath());
         }
     }
-
+    
+    /**
+     * Handles the action event when selecting the copy file path.
+     * Opens a file chooser dialog to select a file for copying.
+     * 
+     * @param event The ActionEvent triggered by selecting the copy file path.
+     */
     @FXML
     private void copyFilePathAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -373,6 +397,12 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+     * Handles the action event when selecting the move file path.
+     * Opens a file chooser dialog to select a file to move.
+     * 
+     * @param event The ActionEvent triggered by selecting the move file path.
+     */
     @FXML
     private void moveFilePathAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -387,6 +417,12 @@ public class FXMLCreationViewController{
         }
     }
     
+    /**
+     * Handles the action event when selecting the destination path for the copied file.
+     * Opens a directory chooser dialog to select the destination for the copied file.
+     * 
+     * @param event The ActionEvent triggered by selecting the copy file destination path.
+     */
     @FXML
     private void copyFileDestPathAction(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -399,6 +435,12 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+     * Handles the action event when selecting the destination path for the moved file.
+     * Opens a directory chooser dialog to select the destination for the moved file.
+     * 
+     * @param event The ActionEvent triggered by selecting the move file destination path.
+     */
     @FXML
     private void moveFieldDestPathAction(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -411,7 +453,12 @@ public class FXMLCreationViewController{
         }
     }
 
-
+    /**
+     * Handles the action event when selecting the file to delete.
+     * Opens a file chooser dialog to select a file for deletion.
+     * 
+     * @param event The ActionEvent triggered by selecting the file to delete.
+     */
     @FXML
     private void deleteFilePathAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -426,6 +473,12 @@ public class FXMLCreationViewController{
         }
     }
     
+    /**
+     * Handles the action event when selecting the file to check existence.
+     * Opens a directory chooser dialog to select a directory for file existence check.
+     * 
+     * @param event The ActionEvent triggered by selecting the directory for file existence check.
+     */
     @FXML
     private void existFileButtonAction(ActionEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -438,6 +491,12 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+     * Handles the action event when selecting the file for file dimension check.
+     * Opens a file chooser dialog to select a file for dimension check.
+     * 
+     * @param event The ActionEvent triggered by selecting the file for dimension check.
+     */
     @FXML
     private void fileDimensionButtonAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -452,6 +511,12 @@ public class FXMLCreationViewController{
         }
     }
     
+    /**
+    * Handles the action when the 'Single Execution' checkbox is selected.
+    * Hides multiple execution elements and unchecks 'Multiple Executions' checkbox.
+    * 
+    * @param event The ActionEvent triggered by selecting the checkbox.
+    */
     @FXML
     private void singleExecutionAction(ActionEvent event) {
         if (singleExecutionCheckBox.isSelected()) {
@@ -460,6 +525,12 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+    * Handles the action when the 'Multiple Executions' checkbox is selected.
+    * Shows multiple execution elements and unchecks 'Single Execution' checkbox if selected.
+    * 
+    * @param event The ActionEvent triggered by selecting the checkbox.
+    */
     @FXML
     private void multipleExecutionsAction(ActionEvent event) {
         if (multipleExecutionsCheckBox.isSelected()) {
@@ -470,6 +541,13 @@ public class FXMLCreationViewController{
         }
     }
 
+    /**
+    * Handles the action when the 'Create Rule' button is clicked.
+    * Gathers user-entered data, creates a new rule using the RuleManager,
+    * resets fields, publishes a creation event, and closes the window.
+    * 
+    * @param event The ActionEvent triggered by clicking the button.
+    */
     @FXML
     private void createRuleButtonAction(ActionEvent event) {
         String ruleName = ruleNameField.getText();
@@ -491,6 +569,18 @@ public class FXMLCreationViewController{
         closeWindow();
     }
     
+    /**
+    * Initializes necessary variables used in the class.
+    */
+    private void initializeVariables() {
+        ruleManager = RuleManager.getInstance();
+        eventBus = EventBus.getInstance();
+    }
+    
+    /**
+    * Configures UI elements such as ComboBoxes, Spinners, DatePicker, and other components.
+    * Initializes available options for trigger and action selection.
+    */
     private void configureUIElements() {
         configureComboBoxes();
         configureSpinners();
@@ -500,21 +590,12 @@ public class FXMLCreationViewController{
         comboBoxActionRule.setFocusTraversable(false);
         createRuleButton.requestFocus();
         singleExecutionCheckBox.setSelected(true);
-        hideTimeTriggerControls();
-        hideAudioActionControls();
-        hideMessageField();
-        hideMultipleExecution();
-        hideDayOfWeekControls();
-        hideDayOfMonthControls();
-        hideDatePickerControls();
-        hideCopyFileControls();
-        hideStringFileControls();
-        hideMoveFileControls();
-        hideDeleteFileControls();
-        hideFileExistenceControls();
-        hideFileDimensionControls();
+        resetFields();
     }
     
+    /**
+    * Configures ComboBoxes with available trigger and action options.
+    */
     private void configureComboBoxes() {
         comboBoxTrigger.getItems().clear();
         comboBoxTrigger.getItems().addAll(
@@ -525,6 +606,7 @@ public class FXMLCreationViewController{
             FILE_EXISTENCE_TRIGGER,
             FILE_DIMENSION_TRIGGER
         );
+        
         comboBoxActionRule.getItems().clear();
         comboBoxActionRule.getItems().setAll(
                 AUDIO_ACTION,
@@ -534,6 +616,7 @@ public class FXMLCreationViewController{
                 MOVE_FILE_ACTION, 
                 DELETE_FILE_ACTION
         );
+        
         configureDaysBox(suspensionDaysBox, minValue, maxValueDays, minValue);
         configureTimeBox(suspensionHoursBox, minValue, maxValueHours, minValue, "Hours");
         configureTimeBox(suspensionMinutesBox, minValue, maxValueMinutes, minValue, "Minutes");
@@ -542,15 +625,50 @@ public class FXMLCreationViewController{
         configureDayOfMonthComboBox();
     }
     
-    private void configureSpinners() {
-        minValue = 0;
-        maxValueHours = 23;
-        maxValueMinutes = 59;
-        maxValueDays = 30;
-        configureSpinner(spinnerHours, null, minValue, maxValueHours, java.time.LocalTime.now().getHour(), "Hours");
-        configureSpinner(spinnerMinutes, null, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute(), "Minutes");
+    /**
+    * Configures a ComboBox to display days based on the specified range and default value.
+    *
+    * @param comboBox    The ComboBox to be configured.
+    * @param minValue    The minimum value for days.
+    * @param maxValue    The maximum value for days.
+    * @param defaultValue The default value for days.
+    */
+    private void configureDaysBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue) {
+        comboBox.getItems().clear();
+        for (int i = minValue; i <= maxValue; i++) {
+            if (i == 1) {
+                comboBox.getItems().add(i + " Day");
+            } else {
+                comboBox.getItems().add(i + " Days");
+            }
+        }
+        comboBox.setValue(defaultValue + (defaultValue == 1 ? " Day" : " Days"));
+    }
+
+    /**
+    * Configures a ComboBox to display time units (e.g., hours, minutes) based on the specified range and default value.
+    *
+    * @param comboBox    The ComboBox to be configured.
+    * @param minValue    The minimum value for time units.
+    * @param maxValue    The maximum value for time units.
+    * @param defaultValue The default value for time units.
+    * @param unit        The unit of time (e.g., "Hours").
+    */
+    private void configureTimeBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue, String unit) {
+        comboBox.getItems().clear();
+        for (int i = minValue; i <= maxValue; i++) {
+            if (i == 1) {
+                comboBox.getItems().add(i + " " + unit.substring(0, unit.length() - 1));
+            } else {
+                comboBox.getItems().add(i + " " + unit);
+            }
+        }
+        comboBox.setValue(defaultValue + (defaultValue == 1 ? " " + unit.substring(0, unit.length() - 1) : " " + unit));
     }
     
+    /**
+    * Configures the ComboBox for selecting days of the week.
+    */
     private void configureDayOfWeekComboBox() {
         ObservableList<String> daysOfWeek = FXCollections.observableArrayList(
             "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
@@ -558,6 +676,9 @@ public class FXMLCreationViewController{
         dayOfWeekComboBox.setItems(daysOfWeek);
     }
     
+    /**
+    * Configures the ComboBox for selecting days of the month.
+    */
     private void configureDayOfMonthComboBox() {
         ObservableList<String> daysOfMonth = FXCollections.observableArrayList();
 
@@ -568,6 +689,21 @@ public class FXMLCreationViewController{
         dayOfTheMonthBox.setItems(daysOfMonth);
     }
     
+    /**
+    * Configures spinners used for selecting time values of hours and minutes.
+    */
+    private void configureSpinners() {
+        minValue = 0;
+        maxValueHours = 23;
+        maxValueMinutes = 59;
+        maxValueDays = 30;
+        configureSpinner(spinnerHours, null, minValue, maxValueHours, java.time.LocalTime.now().getHour(), "Hours");
+        configureSpinner(spinnerMinutes, null, minValue, maxValueMinutes, java.time.LocalTime.now().getMinute(), "Minutes");
+    }
+    
+    /**
+    * Configures the DatePicker component to prevent selection of past dates.
+    */
     private void configureDatePicker() {
 
         datePicker.setShowWeekNumbers(false);
@@ -586,6 +722,59 @@ public class FXMLCreationViewController{
         });
     }
     
+    /**
+    * Configures a Spinner component with specified settings.
+    *
+    * @param spinner     The Spinner component to be configured.
+    * @param initialValue The initial value for the Spinner.
+    * @param minValue     The minimum allowed value.
+    * @param maxValue     The maximum allowed value.
+    * @param defaultValue The default value if initialValue is null.
+    * @param unit         The unit of measurement for the Spinner.
+    */
+    private void configureSpinner(Spinner<Integer> spinner, Integer initialValue, int minValue, int maxValue, int defaultValue, String unit) {
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initialValue != null ? initialValue : defaultValue);
+
+        spinner.setValueFactory(valueFactory);
+
+        TextField editor = spinner.getEditor();
+        editor.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                editor.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                spinner.getValueFactory().setValue(defaultValue);
+            }
+        });
+
+        Tooltip tooltip = new Tooltip("Min: " + minValue + ", Max: " + maxValue + " " + unit);
+        spinner.setTooltip(tooltip);
+
+        spinner.setOnMouseEntered(event -> {
+            if (!spinner.isFocused()) {
+                tooltip.show(spinner, event.getScreenX(), event.getScreenY() + 20);
+            }
+        });
+
+        spinner.setOnMouseExited(event -> {
+            if (!spinner.isFocused()) {
+                tooltip.hide();
+            }
+        });
+
+        spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                tooltip.hide();
+            }
+        });
+    }
+    
+    /**
+     * Sets up listeners for various UI components (such as rule name field, hours and minutes spinners, etc..) to detect changes.
+     */
     private void setupListeners() {
         ruleNameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -617,7 +806,7 @@ public class FXMLCreationViewController{
             }
         });
         
-        Tooltip warningTooltip = new Tooltip("Warning: Some months do not have days beyond 28, 29, 30, or 31.");
+        Tooltip warningTooltip = new Tooltip("Warning: Some months do not have days beyond 29, 30, or 31.");
         dayOfTheMonthBox.setTooltip(warningTooltip);
 
         Timeline hideTooltipTimeline = new Timeline(new KeyFrame(Duration.seconds(3), ae -> warningTooltip.hide()));
@@ -656,6 +845,10 @@ public class FXMLCreationViewController{
         });
     }
     
+    /**
+    * Initializes bindings between UI components and their properties for enabling/disabling.
+    * For example initialize bindings for the rule creation button.
+    */
     private void initializeBindings() {
         createRuleButton.disableProperty().bind(
                 ruleNameField.textProperty().isEmpty()
@@ -663,7 +856,164 @@ public class FXMLCreationViewController{
                 .or(isInvalidMultipleExecution())
             );
     }
+    
+        
+    /**
+     * Creates a BooleanBinding that checks the validity of the trigger input fields.
+     * Evaluates if the selected trigger and associated fields are valid for rule creation.
+     *
+     * @return A BooleanBinding representing the validity of the trigger input fields.
+     */
+    private BooleanBinding isValidTriggerInput() {
+        return Bindings.createBooleanBinding(() -> {
+            String selectedTrigger = comboBoxTrigger.getValue();
+            boolean triggerValid = selectedTrigger != null;
 
+            if (selectedTrigger != null) {
+                switch (selectedTrigger) {
+                    case TIME_TRIGGER:
+                        triggerValid = triggerValid &&
+                                (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null) && areTriggerTimeSpinnerValuesValid();
+                        break;
+                    case DAY_OF_WEEK_TRIGGER:
+                        triggerValid = triggerValid && dayOfWeekComboBox.getValue() != null;
+                        break;
+                    case DAY_OF_MONTH_TRIGGER:
+                        triggerValid = triggerValid && dayOfTheMonthBox.getValue() != null;
+                        break;
+                    case DATE_TRIGGER:
+                        triggerValid = triggerValid && datePicker.getValue() != null;
+                        break;
+                    case FILE_EXISTENCE_TRIGGER:
+                        triggerValid = triggerValid && (fileNameField.getText() != null && fileNamePathField.getText() != null);
+                        break;
+                    case FILE_DIMENSION_TRIGGER:
+                        triggerValid = triggerValid && (fileDimensionField.getText() != null && fileDimensionPathField.getText() != null);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return triggerValid && isFieldsFilled();
+        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty(), singleExecutionCheckBox.selectedProperty(), multipleExecutionsCheckBox.selectedProperty(), dayOfTheMonthBox.valueProperty(), dayOfWeekComboBox.valueProperty(), datePicker.valueProperty());
+    }
+
+    
+    /**
+     * Creates a BooleanBinding that checks the validity of the action input fields.
+     * Evaluates if the selected action and associated fields are valid for rule creation.
+     *
+     * @return A BooleanBinding representing the validity of the action input fields.
+     */
+    private BooleanBinding isValidActionInput() {
+        return Bindings.createBooleanBinding(() -> {
+            String selectedAction = comboBoxActionRule.getValue();
+            boolean actionValid = selectedAction != null;
+
+            if (selectedAction != null) {
+                switch (selectedAction) {
+                    case AUDIO_ACTION:
+                        actionValid = actionValid && !audioPathField.getText().isEmpty();
+                        break;
+                    case MESSAGE_ACTION:
+                        actionValid = actionValid && !messageField.getText().isEmpty();
+                        break;
+                    case STRING_ACTION:
+                        actionValid = actionValid && !stringFilePathField.getText().isEmpty();
+                        break;
+                    case COPY_FILE_ACTION:
+                        actionValid = actionValid && !copyFilePathField.getText().isEmpty() && !copyFileDestPathField.getText().isEmpty();
+                        break;
+                    case MOVE_FILE_ACTION:
+                        actionValid = actionValid && !moveFilePathField.getText().isEmpty() && !moveFileDestPathField.getText().isEmpty();
+                        break;
+                    case DELETE_FILE_ACTION:
+                        actionValid = actionValid && !deleteFilePathField.getText().isEmpty();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return actionValid && isFieldsFilled();
+        }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), stringFilePathField.textProperty(), copyFilePathField.textProperty(), copyFileDestPathField.textProperty(), moveFilePathField.textProperty(), moveFileDestPathField.textProperty(), deleteFilePathField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
+    }
+
+    /**
+    * Creates a BooleanBinding that determines if multiple execution settings are invalid.
+    * Checks if the days, hours, and minutes for suspension are all set to zero when multiple executions are selected.
+    *
+    * @return A BooleanBinding representing the invalidity of multiple execution settings.
+    */
+    private BooleanBinding isInvalidMultipleExecution() {
+        BooleanBinding daysZero = suspensionDaysBox.valueProperty().isEqualTo("0 Days");
+        BooleanBinding hoursZero = suspensionHoursBox.valueProperty().isEqualTo("0 Hours");
+        BooleanBinding minutesZero = suspensionMinutesBox.valueProperty().isEqualTo("0 Minutes");
+
+        return multipleExecutionsCheckBox.selectedProperty().and(
+            daysZero.and(hoursZero).and(minutesZero)
+        );
+    }
+    
+    /**
+     * Creates a BooleanBinding indicating if either the single or multiple execution checkboxes are selected.
+     *
+     * @return A BooleanBinding representing the validity of the checkbox inputs.
+     */
+    private BooleanBinding isValidCheckBoxInput() {
+        return singleExecutionCheckBox.selectedProperty().or(multipleExecutionsCheckBox.selectedProperty());
+    }
+    
+    /**
+    * Checks the validity of the provided rule name and displays an alert if a duplicate rule name exists.
+    * If a duplicate rule name exists, it prompts the user to choose a different name.
+    */
+    private void checkRuleNameValidity() {
+        String ruleName = ruleNameField.getText();
+        if(!ruleName.isEmpty()){
+            if (ruleManager != null && !ruleManager.getRuleList().isEmpty()) {
+                if (ruleManager.doesRuleNameExist(ruleName)) {
+                    showAlert("Duplicate Rule Name", "A rule with this name already exists. Please choose a different name.", AlertType.ERROR);
+                    ruleNameField.clear();
+                }
+            }
+        }
+    }
+    
+    /**
+    * Checks if the rule name field is filled.
+    *
+    * @return A boolean indicating if the rule name field is filled or empty.
+    */
+    private boolean isFieldsFilled() {
+        return !ruleNameField.getText().isEmpty();
+    }
+    
+    /**
+    * Checks if the values selected in trigger time spinners are valid.
+    *
+    * @return True if the values are valid, false otherwise.
+    */
+    private boolean areTriggerTimeSpinnerValuesValid() {
+        int hoursValue = spinnerHours.getValue();
+        int minutesValue = spinnerMinutes.getValue();
+        return (hoursValue >= minValue && hoursValue <= maxValueHours) && (minutesValue >= minValue && minutesValue <= maxValueMinutes);
+    }
+    
+    /**
+    * Subscribes to specific events using the event bus.
+    */
+    private void eventSubscription() {
+        eventBus.subscribe(CloseEvent.class, this::onCloseEvent);
+    }
+    
+    /**
+     * Prepares action data based on the selected action type for the creation of rules.
+     *
+     * @param selectedAction The selected action type.
+     * @return Map containing action data based on the selected action type.
+     */
     private Map<String, String> prepareActionData(String selectedAction) {
         Map<String, String> actionData = new HashMap<>();
         switch (selectedAction) {
@@ -708,6 +1058,12 @@ public class FXMLCreationViewController{
         return actionData;
     }
 
+    /**
+    * Prepares trigger data based on the selected trigger type for the creation of rules.
+    *
+    * @param selectedTrigger The selected trigger type.
+    * @return Map containing trigger data based on the selected trigger type.
+    */
     private Map<String, String> prepareTriggerData(String selectedTrigger) {
         Map<String, String> triggerData = new HashMap<>();
         switch (selectedTrigger) {
@@ -751,13 +1107,11 @@ public class FXMLCreationViewController{
         return triggerData;
     }
     
-    private void resetFields(){
-        ruleNameField.clear();
-        audioPathField.clear();
-        comboBoxTrigger.getSelectionModel().clearSelection();
-        comboBoxActionRule.getSelectionModel().clearSelection();
-    }
-    
+    /**
+    * Prepares the suspension period in seconds based on the selected days, hours, and minutes.
+    *
+    * @return The suspension period in seconds.
+    */
     private long prepareSuspensionPeriod() {
         long days = Long.parseLong(suspensionDaysBox.getValue().split(" ")[0]); 
         long hours = Long.parseLong(suspensionHoursBox.getValue().split(" ")[0]); 
@@ -765,52 +1119,28 @@ public class FXMLCreationViewController{
 
         return (days * 86400L) + (hours * 3600L) + (minutes * 60L);
     }
-
     
-    private void configureSpinner(Spinner<Integer> spinner, Integer initialValue, int minValue, int maxValue, int defaultValue, String unit) {
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initialValue != null ? initialValue : defaultValue);
-
-        spinner.setValueFactory(valueFactory);
-
-        TextField editor = spinner.getEditor();
-        editor.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                editor.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-
-        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                spinner.getValueFactory().setValue(defaultValue);
-            }
-        });
-
-        Tooltip tooltip = new Tooltip("Min: " + minValue + ", Max: " + maxValue + " " + unit);
-        spinner.setTooltip(tooltip);
-
-        spinner.setOnMouseEntered(event -> {
-            if (!spinner.isFocused()) {
-                tooltip.show(spinner, event.getScreenX(), event.getScreenY() + 20);
-            }
-        });
-
-        spinner.setOnMouseExited(event -> {
-            if (!spinner.isFocused()) {
-                tooltip.hide();
-            }
-        });
-
-        spinner.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                tooltip.hide();
-            }
-        });
-    }
-    
-    private boolean areTriggerTimeSpinnerValuesValid() {
-        int hoursValue = spinnerHours.getValue();
-        int minutesValue = spinnerMinutes.getValue();
-        return (hoursValue >= minValue && hoursValue <= maxValueHours) && (minutesValue >= minValue && minutesValue <= maxValueMinutes);
+    /**
+    * Resets input fields and hides UI elements related to rule creation.
+    */
+    private void resetFields(){
+        ruleNameField.clear();
+        audioPathField.clear();
+        comboBoxTrigger.getSelectionModel().clearSelection();
+        comboBoxActionRule.getSelectionModel().clearSelection();
+        hideTimeTriggerControls();
+        hideAudioActionControls();
+        hideMessageField();
+        hideMultipleExecution();
+        hideDayOfWeekControls();
+        hideDayOfMonthControls();
+        hideDatePickerControls();
+        hideCopyFileControls();
+        hideStringFileControls();
+        hideMoveFileControls();
+        hideDeleteFileControls();
+        hideFileExistenceControls();
+        hideFileDimensionControls();
     }
     
     private void showTimeTriggerControls() {
@@ -927,90 +1257,6 @@ public class FXMLCreationViewController{
         fileDimensionPathField.clear();
         fileDimensionAnchor.setVisible(false);
     }
-
-    private BooleanBinding isValidTriggerInput() {
-        return Bindings.createBooleanBinding(() -> {
-            String selectedTrigger = comboBoxTrigger.getValue();
-            boolean triggerValid = selectedTrigger != null;
-
-            if (selectedTrigger != null) {
-                switch (selectedTrigger) {
-                    case TIME_TRIGGER:
-                        triggerValid = triggerValid &&
-                                (spinnerHours.getValue() != null && spinnerMinutes.getValue() != null) && areTriggerTimeSpinnerValuesValid();
-                        break;
-                    case DAY_OF_WEEK_TRIGGER:
-                        triggerValid = triggerValid && dayOfWeekComboBox.getValue() != null;
-                        break;
-                    case DAY_OF_MONTH_TRIGGER:
-                        triggerValid = triggerValid && dayOfTheMonthBox.getValue() != null;
-                        break;
-                    case DATE_TRIGGER:
-                        triggerValid = triggerValid && datePicker.getValue() != null;
-                        break;
-                    case FILE_EXISTENCE_TRIGGER:
-                        triggerValid = triggerValid && (fileNameField.getText() != null && fileNamePathField.getText() != null);
-                        break;
-                    case FILE_DIMENSION_TRIGGER:
-                        triggerValid = triggerValid && (fileDimensionField.getText() != null && fileDimensionPathField.getText() != null);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return triggerValid && isFieldsFilled();
-        }, comboBoxTrigger.valueProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty(), ruleNameField.textProperty(), comboBoxActionRule.valueProperty(), audioPathField.textProperty(), messageField.textProperty(), singleExecutionCheckBox.selectedProperty(), multipleExecutionsCheckBox.selectedProperty(), dayOfTheMonthBox.valueProperty(), dayOfWeekComboBox.valueProperty(), datePicker.valueProperty());
-    }
-
-    private BooleanBinding isValidActionInput() {
-        return Bindings.createBooleanBinding(() -> {
-            String selectedAction = comboBoxActionRule.getValue();
-            boolean actionValid = selectedAction != null;
-
-            if (selectedAction != null) {
-                switch (selectedAction) {
-                    case AUDIO_ACTION:
-                        actionValid = actionValid && !audioPathField.getText().isEmpty();
-                        break;
-                    case MESSAGE_ACTION:
-                        actionValid = actionValid && !messageField.getText().isEmpty();
-                        break;
-                    case STRING_ACTION:
-                        actionValid = actionValid && !stringFilePathField.getText().isEmpty();
-                        break;
-                    case COPY_FILE_ACTION:
-                        actionValid = actionValid && !copyFilePathField.getText().isEmpty() && !copyFileDestPathField.getText().isEmpty();
-                        break;
-                    case MOVE_FILE_ACTION:
-                        actionValid = actionValid && !moveFilePathField.getText().isEmpty() && !moveFileDestPathField.getText().isEmpty();
-                        break;
-                    case DELETE_FILE_ACTION:
-                        actionValid = actionValid && !deleteFilePathField.getText().isEmpty();
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return actionValid && isFieldsFilled();
-        }, comboBoxActionRule.valueProperty(), ruleNameField.textProperty(), audioPathField.textProperty(), messageField.textProperty(), stringFilePathField.textProperty(), copyFilePathField.textProperty(), copyFileDestPathField.textProperty(), moveFilePathField.textProperty(), moveFileDestPathField.textProperty(), deleteFilePathField.textProperty(), spinnerHours.valueProperty(), spinnerMinutes.valueProperty());
-    }
-
-    
-    private BooleanBinding isInvalidMultipleExecution() {
-        BooleanBinding daysZero = suspensionDaysBox.valueProperty().isEqualTo("0 Days");
-        BooleanBinding hoursZero = suspensionHoursBox.valueProperty().isEqualTo("0 Hours");
-        BooleanBinding minutesZero = suspensionMinutesBox.valueProperty().isEqualTo("0 Minutes");
-
-        return multipleExecutionsCheckBox.selectedProperty().and(
-            daysZero.and(hoursZero).and(minutesZero)
-        );
-    }
-
-    private boolean isFieldsFilled() {
-        return !ruleNameField.getText().isEmpty();
-    }
     
     private void showMultipleExecution() {
         suspensionTimeLabel.setVisible(true);
@@ -1034,47 +1280,14 @@ public class FXMLCreationViewController{
         suspensionMinutesBox.setVisible(false);
         suspensionMinutesBox.setValue("0 Minutes");
     }
-    
-    private BooleanBinding isValidCheckBoxInput() {
-        return singleExecutionCheckBox.selectedProperty().or(multipleExecutionsCheckBox.selectedProperty());
-    }
-    
-    private void configureDaysBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue) {
-        comboBox.getItems().clear();
-        for (int i = minValue; i <= maxValue; i++) {
-            if (i == 1) {
-                comboBox.getItems().add(i + " Day");
-            } else {
-                comboBox.getItems().add(i + " Days");
-            }
-        }
-        comboBox.setValue(defaultValue + (defaultValue == 1 ? " Day" : " Days"));
-    }
 
-    private void configureTimeBox(ComboBox<String> comboBox, int minValue, int maxValue, int defaultValue, String unit) {
-        comboBox.getItems().clear();
-        for (int i = minValue; i <= maxValue; i++) {
-            if (i == 1) {
-                comboBox.getItems().add(i + " " + unit.substring(0, unit.length() - 1));
-            } else {
-                comboBox.getItems().add(i + " " + unit);
-            }
-        }
-        comboBox.setValue(defaultValue + (defaultValue == 1 ? " " + unit.substring(0, unit.length() - 1) : " " + unit));
-    }
-    
-    private void checkRuleNameValidity() {
-        String ruleName = ruleNameField.getText();
-        if(!ruleName.isEmpty()){
-            if (ruleManager != null && !ruleManager.getRuleList().isEmpty()) {
-                if (ruleManager.doesRuleNameExist(ruleName)) {
-                    showAlert("Duplicate Rule Name", "A rule with this name already exists. Please choose a different name.", AlertType.ERROR);
-                    ruleNameField.clear();
-                }
-            }
-        }
-    }
-
+    /**
+    * Shows an alert dialog with the specified title, content, and alert type.
+    *
+    * @param title  The title of the alert dialog.
+    * @param content The content of the alert dialog.
+    * @param type   The type of alert dialog (e.g., ERROR, INFORMATION).
+    */
     private void showAlert(String title, String content, AlertType type) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type, content, ButtonType.OK);
