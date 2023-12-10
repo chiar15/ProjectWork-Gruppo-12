@@ -1,16 +1,16 @@
 package it.unisa.diem.se.automationapptest.action;
 
 import it.unisa.diem.se.automationapp.action.MoveFileAction;
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 import static org.junit.Assert.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import org.junit.After;
 
 public class MoveFileActionTest {
 
@@ -20,9 +20,7 @@ public class MoveFileActionTest {
 
     @Before
     public void setUp() throws IOException {
-        // Set up a test file and destination directory
         sourceFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "testFileToMove.txt");
-        // Check if the file already exists and delete if it does
         if (Files.exists(sourceFilePath)) {
             Files.delete(sourceFilePath);
         }
@@ -33,20 +31,58 @@ public class MoveFileActionTest {
             Files.createDirectory(destinationFolderPath);
         }
 
-        Map<String, String> actionData = new HashMap<>();
-        actionData.put("moveSourcePath", sourceFilePath.toString());
-        actionData.put("moveDestPath", destinationFolderPath.toString());
-
-        moveFileAction = new MoveFileAction(actionData);
+        moveFileAction = new MoveFileAction(sourceFilePath.toString(), destinationFolderPath.toString());
     }
 
     @Test
-    public void testExecute() throws IOException {
+    public void testExecute() throws InvalidInputException, FileException {
         moveFileAction.execute();
 
         Path movedFilePath = destinationFolderPath.resolve(sourceFilePath.getFileName());
         assertTrue("The file should be moved to the destination folder", Files.exists(movedFilePath));
         assertFalse("The source file should no longer exist", Files.exists(sourceFilePath));
+    }
+
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithEmptySourcePath() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile("");
+        moveFileAction.setDestinationFolder(destinationFolderPath.toString());
+        moveFileAction.execute();
+    }
+
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithEmptyDestinationPath() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile(sourceFilePath.toString());
+        moveFileAction.setDestinationFolder("");
+        moveFileAction.execute();
+    }
+    
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithNullSourcePath() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile(null);
+        moveFileAction.setDestinationFolder(destinationFolderPath.toString());
+        moveFileAction.execute();
+    }
+
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithNullDestinationPath() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile(sourceFilePath.toString());
+        moveFileAction.setDestinationFolder(null);
+        moveFileAction.execute();
+    }
+
+    @Test(expected = FileException.class)
+    public void testExecuteWithNonExistentSourceFile() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile("nonExistentFile.txt");
+        moveFileAction.setDestinationFolder(destinationFolderPath.toString());
+        moveFileAction.execute();
+    }
+
+    @Test(expected = FileException.class)
+    public void testExecuteWithNonExistentDestinationFolder() throws InvalidInputException, FileException {
+        moveFileAction.setSourceFile(sourceFilePath.toString());
+        moveFileAction.setDestinationFolder(Paths.get(System.getProperty("java.io.tmpdir"), "nonExistentDestFolder").toString());
+        moveFileAction.execute();
     }
 
     @Test
@@ -62,8 +98,8 @@ public class MoveFileActionTest {
 
     @After
     public void tearDown() throws IOException {
-        // Clean up destination directory and moved file
         Files.deleteIfExists(destinationFolderPath.resolve(sourceFilePath.getFileName()));
         Files.deleteIfExists(destinationFolderPath);
+        Files.deleteIfExists(sourceFilePath); // In case the file wasn't moved
     }
 }

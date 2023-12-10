@@ -13,32 +13,33 @@ import java.util.Map;
  * @author chiar
  */
 public class DayOfMonthTrigger implements TriggerInterface{
-    private String dayOfMonth;
-
+    private int dayOfMonth;
+  
     public DayOfMonthTrigger() {
     }
 
-    public DayOfMonthTrigger(Map<String, String> triggerData) {
-        this.dayOfMonth = triggerData.get("dayOfMonth");
+    public DayOfMonthTrigger(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
     }
 
-    public String getDayOfMonth() {
+    public int getDayOfMonth() {
         return dayOfMonth;
     }
 
-    public void setDayOfMonth(String dayOfMonth) {
-        this.dayOfMonth = dayOfMonth;
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth; 
+        
     }
     
     @JsonIgnore
     @Override
     public boolean isTriggered() {
         int currentDay = LocalDate.now().getDayOfMonth();
-        return Integer.toString(currentDay).equals(dayOfMonth);
+        return (currentDay == dayOfMonth);
     }
 
     @Override
     public String toString() {
-        return dayOfMonth;
+        return Integer.toString(dayOfMonth);
     }
 }

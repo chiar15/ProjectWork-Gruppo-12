@@ -80,11 +80,17 @@ public class Rule {
     
     @JsonIgnore
     public boolean isTriggered(){
+        if(trigger == null){
+            return false;
+        }
+        
         return this.trigger.isTriggered();
     }
     
     public void execute()throws Exception{
-        this.action.execute();
+        if(action != null){
+            this.action.execute();
+        }
     }
    
 }

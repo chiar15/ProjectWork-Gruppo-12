@@ -4,6 +4,7 @@
  */
 package it.unisa.diem.se.automationapp;
 
+import it.unisa.diem.se.automationapp.action.ActionType;
 import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.action.CopyFileAction;
 import it.unisa.diem.se.automationapp.action.DeleteFileAction;
@@ -21,6 +22,7 @@ import it.unisa.diem.se.automationapp.trigger.DayOfWeekTrigger;
 import it.unisa.diem.se.automationapp.trigger.FileDimensionTrigger;
 import it.unisa.diem.se.automationapp.trigger.FileExistsTrigger;
 import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
+import it.unisa.diem.se.automationapp.trigger.TriggerType;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -667,37 +669,37 @@ public class FXMLCreationViewController{
         switch (selectedAction) {
             case AUDIO_ACTION:
                 String audioFilePath = audioPathField.getText();
-                actionData.put("type", AudioAction.class.getSimpleName());
+                actionData.put("type", ActionType.AUDIO.toString());
                 actionData.put("filePath", audioFilePath);
                 break;
             case MESSAGE_ACTION:
                 String message = messageField.getText();
-                actionData.put("type", MessageAction.class.getSimpleName());
+                actionData.put("type", ActionType.MESSAGE.toString());
                 actionData.put("message", message);
                 break;
             case STRING_ACTION:
                 String stringFilePath = stringFilePathField.getText();
-                actionData.put("type", StringAction.class.getSimpleName());
+                actionData.put("type", ActionType.STRING.toString());
                 actionData.put("stringFilePath", stringFilePath);
                 actionData.put("string", stringAppendField.getText());
                 break;
             case COPY_FILE_ACTION:
                 String copyFilePath = copyFilePathField.getText();
                 String copyFileDestPath = copyFileDestPathField.getText();
-                actionData.put("type", CopyFileAction.class.getSimpleName());
+                actionData.put("type", ActionType.COPYFILE.toString());
                 actionData.put("copySourcePath", copyFilePath);
                 actionData.put("copyDestPath", copyFileDestPath);
                 break;
             case MOVE_FILE_ACTION:
                 String moveFilePath = moveFilePathField.getText();
                 String moveFileDestPath = moveFileDestPathField.getText();
-                actionData.put("type", MoveFileAction.class.getSimpleName());
+                actionData.put("type", ActionType.MOVEFILE.toString());
                 actionData.put("moveSourcePath", moveFilePath);
                 actionData.put("moveDestPath", moveFileDestPath);
                 break;
             case DELETE_FILE_ACTION:
                 String deleteFilePath = deleteFilePathField.getText();
-                actionData.put("type", DeleteFileAction.class.getSimpleName());
+                actionData.put("type", ActionType.DELETEFILE.toString());
                 actionData.put("deleteFilePath", deleteFilePath);
                 break;
             default:
@@ -713,36 +715,35 @@ public class FXMLCreationViewController{
                 int hours = spinnerHours.getValue();
                 int minutes = spinnerMinutes.getValue();
                 String timeString = String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
-                triggerData.put("type", TimeTrigger.class.getSimpleName());
+                triggerData.put("type", TriggerType.TIME.toString());
                 triggerData.put("time", timeString);
                 break;
             case DAY_OF_WEEK_TRIGGER:
                 String weekDay = dayOfWeekComboBox.getValue();
-                triggerData.put("type", DayOfWeekTrigger.class.getSimpleName());
+                triggerData.put("type", TriggerType.DAYOFWEEK.toString());
                 triggerData.put("dayOfWeek", weekDay);
                 break;
             case DAY_OF_MONTH_TRIGGER:
                 String day = dayOfTheMonthBox.getValue();
-                triggerData.put("type", DayOfMonthTrigger.class.getSimpleName());
+                triggerData.put("type", TriggerType.DAYOFMONTH.toString());
                 triggerData.put("dayOfMonth", day);
                 break;
             case DATE_TRIGGER:
                 LocalDate date = datePicker.getValue();
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                triggerData.put("type", DateTrigger.class.getSimpleName());
-                triggerData.put("date", dtf.format(date));
+                triggerData.put("type", TriggerType.DATE.toString());
+                triggerData.put("date", date.toString());
                 break;
             case FILE_EXISTENCE_TRIGGER:
                 String fileName = fileNameField.getText();
                 String pathFileName = fileNamePathField.getText();
-                triggerData.put("type", FileExistsTrigger.class.getSimpleName());
+                triggerData.put("type", TriggerType.FILEEXISTS.toString());
                 triggerData.put("fileName", fileName);
                 triggerData.put("fileDirectory", pathFileName);
                 break;
             case FILE_DIMENSION_TRIGGER:
                 String dimension = fileDimensionField.getText();
                 String filePath = fileDimensionPathField.getText();
-                triggerData.put("type", FileDimensionTrigger.class.getSimpleName());
+                triggerData.put("type", TriggerType.FILEDIMENSION.toString());
                 triggerData.put("dimension", dimension);
                 triggerData.put("filePath", filePath);
         }

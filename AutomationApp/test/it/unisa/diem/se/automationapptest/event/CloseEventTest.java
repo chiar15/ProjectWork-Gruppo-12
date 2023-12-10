@@ -29,4 +29,17 @@ public class CloseEventTest {
 
         assertEquals("The message should be updated", newMessage, saveEvent.getMessage());
     }
+    
+    @Test
+    public void testWithNullValue() {
+        CloseEvent closeEvent = new CloseEvent(null);
+        assertNull("The message should be null", closeEvent.getMessage());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        CloseEvent closeEvent = new CloseEvent("");
+        assertEquals("The message should be an empty string", "", closeEvent.getMessage());
+    }
+
 }

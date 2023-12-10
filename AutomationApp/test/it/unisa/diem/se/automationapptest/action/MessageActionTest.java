@@ -1,14 +1,13 @@
 package it.unisa.diem.se.automationapptest.action;
 
 import it.unisa.diem.se.automationapp.action.MessageAction;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.Assert.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MessageActionTest {
 
@@ -29,17 +28,28 @@ public class MessageActionTest {
     @Test
     public void testExecutePublishesMessage() {
         String testMessage = "Test message";
-        Map<String, String> actionData = new HashMap<>();
-        actionData.put("message", testMessage);
-        MessageAction action = new MessageAction(actionData);
+        MessageAction action = new MessageAction(testMessage); // Aggiornato per utilizzare il nuovo costruttore
 
         try {
             action.execute();
         } catch (Exception e) {
-            fail("No exception should be thrown during execution");
+            fail("Non dovrebbe essere lanciata alcuna eccezione durante l'esecuzione");
         }
 
-        assertTrue("A message event should be published", eventPublished.get());
-        assertEquals("Published message should match", testMessage, publishedMessage);
+        assertTrue("Un evento messaggio dovrebbe essere pubblicato", eventPublished.get());
+        assertEquals("Il messaggio pubblicato dovrebbe corrispondere", testMessage, publishedMessage);
     }
+    
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithEmptyMessage() throws InvalidInputException {
+        MessageAction action = new MessageAction("");
+        action.execute();
+    }
+
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithNullMessage() throws InvalidInputException {
+        MessageAction action = new MessageAction(null);
+        action.execute();
+    }
+
 }

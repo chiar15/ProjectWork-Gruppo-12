@@ -4,36 +4,44 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalTime;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
 
 public class TimeTrigger implements TriggerInterface{
-    private String time;
+    @JsonFormat
+      (shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime time;
     
     public TimeTrigger(){
     }
     
-    public TimeTrigger(Map<String, String> triggerData){
-        this.time = triggerData.get("time");
+    public TimeTrigger(LocalTime time){
+        this.time = time;
     }
 
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTime(LocalTime time) {
+        this.time = time.truncatedTo(ChronoUnit.MINUTES);;
     }
 
     @JsonIgnore
     @Override
     public boolean isTriggered() {
-        return (!(LocalTime.now().isBefore(LocalTime.parse(time))));
+        if(time == null){
+            return false;
+        }
+        
+        LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
+        return !(now.isBefore(time));
     }
 
     @Override
     public String toString() {
-        return time;
+        return time.toString();
     }
 }

@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.After;
 
 public class FileDimensionTriggerTest {
@@ -28,11 +26,8 @@ public class FileDimensionTriggerTest {
         Files.write(file, "Test content for file dimension".getBytes());
         testFileSize = Files.size(file);
 
-        Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("filePath", testFilePath);
-        triggerData.put("dimension", String.valueOf(testFileSize - 5)); // Set the dimension just below the actual file size
-
-        fileDimensionTrigger = new FileDimensionTrigger(triggerData);
+        // Initialize FileDimensionTrigger with direct parameters
+        fileDimensionTrigger = new FileDimensionTrigger(testFilePath, testFileSize - 5); // Set the dimension just below the actual file size
     }
 
     @Test
@@ -42,7 +37,7 @@ public class FileDimensionTriggerTest {
 
     @Test
     public void testIsTriggeredWithSmallerSize() {
-        fileDimensionTrigger.setDimension(String.valueOf(testFileSize + 5));
+        fileDimensionTrigger.setDimension(testFileSize + 5);
         assertFalse("The trigger should not be activated for a file smaller than the specified size", fileDimensionTrigger.isTriggered());
     }
 
@@ -51,10 +46,39 @@ public class FileDimensionTriggerTest {
         String newFilePath = "newTestFilePath.txt";
         long newDimension = 100;
         fileDimensionTrigger.setFilePath(newFilePath);
-        fileDimensionTrigger.setDimension(String.valueOf(newDimension));
+        fileDimensionTrigger.setDimension(newDimension);
 
         assertEquals("The file path should be updated", newFilePath, fileDimensionTrigger.getFilePath());
         assertEquals("The dimension should be updated", newDimension, fileDimensionTrigger.getDimension());
+    }
+    @Test
+    public void testTriggerWithNonExistentFilePath() {
+        fileDimensionTrigger.setFilePath("non_existent_file.txt");
+        assertFalse("The trigger should not be activated for a non-existent file path", fileDimensionTrigger.isTriggered());
+    }
+
+    @Test
+    public void testTriggerWithEmptyFile() throws IOException {
+        Path emptyFile = Paths.get(System.getProperty("java.io.tmpdir"), "emptyTestFile.txt");
+        Files.createFile(emptyFile);
+        fileDimensionTrigger.setFilePath(emptyFile.toString());
+        fileDimensionTrigger.setDimension(1);
+
+        assertFalse("The trigger should not be activated for an empty file", fileDimensionTrigger.isTriggered());
+
+        Files.deleteIfExists(emptyFile);
+    }
+
+    @Test
+    public void testTriggerWithExactFileSize() {
+        fileDimensionTrigger.setDimension(testFileSize);
+        assertTrue("The trigger should be activated for a file with size equal to the limit", fileDimensionTrigger.isTriggered());
+    }
+
+    @Test
+    public void testTriggerWithNegativeFileSize() {
+        fileDimensionTrigger.setDimension(-1);
+        assertFalse("The trigger should not be activated for negative file size limit", fileDimensionTrigger.isTriggered());
     }
 
     @After

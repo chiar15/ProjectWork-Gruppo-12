@@ -2,12 +2,11 @@ package it.unisa.diem.se.automationapptest.action;
 
 import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AudioActionTest {
 
@@ -20,9 +19,8 @@ public class AudioActionTest {
         validFilePath = System.getProperty("user.dir") + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\song01.wav";
         invalidFilePath = System.getProperty("user.dir") + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\invalidfile.wav";
 
-        Map<String, String> actionData = new HashMap<>();
-        actionData.put("filePath", validFilePath);
-        audioAction = new AudioAction(actionData);
+        // Utilizzo del costruttore aggiornato
+        audioAction = new AudioAction(validFilePath);
     }
 
     @Test
@@ -37,14 +35,27 @@ public class AudioActionTest {
     }
 
     @Test
-    public void testExecuteWithValidFile() throws AudioExecutionException, InterruptedException {
-        // Assume that the file specified exists and is a valid audio file.
+    public void testExecuteWithValidFile() throws AudioExecutionException, InterruptedException, FileException, InvalidInputException {
+        // Assumo che il file specificato esista ed è un file audio valido.
+        audioAction.execute();
+    }
+
+    @Test(expected = InvalidInputException.class)
+    public void testExecuteWithNullFilePath() throws AudioExecutionException, InterruptedException, InvalidInputException, FileException {
+        audioAction.setFilePath(null);
+        audioAction.execute();
+        fail("Expected AudioExecutionException");
+    }
+
+    @Test(expected = FileException.class)
+    public void testExecuteWithNonExistentFile() throws AudioExecutionException, InterruptedException, InvalidInputException, FileException {
+        audioAction.setFilePath(invalidFilePath);
         audioAction.execute();
     }
 
     @Test(expected = AudioExecutionException.class)
-    public void testExecuteWithInvalidFile() throws AudioExecutionException, InterruptedException {
-        audioAction.setFilePath(invalidFilePath);
+    public void testExecuteWithUnsupportedAudioFormat() throws AudioExecutionException, InterruptedException, InvalidInputException, FileException {
+        audioAction.setFilePath(System.getProperty("user.dir") + "\\test\\it\\unisa\\diem\\se\\automationapptest\\action\\data\\sample-6s.mp3");
         audioAction.execute();
     }
 }

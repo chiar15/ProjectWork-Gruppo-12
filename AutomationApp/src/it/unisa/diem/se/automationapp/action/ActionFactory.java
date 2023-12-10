@@ -4,6 +4,14 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.action.actioncreation.ActionCreationStrategy;
+import it.unisa.diem.se.automationapp.action.actioncreation.AudioActionCreation;
+import it.unisa.diem.se.automationapp.action.actioncreation.CopyFileActionCreation;
+import it.unisa.diem.se.automationapp.action.actioncreation.DeleteFileActionCreation;
+import it.unisa.diem.se.automationapp.action.actioncreation.MessageActionCreation;
+import it.unisa.diem.se.automationapp.action.actioncreation.MoveFileActionCreation;
+import it.unisa.diem.se.automationapp.action.actioncreation.StringActionCreation;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,22 +19,25 @@ import java.util.Map;
  * @author chiar
  */
 public class ActionFactory {
-    public static ActionInterface createAction(Map<String, String> actionData){
-        String type = actionData.get("type");
+    private static Map<String, ActionCreationStrategy> strategies = new HashMap<>();
+
+    static {
+        strategies.put(ActionType.AUDIO.toString(), new AudioActionCreation());
+        strategies.put(ActionType.MESSAGE.toString(), new MessageActionCreation());
+        strategies.put(ActionType.COPYFILE.toString(), new CopyFileActionCreation());
+        strategies.put(ActionType.MOVEFILE.toString(), new MoveFileActionCreation());
+        strategies.put(ActionType.DELETEFILE.toString(), new DeleteFileActionCreation());
+        strategies.put(ActionType.STRING.toString(), new StringActionCreation());
         
-        if(type.equalsIgnoreCase(AudioAction.class.getSimpleName())){
-            return new AudioAction(actionData);
-        } else if (type.equalsIgnoreCase(MessageAction.class.getSimpleName())){
-            return new MessageAction(actionData);
-        }   else if (type.equalsIgnoreCase(StringAction.class.getSimpleName())){
-            return new StringAction(actionData);
-        } else if (type.equalsIgnoreCase(CopyFileAction.class.getSimpleName())){
-            return new CopyFileAction(actionData);
-        } else if (type.equalsIgnoreCase(MoveFileAction.class.getSimpleName())){
-            return new MoveFileAction(actionData);
-        } else if (type.equalsIgnoreCase(DeleteFileAction.class.getSimpleName())){
-            return new DeleteFileAction(actionData);
-        }else{
+    }
+
+    public static ActionInterface createAction(Map<String, String> actionData) {
+        String type = actionData.get("type");
+        ActionCreationStrategy strategy = strategies.get(type);
+
+        if (strategy != null) {
+            return strategy.createAction(actionData);
+        } else {
             throw new IllegalArgumentException("Invalid action type: " + type);
         }
     }

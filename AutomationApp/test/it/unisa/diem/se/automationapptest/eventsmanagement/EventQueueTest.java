@@ -4,6 +4,8 @@
  */
 package it.unisa.diem.se.automationapptest.eventsmanagement;
 
+import it.unisa.diem.se.automationapp.event.ErrorEvent;
+import it.unisa.diem.se.automationapp.event.ErrorEventType;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventQueue;
 import it.unisa.diem.se.automationapp.event.EventInterface;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
@@ -45,5 +47,23 @@ public class EventQueueTest {
 
         eventQueue.setEvents(newEvents);
         assertSame("The events queue should be the one that was set", newEvents, eventQueue.getEvents());
+    }
+    
+    @Test
+    public void testPollFromEmptyQueue() {
+        assertTrue("The queue should be initially empty", eventQueue.getEvents().isEmpty());
+        assertNull("Polling from an empty queue should return null", eventQueue.getEvents().poll());
+    }
+
+    @Test
+    public void testAddAndRemoveMultipleEvents() {
+        EventInterface secondTestEvent = new ErrorEvent("Test error message", ErrorEventType.NORMAL);
+
+        eventQueue.getEvents().add(testEvent);
+        eventQueue.getEvents().add(secondTestEvent);
+
+        assertEquals("First polled event should be the first added", testEvent, eventQueue.getEvents().poll());
+        assertEquals("Second polled event should be the second added", secondTestEvent, eventQueue.getEvents().poll());
+        assertTrue("The queue should be empty after removing all events", eventQueue.getEvents().isEmpty());
     }
 }

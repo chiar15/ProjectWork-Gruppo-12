@@ -37,4 +37,38 @@ public class RuleListTest {
         assertFalse("The rule list should not be empty after setting new rules", ruleList.getRules().isEmpty());
         assertSame("The rule in the list should be the one that was added", testRule, ruleList.getRules().get(0));
     }
+    
+        @Test
+    public void testSetEmptyRuleList() {
+        List<Rule> emptyRuleList = new ArrayList<>();
+        ruleList.setRules(emptyRuleList);
+
+        assertTrue("The rule list should be empty after setting an empty list", ruleList.getRules().isEmpty());
+    }
+
+    @Test
+    public void testAddAndRemoveRule() {
+        ruleList.getRules().add(testRule);
+        assertFalse("The rule list should not be empty after adding a rule", ruleList.getRules().isEmpty());
+
+        ruleList.getRules().remove(testRule);
+        assertTrue("The rule list should be empty after removing the rule", ruleList.getRules().isEmpty());
+    }
+
+    @Test
+    public void testSetNullRuleList() {
+        ruleList.setRules(null);
+        assertNull("The rule list should be null after setting to null", ruleList.getRules());
+    }
+
+    @Test
+    public void testMultipleRulesHandling() {
+        List<Rule> multipleRules = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            multipleRules.add(new Rule("Rule" + i, null, null));
+        }
+        ruleList.setRules(multipleRules);
+
+        assertEquals("The rule list should have 5 rules", 5, ruleList.getRules().size());
+    }
 }

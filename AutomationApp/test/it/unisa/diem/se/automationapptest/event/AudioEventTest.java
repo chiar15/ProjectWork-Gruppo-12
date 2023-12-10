@@ -36,5 +36,29 @@ public class AudioEventTest {
         assertEquals("The message should be updated", newMessage, audioEvent.getMessage());
         assertEquals("The event type should be updated", newEventType, audioEvent.getEventType());
     }
+    
+    @Test
+    public void testWithNullValues() {
+        AudioEvent audioEvent = new AudioEvent(null, null);
+
+        assertNull("The message should be null", audioEvent.getMessage());
+        assertNull("The event type should be null", audioEvent.getEventType());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        AudioEvent audioEvent = new AudioEvent("", AudioEventType.STARTED);
+
+        assertEquals("The message should be an empty string", "", audioEvent.getMessage());
+        assertNotNull("The event type should not be null", audioEvent.getEventType());
+    }
+
+    @Test
+    public void testAllAudioEventTypes() {
+        for (AudioEventType type : AudioEventType.values()) {
+            AudioEvent audioEvent = new AudioEvent("Test", type);
+            assertEquals("The event type should be " + type, type, audioEvent.getEventType());
+        }
+    }
 }
 

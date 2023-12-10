@@ -36,4 +36,20 @@ public class CreationEventTest {
         assertEquals("The message should be updated", newMessage, creationEvent.getMessage());
         assertSame("The rule should be updated", newRule, creationEvent.getRule());
     }
+    
+    @Test
+    public void testWithNullValues() {
+        CreationEvent creationEvent = new CreationEvent(null, null);
+
+        assertNull("The message should be null", creationEvent.getMessage());
+        assertNull("The rule should be null", creationEvent.getRule());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        CreationEvent creationEvent = new CreationEvent("", new Rule("EmptyStringRule", null, null));
+
+        assertEquals("The message should be an empty string", "", creationEvent.getMessage());
+        assertNotNull("The rule should not be null", creationEvent.getRule());
+    }
 }

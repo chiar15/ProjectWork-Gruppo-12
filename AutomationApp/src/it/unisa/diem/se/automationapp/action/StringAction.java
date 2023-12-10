@@ -4,11 +4,14 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.NoSuchFileException;
 import java.util.Map;
 
 /**
@@ -22,9 +25,9 @@ public class StringAction implements ActionInterface{
     public StringAction() {
     }
 
-    public StringAction(Map<String, String> actionData) {
-        this.string = actionData.get("string");
-        this.filePath = actionData.get("stringFilePath");
+    public StringAction(String string, String filePath) {
+        this.string = string;
+        this.filePath = filePath;
     }
         
     public String getString() {
@@ -44,14 +47,24 @@ public class StringAction implements ActionInterface{
     }
     
     @Override
-    public void execute() throws IOException {
-        File file = new File(filePath);
+    public void execute() throws InvalidInputException, FileException {
         
-        if(file == null){
-            file.createNewFile();
+        if(string == null || string.trim().isEmpty()){
+            throw new InvalidInputException("The string to write cannot be empty.");
         }
+        
+        if (filePath == null || filePath.trim().isEmpty()) {
+            throw new InvalidInputException("The file path cannot be empty.");
+        }
+        
+        File file = new File(filePath);
+
         try(PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(filePath, true)))){
             pw.append(string + " ");
+        } catch(NoSuchFileException e){
+            throw new FileException("The selected file was not found.");
+        }catch(IOException e){
+            throw new FileException("Cannot access the selected file. There might be some conflicts with system restrictions.");
         }
     }
 

@@ -1,32 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapptest.trigger;
 
 import it.unisa.diem.se.automationapp.trigger.DateTrigger;
-import it.unisa.diem.se.automationapp.trigger.TimeTrigger;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.format.DateTimeParseException;
 
 public class DateTriggerTest {
 
     private DateTrigger dateTrigger;
-    private String currentDate;
+    private LocalDate currentDate;
 
     @Before
     public void setUp() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        currentDate = dtf.format(LocalDateTime.now());
-        Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("date", currentDate);
-
-        dateTrigger = new DateTrigger(triggerData);
+        currentDate = LocalDate.now();
+        dateTrigger = new DateTrigger(currentDate);
     }
 
     @Test
@@ -36,7 +26,7 @@ public class DateTriggerTest {
 
     @Test
     public void testSetDate() {
-        String newDate = "01/01/2023";
+        LocalDate newDate = LocalDate.of(2023, 1, 1);
         dateTrigger.setDate(newDate);
         assertEquals("The date should be updated", newDate, dateTrigger.getDate());
     }
@@ -44,6 +34,47 @@ public class DateTriggerTest {
     @Test
     public void testIsTriggered() {
         assertTrue("The trigger should be activated on the current date", dateTrigger.isTriggered());
+
+        // Test with a future date
+        LocalDate futureDate = currentDate.plusDays(1);
+        dateTrigger.setDate(futureDate);
+        assertFalse("The trigger should not be activated on a future date", dateTrigger.isTriggered());
+    }
+    
+    @Test
+    public void testIsTriggeredWithPastDate() {
+        LocalDate pastDate = currentDate.minusDays(1);
+        dateTrigger.setDate(pastDate);
+        assertFalse("The trigger should not be activated on a past date", dateTrigger.isTriggered());
+    }
+
+    @Test
+    public void testIsTriggeredWithNullDate() {
+        dateTrigger.setDate(null);
+        assertFalse("The trigger should not be activated with a null date", dateTrigger.isTriggered());
+    }
+    
+    @Test
+    public void testTriggerOnBoundaryDates() {
+        LocalDate startOfYear = LocalDate.of(currentDate.getYear(), 1, 1);
+        LocalDate endOfYear = LocalDate.of(currentDate.getYear(), 12, 31);
+
+        dateTrigger.setDate(startOfYear);
+        assertEquals("Trigger should activate on the first day of the year", startOfYear, dateTrigger.getDate());
+
+        dateTrigger.setDate(endOfYear);
+        assertEquals("Trigger should activate on the last day of the year", endOfYear, dateTrigger.getDate());
+    }
+
+    @Test(expected = DateTimeParseException.class)
+    public void testWithInvalidDate() {
+        dateTrigger.setDate(LocalDate.parse("invalid-date"));
+    }
+
+    @Test
+    public void testTriggerOnLeapYear() {
+        LocalDate leapDay = LocalDate.of(2024, 2, 29);
+        dateTrigger.setDate(leapDay);
+        assertEquals("Trigger should activate on leap day in a leap year", leapDay, dateTrigger.getDate());
     }
 }
-

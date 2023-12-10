@@ -4,43 +4,49 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 /**
  *
  * @author chiar
  */
 public class DateTrigger implements TriggerInterface{
-    private String date;
+    @JsonFormat
+      (shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private LocalDate date;
 
     public DateTrigger() {
     }
 
-    public DateTrigger(Map<String, String> triggerData) {
-        this.date = triggerData.get("date");
+    public DateTrigger(LocalDate date) { 
+        this.date = date;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
     
     @JsonIgnore
     @Override
     public boolean isTriggered() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
-        LocalDateTime now = LocalDateTime.now(); 
-        return dtf.format(now).equalsIgnoreCase(date); 
+        if(date == null){
+            return false;
+        }
+        
+        LocalDate now = LocalDate.now(); 
+        return now.isEqual(date); 
     }
 
     @Override
     public String toString() {
-        return date;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dtf.format(date);
     } 
 }

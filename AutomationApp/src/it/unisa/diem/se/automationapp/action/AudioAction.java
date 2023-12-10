@@ -5,8 +5,11 @@
 package it.unisa.diem.se.automationapp.action;
 
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import javax.sound.sampled.AudioFormat;
@@ -26,8 +29,8 @@ public class AudioAction implements ActionInterface{
     public AudioAction(){ 
     }
     
-    public AudioAction(Map<String, String> actionData){
-        this.filePath = actionData.get("filePath");
+    public AudioAction(String filePath){
+        this.filePath = filePath;
     }
 
     public String getFilePath() {
@@ -40,7 +43,12 @@ public class AudioAction implements ActionInterface{
 
     
     @Override
-    public void execute()throws AudioExecutionException, InterruptedException{
+    public void execute()throws AudioExecutionException, InterruptedException, InvalidInputException, FileException{
+        
+        if (filePath == null) {
+            throw new InvalidInputException("The file path cannot be empty.");
+        }
+        
         try{
             File audioFile = new File(filePath);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
@@ -68,8 +76,10 @@ public class AudioAction implements ActionInterface{
             }
         } catch (UnsupportedAudioFileException  e) {
             throw new AudioExecutionException ("Audio file format is not supported");
+        } catch(NoSuchFileException e){
+            throw new FileException("The selected audio file was not found.");
         } catch(IOException e){
-            throw new AudioExecutionException ("Cannot access selected audio file");
+            throw new FileException ("Cannot access selected audio file");
         }
     }
     

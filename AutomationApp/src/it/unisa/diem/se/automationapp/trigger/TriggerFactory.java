@@ -4,27 +4,37 @@
  */
 package it.unisa.diem.se.automationapp.trigger;
 
+import it.unisa.diem.se.automationapp.trigger.triggercreation.DateTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.DayOfMonthTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.DayOfWeekTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.FileDimensionTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.FileExistsTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.TimeTriggerCreation;
+import it.unisa.diem.se.automationapp.trigger.triggercreation.TriggerCreationStrategy;
+import java.util.HashMap;
 import java.util.Map;
 
-
 public class TriggerFactory {
-    public static TriggerInterface createTrigger(Map<String, String> triggerData){
-        String type = triggerData.get("type");
+    private static Map<String, TriggerCreationStrategy> strategies = new HashMap<>();
+
+    static {
+        strategies.put(TriggerType.TIME.toString(), new TimeTriggerCreation());
+        strategies.put(TriggerType.DAYOFWEEK.toString(), new DayOfWeekTriggerCreation());
+        strategies.put(TriggerType.DAYOFMONTH.toString(), new DayOfMonthTriggerCreation());
+        strategies.put(TriggerType.DATE.toString(), new DateTriggerCreation());
+        strategies.put(TriggerType.FILEEXISTS.toString(), new FileExistsTriggerCreation());
+        strategies.put(TriggerType.FILEDIMENSION.toString(), new FileDimensionTriggerCreation());
         
-        if(type.equalsIgnoreCase(TimeTrigger.class.getSimpleName())){
-            return new TimeTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(DayOfWeekTrigger.class.getSimpleName())) {
-            return new DayOfWeekTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(DayOfMonthTrigger.class.getSimpleName())) {
-            return new DayOfMonthTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(DateTrigger.class.getSimpleName())) {
-            return new DateTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(FileExistsTrigger.class.getSimpleName())) {
-            return new FileExistsTrigger(triggerData);
-        } else if (type.equalsIgnoreCase(FileDimensionTrigger.class.getSimpleName())) {
-            return new FileDimensionTrigger(triggerData);
-        }else {
-            throw new IllegalArgumentException("Invalid trigger type: " + type);
+    }
+
+    public static TriggerInterface createTrigger(Map<String, String> triggerData) {
+        String type = triggerData.get("type");
+        TriggerCreationStrategy strategy = strategies.get(type);
+
+        if (strategy != null) {
+            return strategy.createTrigger(triggerData);
+        } else {
+            throw new IllegalArgumentException("Invalid action type: " + type);
         }
     }
 }

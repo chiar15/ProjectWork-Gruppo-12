@@ -36,5 +36,28 @@ public class SceneEventTest {
         assertEquals("The message should be updated", newMessage, sceneEvent.getMessage());
         assertEquals("The event type should be updated", newEventType, sceneEvent.getEventType());
     }
+    
+    @Test
+    public void testWithNullValues() {
+        SceneEvent sceneEvent = new SceneEvent(null, null);
+
+        assertNull("The message should be null", sceneEvent.getMessage());
+        assertNull("The event type should be null", sceneEvent.getEventType());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        SceneEvent sceneEvent = new SceneEvent("", SceneEventType.BUSY);
+
+        assertEquals("The message should be an empty string", "", sceneEvent.getMessage());
+    }
+
+    @Test
+    public void testAllSceneEventTypes() {
+        for (SceneEventType type : SceneEventType.values()) {
+            SceneEvent sceneEvent = new SceneEvent("Test", type);
+            assertEquals("The event type should be " + type, type, sceneEvent.getEventType());
+        }
+    }
 }
 

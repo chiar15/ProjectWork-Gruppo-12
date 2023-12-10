@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 /**
  *
@@ -16,14 +15,14 @@ import java.util.Map;
  */
 public class FileExistsTrigger implements TriggerInterface{
     private String fileName;
-    private String folder;
+    private String folderPath;
 
     public FileExistsTrigger() {
     }
 
-    public FileExistsTrigger(Map<String, String> triggerData) {
-        this.fileName = triggerData.get("fileName");
-        this.folder = triggerData.get("fileDirectory");
+    public FileExistsTrigger(String fileName, String folderPath) {
+        this.fileName = fileName;
+        this.folderPath = folderPath;
     }
 
     public String getFilePath() {
@@ -34,23 +33,27 @@ public class FileExistsTrigger implements TriggerInterface{
         this.fileName = fileName;
     }
 
-    public String getDirectory() {
-        return folder;
+    public String getFolderPath() {
+        return folderPath;
     }
 
-    public void setDirectory(String folder) {
-        this.folder = folder;
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
     }
     
     @JsonIgnore
     @Override
     public boolean isTriggered() {
-        Path filePath = Paths.get(folder, fileName);
+        if(folderPath == null || folderPath.trim().isEmpty() || fileName == null || fileName.trim().isEmpty()){
+            return false;
+        }
+        
+        Path filePath = Paths.get(folderPath, fileName);
         return Files.exists(filePath);
     }
 
     @Override
     public String toString() {
-        return "File name to check existence: " + fileName + " in the directory: '" + folder + "'";
+        return "File name to check existence: " + fileName + " in the directory: '" + folderPath + "'";
     }
 }

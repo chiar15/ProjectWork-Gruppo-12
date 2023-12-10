@@ -15,7 +15,7 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateTimeTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", TimeTrigger.class.getSimpleName());
+        triggerData.put("type", TriggerType.TIME.toString());
         triggerData.put("time", "10:00");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
@@ -25,8 +25,8 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDayOfWeekTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", DayOfWeekTrigger.class.getSimpleName());
-        triggerData.put("day_of_week", "MONDAY");
+        triggerData.put("type", TriggerType.DAYOFWEEK.toString());
+        triggerData.put("dayOfWeek", "MONDAY");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         assertTrue(trigger instanceof DayOfWeekTrigger);
@@ -35,8 +35,8 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDayOfMonthTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", DayOfMonthTrigger.class.getSimpleName());
-        triggerData.put("day_of_month", "15");
+        triggerData.put("type", TriggerType.DAYOFMONTH.toString());
+        triggerData.put("dayOfMonth", "15");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         assertTrue(trigger instanceof DayOfMonthTrigger);
@@ -45,13 +45,35 @@ public class TriggerFactoryTest {
     @Test
     public void testCreateDateTrigger() {
         Map<String, String> triggerData = new HashMap<>();
-        triggerData.put("type", DateTrigger.class.getSimpleName());
-        triggerData.put("date", "01/01/2023");
+        triggerData.put("type", TriggerType.DATE.toString());
+        triggerData.put("date", "2023-01-01");
 
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         assertTrue(trigger instanceof DateTrigger);
     }
 
+    @Test
+    public void testCreateFileExistsTrigger() {
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", TriggerType.FILEEXISTS.toString());
+        triggerData.put("fileName", "testFile.txt");
+        triggerData.put("fileDirectory", "path/to/directory");
+
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
+        assertTrue(trigger instanceof FileExistsTrigger);
+    }
+
+    @Test
+    public void testCreateFileDimensionTrigger() {
+        Map<String, String> triggerData = new HashMap<>();
+        triggerData.put("type", TriggerType.FILEDIMENSION.toString());
+        triggerData.put("filePath", "path/to/testFile.txt");
+        triggerData.put("dimension", "1024");
+
+        TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
+        assertTrue(trigger instanceof FileDimensionTrigger);
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void testCreateInvalidTrigger() {
         Map<String, String> triggerData = new HashMap<>();

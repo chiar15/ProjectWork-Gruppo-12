@@ -57,11 +57,11 @@ public class SuspendedRuleDecorator extends Rule {
         long minutes = seconds / 60L;
         
         if(days != 0){
-            simpleSuspension += days + "days ";
+            simpleSuspension += days + " days ";
         }
         
         if(hours != 0){
-            simpleSuspension += hours + "hours ";
+            simpleSuspension += hours + " hours ";
         }
         
         if(minutes != 0){

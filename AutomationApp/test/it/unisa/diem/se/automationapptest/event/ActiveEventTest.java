@@ -36,5 +36,21 @@ public class ActiveEventTest {
         assertEquals("The message should be updated", newMessage, activeEvent.getMessage());
         assertSame("The rule should be updated", newRule, activeEvent.getRule());
     }
+    
+    @Test
+    public void testWithNullValues() {
+        ActiveEvent activeEvent = new ActiveEvent(null, null);
+
+        assertNull("The message should be null", activeEvent.getMessage());
+        assertNull("The rule should be null", activeEvent.getRule());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        ActiveEvent activeEvent = new ActiveEvent("", new Rule("EmptyStringRule", null, null));
+
+        assertEquals("The message should be an empty string", "", activeEvent.getMessage());
+        assertNotNull("The rule should not be null", activeEvent.getRule());
+    }
 }
 

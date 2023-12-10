@@ -28,5 +28,19 @@ public class MessageEventTest {
 
         assertEquals("The message should be updated", newMessage, messageEvent.getMessage());
     }
+    
+    @Test
+    public void testWithNullValue() {
+        MessageEvent messageEvent = new MessageEvent(null);
+
+        assertNull("The message should be null", messageEvent.getMessage());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        MessageEvent messageEvent = new MessageEvent("");
+
+        assertEquals("The message should be an empty string", "", messageEvent.getMessage());
+    }
 }
 

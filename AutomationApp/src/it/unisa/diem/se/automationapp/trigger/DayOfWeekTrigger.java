@@ -19,8 +19,8 @@ public class DayOfWeekTrigger implements TriggerInterface{
     public DayOfWeekTrigger() {
     }
 
-    public DayOfWeekTrigger(Map<String, String> triggerData) {
-        this.dayOfWeek = triggerData.get("dayOfWeek");
+    public DayOfWeekTrigger(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public String getDayOfWeek() {
@@ -34,6 +34,10 @@ public class DayOfWeekTrigger implements TriggerInterface{
     @JsonIgnore
     @Override
     public boolean isTriggered() {
+        if(dayOfWeek == null){
+            return false;
+        }
+        
         DayOfWeek currentDay = LocalDate.now().getDayOfWeek();
         return currentDay.name().equalsIgnoreCase(dayOfWeek);
     }

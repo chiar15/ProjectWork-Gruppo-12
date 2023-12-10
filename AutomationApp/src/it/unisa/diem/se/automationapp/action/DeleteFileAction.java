@@ -4,6 +4,8 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -21,8 +23,8 @@ public class DeleteFileAction implements ActionInterface{
     public DeleteFileAction() {
     }
 
-    public DeleteFileAction(Map<String, String> actionData) {
-        this.filePath = actionData.get("deleteFilePath");
+    public DeleteFileAction(String filePath) {
+        this.filePath = filePath;
     }
 
     public String getFilePath() {
@@ -34,9 +36,19 @@ public class DeleteFileAction implements ActionInterface{
     }
     
     @Override
-    public void execute() throws NoSuchFileException, IOException {
+    public void execute() throws InvalidInputException, FileException {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            throw new InvalidInputException("The file path cannot be empty.");
+        }
+        
         Path deletePath = Paths.get(filePath);
-        Files.delete(deletePath);
+        try{
+            Files.delete(deletePath);
+        } catch(NoSuchFileException e){
+            throw new FileException("The selected file was not found.");
+        } catch(IOException e){
+            throw new FileException("Cannot access the selected file. There might be some conflicts with system restrictions.");
+        }
     }
 
     @Override

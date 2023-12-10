@@ -4,11 +4,9 @@
  */
 package it.unisa.diem.se.automationapp.action;
 
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.MessageEvent;
-import it.unisa.diem.se.automationapp.event.ErrorEventType;
-import java.util.Map;
-
 /**
  *
  * @author chiar
@@ -19,8 +17,8 @@ public class MessageAction implements ActionInterface{
     public MessageAction(){     
     }
     
-    public MessageAction(Map<String, String> actionData) {
-        this.message = actionData.get("message");
+    public MessageAction(String message) {
+        this.message = message;
     }
 
     public String getMessage() {
@@ -32,8 +30,12 @@ public class MessageAction implements ActionInterface{
     }
     
     @Override
-    public void execute() throws Exception {
+    public void execute() throws InvalidInputException {
         EventBus eventBus = EventBus.getInstance();
+        
+        if(message == null || message.trim().isEmpty()){
+            throw new InvalidInputException("The message to show cannot be empty.");
+        }
         
         eventBus.publish(new MessageEvent(message));
     }

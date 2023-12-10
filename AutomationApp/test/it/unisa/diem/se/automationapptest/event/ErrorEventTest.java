@@ -36,5 +36,28 @@ public class ErrorEventTest {
         assertEquals("The message should be updated", newMessage, errorEvent.getMessage());
         assertEquals("The event type should be updated", newEventType, errorEvent.getEventType());
     }
+    
+    @Test
+    public void testWithNullValues() {
+        ErrorEvent errorEvent = new ErrorEvent(null, null);
+
+        assertNull("The message should be null", errorEvent.getMessage());
+        assertNull("The event type should be null", errorEvent.getEventType());
+    }
+
+    @Test
+    public void testWithEmptyString() {
+        ErrorEvent errorEvent = new ErrorEvent("", ErrorEventType.NORMAL);
+
+        assertEquals("The message should be an empty string", "", errorEvent.getMessage());
+    }
+
+    @Test
+    public void testAllErrorEventTypes() {
+        for (ErrorEventType type : ErrorEventType.values()) {
+            ErrorEvent errorEvent = new ErrorEvent("Test", type);
+            assertEquals("The event type should be " + type, type, errorEvent.getEventType());
+        }
+    }
 }
 
