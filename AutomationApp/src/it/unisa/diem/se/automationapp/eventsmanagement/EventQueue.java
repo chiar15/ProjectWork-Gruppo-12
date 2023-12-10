@@ -9,20 +9,33 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
+ * The EventQueue class represents a queue of events.
+ * It encapsulates a queue data structure containing objects implementing the EventInterface.
  *
  * @author chiar
  */
-public class EventQueue{
+public class EventQueue {
     private Queue<EventInterface> events;
 
+    /**
+     * Constructs an EventQueue object, initializing the internal queue as a LinkedList.
+     */
     public EventQueue() {
         this.events = new LinkedList<>();
     }
 
+    /**
+     * Retrieves the queue of events.
+     * @return The queue of events encapsulated by this EventQueue object.
+     */
     public Queue<EventInterface> getEvents() {
         return events;
     }
 
+    /**
+     * Sets the queue of events.
+     * @param events The queue of events to be set for this EventQueue object.
+     */
     public void setEvents(Queue<EventInterface> events) {
         this.events = events;
     }

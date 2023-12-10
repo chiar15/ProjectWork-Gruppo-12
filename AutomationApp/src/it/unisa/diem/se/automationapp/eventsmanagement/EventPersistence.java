@@ -4,7 +4,6 @@
  */
 package it.unisa.diem.se.automationapp.eventsmanagement;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
@@ -15,12 +14,18 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-
+/**
+ * The EventPersistence class manages the serialization and deserialization of events to and from a file.
+ * It handles saving events to a file and loading events from a file using Jackson ObjectMapper.
+ */
 public class EventPersistence {
     private final File file;
     private ObjectMapper objectMapper;
     private EventBus eventBus;
 
+    /**
+     * Constructs an EventPersistence object, initializing the file path, ObjectMapper, and EventBus instance.
+     */
     public EventPersistence() {
         this.file = new File(System.getProperty("user.dir") + "\\data\\SaveEvents.json");
         this.objectMapper = new ObjectMapper();
@@ -28,7 +33,12 @@ public class EventPersistence {
         this.eventBus = EventBus.getInstance();
     }
     
-    public void saveEventsToFile(Queue<EventInterface> queue)throws IOException{
+    /**
+     * Saves the provided queue of events to a file.
+     * @param queue The queue of events to be saved.
+     * @throws IOException If an I/O error occurs during the saving process.
+     */
+    public void saveEventsToFile(Queue<EventInterface> queue) throws IOException {
         EventQueue eventQueue = new EventQueue();
         eventQueue.setEvents(queue);
         if(file.exists()){
@@ -36,7 +46,11 @@ public class EventPersistence {
         }
     }
     
-    public Queue<EventInterface> loadEventsFromFile(){
+    /**
+     * Loads events from a file and returns them as a queue.
+     * @return A queue containing events loaded from the file.
+     */
+    public Queue<EventInterface> loadEventsFromFile() {
         EventQueue eventQueue = new EventQueue();
         
         try {

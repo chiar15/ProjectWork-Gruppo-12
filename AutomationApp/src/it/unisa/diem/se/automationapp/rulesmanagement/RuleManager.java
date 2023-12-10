@@ -14,18 +14,31 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * The RuleManager class is responsible for managing rules within the application.
+ * It follows the Singleton design pattern for a single instance across the application.
+ */
 public class RuleManager {
     private static RuleManager instance;
     private RulePersistence rulePersistence;
     private CopyOnWriteArrayList<Rule> ruleList;
     private ConcurrentLinkedQueue<Rule> executionQueue;
 
+    /**
+     * Private constructor for RuleManager to enforce Singleton pattern.
+     * Initializes the rule list, execution queue, and rule persistence.
+     */
     private RuleManager() {
         this.ruleList = new CopyOnWriteArrayList();
         this.executionQueue = new ConcurrentLinkedQueue<>();
         this.rulePersistence = new RulePersistence();
     }
 
+    /**
+     * Retrieves the instance of RuleManager following the Singleton pattern.
+     *
+     * @return The instance of RuleManager.
+     */
     public static RuleManager getInstance() {
         if (instance == null) {
             synchronized (RuleManager.class) {
@@ -61,6 +74,15 @@ public class RuleManager {
         return this.executionQueue.peek();
     }
     
+    /**
+     * Creates a new rule based on provided data.
+     *
+     * @param name            The name of the rule.
+     * @param triggerData     Data for trigger configuration.
+     * @param actionData      Data for action configuration.
+     * @param suspensionPeriod The suspension period for the rule (if any).
+     * @return The created rule.
+     */
     public Rule createRule(String name, Map<String,String> triggerData, Map<String,String> actionData, long suspensionPeriod){
         TriggerInterface trigger = TriggerFactory.createTrigger(triggerData);
         ActionInterface action = ActionFactory.createAction(actionData);
@@ -79,16 +101,26 @@ public class RuleManager {
     }
     
     public boolean doesRuleNameExist(String ruleName) {
-        String trimmedRuleName = ruleName.replaceAll("\\s+", ""); // Rimuove tutti gli spazi
+        String trimmedRuleName = ruleName.replaceAll("\\s+", "");
 
         return getRuleList().stream()
             .anyMatch(rule -> rule.getName().replaceAll("\\s+", "").equals(trimmedRuleName));
     }
     
+    /**
+     * Saves rules to a file.
+     *
+     * @throws IOException If an error occurs while saving rules to the file.
+     */
     public void saveRulesToFile() throws IOException{
         rulePersistence.saveRulesToFile(ruleList);
     }
     
+     /**
+     * Loads rules from a file and updates the rule list.
+     *
+     * @return The list of loaded rules.
+     */
     public List<Rule> loadRulesFromFile(){
        List<Rule> list = rulePersistence.loadRulesFromFile();
        ruleList.clear();

@@ -7,6 +7,11 @@ package it.unisa.diem.se.automationapp.event;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * The EventInterface represents the interface for different types of events in the application.
+ * It defines a method to retrieve the message associated with the event.
+ * Implementing classes should provide concrete implementations for this interface.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AudioEvent.class, name = "audio"),
@@ -18,7 +23,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = ActiveEvent.class, name = "active"),
     @JsonSubTypes.Type(value = FileEvent.class, name = "file")
 })
-
 public interface EventInterface {
+    /**
+     * Retrieves the message associated with the event.
+     * @return The message of the event.
+     */
     String getMessage();
 }

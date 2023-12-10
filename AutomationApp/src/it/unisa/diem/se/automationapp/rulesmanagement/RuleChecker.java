@@ -4,21 +4,29 @@
  */
 package it.unisa.diem.se.automationapp.rulesmanagement;
 
-import it.unisa.diem.se.automationapp.action.AudioAction;
 import it.unisa.diem.se.automationapp.event.ErrorEvent;
-import it.unisa.diem.se.automationapp.event.MessageEvent;
 import it.unisa.diem.se.automationapp.eventsmanagement.EventBus;
 import it.unisa.diem.se.automationapp.event.ErrorEventType;
 
+/**
+ * The RuleChecker class implements the Runnable interface and is responsible for checking rules based on specific conditions.
+ * It continuously checks the rules, determines if they are triggered, and offers them to the execution queue if conditions are met.
+ */
 public class RuleChecker implements Runnable {
     private EventBus eventBus;
     private RuleManager ruleManager;
 
+    /**
+     * Default constructor for RuleChecker initializing the EventBus and RuleManager.
+     */
     public RuleChecker() {
         this.eventBus = EventBus.getInstance();
         this.ruleManager = RuleManager.getInstance();
     }
 
+    /**
+     * The run method continuously checks the rules, their execution status, and triggers, then offers eligible rules to the execution queue.
+     */
     @Override
     public void run() {
         while(true){
@@ -26,7 +34,7 @@ public class RuleChecker implements Runnable {
                 for (Rule rule : ruleManager.getRuleList()) {
                     if(rule!=null){
                         if(rule instanceof SuspendedRuleDecorator && rule.getWasExecuted()){
-                        SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
+                            SuspendedRuleDecorator suspendedRule = (SuspendedRuleDecorator) rule;
                             if(suspendedRule.isReadyToExecute()){
                                 rule.setWasExecuted(false);
                             }
@@ -46,5 +54,3 @@ public class RuleChecker implements Runnable {
         }
     }
 }
-
-

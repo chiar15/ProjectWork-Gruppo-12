@@ -8,12 +8,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * The RuleList class represents a list of Rule objects.
+ * It encapsulates the functionality to manage and retrieve a list of rules.
+ * 
  * @author chiar
  */
 public class RuleList {
     private List<Rule> ruleList;
 
+    /**
+     * Default constructor for RuleList initializing an empty LinkedList of rules.
+     */
     public RuleList() {
         this.ruleList = new LinkedList<>();
     }
@@ -25,6 +30,4 @@ public class RuleList {
     public void setRules(List<Rule> ruleList) {
         this.ruleList = ruleList;
     }
-    
-    
 }

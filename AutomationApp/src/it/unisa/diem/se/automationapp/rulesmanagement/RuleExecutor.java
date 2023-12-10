@@ -10,8 +10,6 @@ import it.unisa.diem.se.automationapp.action.DeleteFileAction;
 import it.unisa.diem.se.automationapp.action.MoveFileAction;
 import it.unisa.diem.se.automationapp.action.StringAction;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
-import it.unisa.diem.se.automationapp.action.exception.FileException;
-import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
 import it.unisa.diem.se.automationapp.event.AudioEventType;
@@ -25,7 +23,9 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
 /**
- *
+ * The RuleExecutor class handles the execution of queued rules.
+ * It implements the Runnable interface to be executed as a separate thread.
+ * 
  * @author chiar
  */
 public class RuleExecutor implements Runnable {
@@ -33,6 +33,11 @@ public class RuleExecutor implements Runnable {
     private RuleManager ruleManager;
     private boolean sceneBusy;
     
+     /**
+     * Default constructor for RuleExecutor.
+     * Initializes the EventBus, RuleManager, and sceneBusy attribute.
+     * Subscribes to SceneEvent for scene status updates.
+     */
     public RuleExecutor() {
         this.eventBus = EventBus.getInstance();
         this.ruleManager = RuleManager.getInstance();
@@ -40,6 +45,10 @@ public class RuleExecutor implements Runnable {
         eventBus.subscribe(SceneEvent.class, this::onSceneEvent);
     }
 
+    /**
+     * The run method is the main execution logic of the RuleExecutor thread.
+     * Executes queued rules based on certain conditions and handles errors.
+     */
     @Override
     public void run() {
         while(true) {
@@ -75,14 +84,14 @@ public class RuleExecutor implements Runnable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     eventBus.publish(new ErrorEvent("Error in the rule execution thread, application will be terminated.", ErrorEventType.CRITICAL));
-                } catch (FileException e) {
+                } catch (NoSuchFileException e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
-                    eventBus.publish(new ErrorEvent("File error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
-                }catch (InvalidInputException e) {
+                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".The selected file was not found.", ErrorEventType.NORMAL));
+                }catch (IOException e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
-                    eventBus.publish(new ErrorEvent("File error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
+                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".There might some conflicts with system restrictions.", ErrorEventType.NORMAL));
                 }catch (Exception e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
@@ -99,10 +108,6 @@ public class RuleExecutor implements Runnable {
     }
     
     private void onSceneEvent(SceneEvent event){
-        if(event.getEventType() == SceneEventType.BUSY){
-            this.sceneBusy = true;
-        } else{
-            this.sceneBusy = false;
-        }
+        this.sceneBusy = event.getEventType() == SceneEventType.BUSY;
     }
 }
