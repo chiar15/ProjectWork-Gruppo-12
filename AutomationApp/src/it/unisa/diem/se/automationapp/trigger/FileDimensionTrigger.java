@@ -22,9 +22,9 @@ public class FileDimensionTrigger implements TriggerInterface{
     public FileDimensionTrigger() {
     }
 
-    public FileDimensionTrigger(Map<String, String> triggerData) {
-        this.filePath = triggerData.get("filePath");
-        this.dimension = Long.parseLong(triggerData.get("dimension"));
+    public FileDimensionTrigger(String filePath, long dimension) {
+        this.filePath = filePath;
+        this.dimension = dimension;
     }
 
     public String getFilePath() {
@@ -39,13 +39,21 @@ public class FileDimensionTrigger implements TriggerInterface{
         return dimension;
     }
 
-    public void setDimension(String dimension) {
-        this.dimension = Long.parseLong(dimension);
+    public void setDimension(long dimension) {
+        this.dimension = dimension;
     }
     
     @JsonIgnore
     @Override
     public boolean isTriggered() {
+        if(filePath == null || filePath.trim().isEmpty()){
+            return false;
+        }
+        
+        if(dimension <0){
+            return false;
+        }
+        
         Path path = Paths.get(filePath);
         long fileDimension;
         
