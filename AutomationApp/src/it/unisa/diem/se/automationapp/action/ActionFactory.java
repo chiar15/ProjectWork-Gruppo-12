@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.unisa.diem.se.automationapp.action;
 
 import it.unisa.diem.se.automationapp.action.actioncreation.ActionCreationStrategy;
@@ -15,12 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author chiar
+ * The ActionFactory class implements the Factory design pattern to create various types of actions
+ * based on the provided action data.
+ * It maintains a collection of strategies to instantiate different types of actions.
  */
 public class ActionFactory {
+
+    // A map that associates action types with their respective creation strategies
     private static Map<String, ActionCreationStrategy> strategies = new HashMap<>();
 
+    // Static initialization block to populate the strategies map
     static {
         strategies.put(ActionType.AUDIO.toString(), new AudioActionCreation());
         strategies.put(ActionType.MESSAGE.toString(), new MessageActionCreation());
@@ -28,9 +28,15 @@ public class ActionFactory {
         strategies.put(ActionType.MOVEFILE.toString(), new MoveFileActionCreation());
         strategies.put(ActionType.DELETEFILE.toString(), new DeleteFileActionCreation());
         strategies.put(ActionType.STRING.toString(), new StringActionCreation());
-        
     }
 
+    /**
+     * Creates an action based on the provided action data.
+     *
+     * @param actionData A Map containing data required for action creation, including the 'type' of action.
+     * @return An instance of ActionInterface representing the created action.
+     * @throws IllegalArgumentException if the provided action type is invalid or not supported.
+     */
     public static ActionInterface createAction(Map<String, String> actionData) {
         String type = actionData.get("type");
         ActionCreationStrategy strategy = strategies.get(type);

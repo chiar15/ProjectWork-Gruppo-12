@@ -6,7 +6,6 @@ package it.unisa.diem.se.automationapp.trigger;
 
 /**
  *
- * @author chiar
  */
 public enum TriggerType {
     TIME, DAYOFWEEK, DAYOFMONTH, DATE, FILEEXISTS, FILEDIMENSION,

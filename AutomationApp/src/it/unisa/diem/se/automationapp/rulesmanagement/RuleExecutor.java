@@ -10,6 +10,8 @@ import it.unisa.diem.se.automationapp.action.DeleteFileAction;
 import it.unisa.diem.se.automationapp.action.MoveFileAction;
 import it.unisa.diem.se.automationapp.action.StringAction;
 import it.unisa.diem.se.automationapp.action.exception.AudioExecutionException;
+import it.unisa.diem.se.automationapp.action.exception.FileException;
+import it.unisa.diem.se.automationapp.action.exception.InvalidInputException;
 import it.unisa.diem.se.automationapp.event.ActiveEvent;
 import it.unisa.diem.se.automationapp.event.AudioEvent;
 import it.unisa.diem.se.automationapp.event.AudioEventType;
@@ -84,14 +86,14 @@ public class RuleExecutor implements Runnable {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     eventBus.publish(new ErrorEvent("Error in the rule execution thread, application will be terminated.", ErrorEventType.CRITICAL));
-                } catch (NoSuchFileException e) {
+                } catch (FileException e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
-                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".The selected file was not found.", ErrorEventType.NORMAL));
-                }catch (IOException e) {
+                    eventBus.publish(new ErrorEvent("File error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
+                }catch (InvalidInputException e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));
-                    eventBus.publish(new ErrorEvent("File error while executing rule: " + rule.getName() + ".There might some conflicts with system restrictions.", ErrorEventType.NORMAL));
+                    eventBus.publish(new ErrorEvent("Error while executing rule " + rule.getName() + ": " + e.getMessage(), ErrorEventType.NORMAL));
                 }catch (Exception e) {
                     rule.setIsActive(false);
                     eventBus.publish(new ActiveEvent("Rule Deactivated", rule));

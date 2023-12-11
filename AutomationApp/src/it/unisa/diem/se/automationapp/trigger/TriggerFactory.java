@@ -14,6 +14,11 @@ import it.unisa.diem.se.automationapp.trigger.triggercreation.TriggerCreationStr
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The TriggerFactory class provides a factory to create various types of triggers based on a given type.
+ * It utilizes different strategies (implementations of TriggerCreationStrategy) for each type of trigger.
+ * 
+ */
 public class TriggerFactory {
     private static Map<String, TriggerCreationStrategy> strategies = new HashMap<>();
 
@@ -24,9 +29,15 @@ public class TriggerFactory {
         strategies.put(TriggerType.DATE.toString(), new DateTriggerCreation());
         strategies.put(TriggerType.FILEEXISTS.toString(), new FileExistsTriggerCreation());
         strategies.put(TriggerType.FILEDIMENSION.toString(), new FileDimensionTriggerCreation());
-        
     }
 
+    /**
+     * Creates a trigger based on the provided trigger data.
+     *
+     * @param triggerData A map containing data to create the trigger.
+     * @return A TriggerInterface object based on the provided trigger data.
+     * @throws IllegalArgumentException if an invalid action type is provided.
+     */
     public static TriggerInterface createTrigger(Map<String, String> triggerData) {
         String type = triggerData.get("type");
         TriggerCreationStrategy strategy = strategies.get(type);

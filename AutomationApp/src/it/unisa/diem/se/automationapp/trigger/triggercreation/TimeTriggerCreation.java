@@ -12,21 +12,32 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 /**
- *
- * @author chiar
+ * The TimeTriggerCreation class implements the TriggerCreationStrategy interface to create TimeTrigger instances.
+ * It reads time information from the provided trigger data map and generates a TimeTrigger object based on that information.
+ * This class is part of a strategy pattern for creating different types of triggers.
+ * 
  */
 public class TimeTriggerCreation implements TriggerCreationStrategy{
 
+    /**
+     * Default constructor for the TimeTriggerCreation class.
+     */
     public TimeTriggerCreation() {
     }
 
+    /**
+     * Creates a TimeTrigger object based on the provided trigger data.
+     *
+     * @param triggerData A map containing data related to the trigger creation, where the "time" key represents the time information in HH:mm format.
+     * @return TimeTrigger An instance of the TimeTrigger class created with the provided time information.
+     */
     @Override
     public TriggerInterface createTrigger(Map<String, String> triggerData) {
         String timeString = triggerData.get("time");
         
-        LocalTime time = LocalTime.parse(timeString);
+        // Parse the time string into LocalTime
+        LocalTime time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern("HH:mm"));
 
         return new TimeTrigger(time.truncatedTo(ChronoUnit.MINUTES));
     }
-    
 }
