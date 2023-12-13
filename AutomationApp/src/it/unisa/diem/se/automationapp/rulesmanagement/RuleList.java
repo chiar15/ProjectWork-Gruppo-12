@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * The RuleList class represents a list of Rule objects.
  * It encapsulates the functionality to manage and retrieve a list of rules.
+ * This class is intended for supporting rule serialization and deserialization and nothing else.
  * 
  * @author chiar
  */

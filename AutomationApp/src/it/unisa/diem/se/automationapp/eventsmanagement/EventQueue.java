@@ -11,6 +11,7 @@ import java.util.Queue;
 /**
  * The EventQueue class represents a queue of events.
  * It encapsulates a queue data structure containing objects implementing the EventInterface.
+ * This class is intended for supporting event serialization and deserialization and nothing else.
  *
  * @author chiar
  */
