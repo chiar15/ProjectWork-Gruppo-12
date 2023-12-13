@@ -26,4 +26,4 @@ Quarta Consegna (10 Dicembre)
 - Link Sprint Backlog: https://unisalerno-my.sharepoint.com/:x:/g/personal/a_cardamone7_studenti_unisa_it/EZAnADLeqapAqNEluhITVigBGYjsGybVIbwt-3Rir2B6Ww?e=3x7hPZ
 - Link Burndown Chart: https://unisalerno-my.sharepoint.com/:x:/g/personal/a_cardamone7_studenti_unisa_it/EUq4_xCzIU9NoAEimM6kMrEBd4QfsFIObCR_N8aOw_uOKQ?e=6PPb5M
 - Link Review Report: https://unisalerno-my.sharepoint.com/:w:/g/personal/a_cardamone7_studenti_unisa_it/EVcZnC2-OsFLhdw3ddx4i14B9CLFGxUJVmsgih8zdLSGsA?e=cFBgOa
-- Link Final Presentation: https://unisalerno-my.sharepoint.com/:p:/g/personal/a_antonucci5_studenti_unisa_it/ET7kEOPlp8REjp6TB0QCeSwBlTOKFd1CIvPZH07MvfU35Q?e=Kaysjj
+- Link Drive Final Presentation: https://drive.google.com/drive/folders/1cmC-89H_6jRpHU_H-4ZMxE_iCLScc89j?usp=drive_link
