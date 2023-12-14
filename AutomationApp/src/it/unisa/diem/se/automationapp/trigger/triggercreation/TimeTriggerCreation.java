@@ -36,7 +36,7 @@ public class TimeTriggerCreation implements TriggerCreationStrategy{
         String timeString = triggerData.get("time");
         
         // Parse the time string into LocalTime
-        LocalTime time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime time = LocalTime.parse(timeString);
 
         return new TimeTrigger(time.truncatedTo(ChronoUnit.MINUTES));
     }
